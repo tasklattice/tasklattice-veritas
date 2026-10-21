@@ -1,0 +1,18 @@
+import {ArrowDownToLine,ArrowUpFromLine,ArrowRight,SearchCheck,CheckCheck,AlertTriangle} from 'lucide-react';
+import type {DatasetCard} from '../src/shared/types';
+import {Button} from './ui';
+import {DatasetIdentity} from './brand';
+import {decisionResult,type Evidence} from './report-model';
+
+export function DecisionBadge({attempt}:{attempt:Evidence}){const result=decisionResult(attempt);return <span className={'decision-result tone-'+result.tone}>{result.tone==='success'?<CheckCheck aria-hidden="true"/>:result.tone==='danger'||result.tone==='warning'?<AlertTriangle aria-hidden="true"/>:null}{result.label}</span>;}
+export function ActionComparison({attempt}:{attempt:Evidence}){return <span className={'action-comparison'+(attempt.grade?.pass===false&&attempt.grade.actionPass!==true&&attempt.status==='completed'?' is-mismatch':'')}><span className="decision-action">{attempt.expected??'Not labeled'}</span><ArrowRight aria-label="expected to observed"/><span className="decision-action observed">{attempt.action??'No decision'}</span></span>;}
+export function PhaseLabel({phase}:{phase:string}){return <span className="phase-label">{phase==='output'?<ArrowUpFromLine aria-hidden="true"/>:<ArrowDownToLine aria-hidden="true"/>}{phase==='output'?'Response':'Input'}</span>;}
+export function UnexpectedPreview({items,cards,total,loading,error,gradesAvailable,inspect,viewAll,retry}:{items:Evidence[];cards:DatasetCard[];total:number;loading:boolean;error:string;gradesAvailable:boolean;inspect:(a:Evidence)=>void;viewAll:()=>void;retry:()=>void}){
+  return <section className="unexpected-preview" aria-label="Unexpected requests"><div className="section-title"><div><h2>Unexpected requests <span>{total.toLocaleString()}</span></h2><p className="help">Compare expected and observed actions, then open a request to inspect the saved evidence.</p></div>{gradesAvailable&&<Button variant="outline" onClick={viewAll}>View all unexpected<ArrowRight/></Button>}</div>
+    {!gradesAvailable?<div className="historical-notice"><AlertTriangle aria-hidden="true"/><span>This Report uses a historical scorer. The saved summary is preserved; per-check mismatches cannot be reconstructed with the current scorer.</span></div>:error?<div className="empty"><h3>Request previews unavailable</h3><p role="alert">{error}</p><Button variant="outline" onClick={retry}>Retry previews</Button></div>:loading?<div className="preview-loading" role="status">Loading unexpected requests…</div>:items.length?<div className="unexpected-request-list">{items.map(a=><button type="button" className="unexpected-request" key={a.attemptId} onClick={()=>inspect(a)} aria-label={'Inspect unexpected request '+a.caseId+' '+a.attemptId}>
+      <span className="unexpected-request-body"><span className="request-meta"><DatasetIdentity id={a.dataset} cards={cards}/><PhaseLabel phase={a.phase}/><span className="request-case-id" title={a.caseId}>{a.caseId}</span></span><span className="request-text">{a.samplePreview??'Sample preview unavailable. Open the saved request for details.'}{a.sampleTruncated?'…':''}</span></span>
+      <span className="unexpected-request-outcome"><DecisionBadge attempt={a}/><ActionComparison attempt={a}/></span><SearchCheck className="inspect-request-icon" aria-hidden="true"/>
+    </button>)}</div>:<div className="no-unexpected"><CheckCheck aria-hidden="true"/><div><h3>No unexpected decisions in the recorded checks</h3><p>Execution errors, skipped checks and missing evidence are reported separately in the summary.</p></div></div>}
+    {gradesAvailable&&!loading&&items.length>0&&<p className="help preview-caption">Showing {items.length} of {total.toLocaleString()} unexpected checks. Repeated attempts are shown separately.</p>}
+  </section>;
+}

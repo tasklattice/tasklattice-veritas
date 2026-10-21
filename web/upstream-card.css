@@ -1,0 +1,94 @@
+/* The upstream README is a document, with Veritas notes outside its boundary. */
+.upstream-card { max-width: 1280px; margin-inline: auto; font-family: var(--dataset-sans); min-width: 0; }
+.upstream-card-source { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--card); font-size: 12px; color: var(--muted-foreground); }
+.upstream-card-source > div, .upstream-card-source > span { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.upstream-card-source > div > span { white-space: nowrap; }
+.upstream-card-source > span { flex-shrink: 0; }
+.upstream-card-source .source-mark { width: 17px; height: 17px; flex-shrink: 0; }
+.upstream-card-source a { display: inline-flex; align-items: center; gap: 6px; color: var(--foreground); min-height: 24px; overflow-wrap: anywhere; }
+.upstream-card-source svg { width: 14px; height: 14px; flex-shrink: 0; }
+.upstream-card-source i { width: 3px; height: 3px; border-radius: 50%; background: var(--muted-foreground); }
+.upstream-card-toolbar { display: flex; align-items: center; gap: 4px; margin-block: 10px 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.upstream-card-view { display: inline-flex; align-items: center; gap: 4px; margin-right: auto; }
+.upstream-card-toolbar .ui-button { font-family: var(--dataset-sans); font-size: 13px; min-height: 44px; padding-inline: 12px; }
+.upstream-card-toolbar .ui-button svg { width: 15px; height: 15px; }
+.upstream-card-view .ui-button[aria-pressed=true] { background: var(--muted); color: var(--foreground); }
+.upstream-card-layout { display: grid; grid-template-columns: minmax(0,1fr) 272px; gap: 40px; align-items: start; }
+.upstream-card-main { min-width: 0; }
+.upstream-card .upstream-markdown { max-width: none; padding: 16px 4px 32px; font-size: 16px; line-height: 1.75; color: var(--foreground); }
+.upstream-markdown h1 { font-size: 30px; font-weight: 600; line-height: 40px; letter-spacing: -.02em; margin: 0 0 20px; }
+.upstream-markdown h2 { font-size: 24px; font-weight: 600; line-height: 32px; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.upstream-markdown h3 { font-size: 20px; font-weight: 600; line-height: 28px; border: 0; padding: 0; margin: 24px 0 12px; }
+.upstream-markdown h4 { font-size: 17px; line-height: 26px; font-weight: 600; margin: 20px 0 10px; }
+.upstream-markdown h5, .upstream-markdown h6 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; }
+.upstream-markdown :is(h1,h2,h3,h4,h5,h6) { scroll-margin-top: 80px; }
+.upstream-markdown :is(h1,h2,h3,h4,h5,h6):focus { outline: none; }
+.upstream-markdown :is(h1,h2,h3,h4,h5,h6):focus-visible { outline: 2px solid var(--ring); outline-offset: 6px; border-radius: 2px; }
+.upstream-markdown p { margin: 0 0 16px; overflow-wrap: anywhere; }
+.upstream-markdown strong { font-weight: 600; }
+.upstream-markdown a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+.upstream-markdown ul, .upstream-markdown ol { padding-left: 26px; margin: 0 0 20px; list-style-position: outside; }
+.upstream-markdown ul { list-style-type: disc; }
+.upstream-markdown ol { list-style-type: decimal; }
+.upstream-markdown li { padding-left: 2px; margin-bottom: 6px; }
+.upstream-markdown li > ul, .upstream-markdown li > ol { margin-top: 8px; margin-bottom: 8px; }
+.upstream-markdown code { display: inline; padding: 2px 5px; margin: 0; background: var(--muted); color: var(--secondary-foreground); border-radius: 4px; font: 12px/1.7 var(--dataset-mono); overflow-wrap: anywhere; }
+.upstream-markdown pre { overflow-x: auto; margin: 16px 0 24px; padding: 16px; background: var(--muted); border: 1px solid var(--border); border-radius: var(--radius-control); font: 12px/21px var(--dataset-mono); white-space: pre; }
+.upstream-markdown pre code { display: block; margin: 0; padding: 0; border: 0; background: none; color: inherit; white-space: pre; overflow-wrap: normal; }
+.upstream-markdown blockquote { margin: 20px 0; border-left: 3px solid var(--border); padding: 0 20px; color: var(--muted-foreground); }
+.upstream-markdown img { display: block; max-width: 100%; height: auto; margin: 20px auto; border-radius: var(--radius-control); }
+.upstream-table-scroll { overflow: auto; max-width: 100%; margin: 16px 0 24px; }
+.upstream-markdown table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 22px; }
+.upstream-markdown th, .upstream-markdown td { text-align: left; border: 1px solid var(--border); padding: 8px 12px; }
+.upstream-markdown th { background: var(--muted); font-weight: 600; }
+.upstream-markdown hr { border: 0; border-top: 1px solid var(--border); margin-block: 28px; }
+.upstream-external-image { display: block; padding: 12px; border: 1px solid var(--border); background: var(--muted); border-radius: var(--radius-control); font-size: 13px; }
+.upstream-external-image a { display: inline-flex; align-items: center; gap: 8px; }
+.upstream-external-image svg { width: 14px; height: 14px; }
+.upstream-card-raw { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; margin: 16px 0 28px; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--card); font: 12px/22px var(--dataset-mono); }
+.upstream-card-sidebar { position: sticky; top: 76px; max-height: calc(100dvh - 96px); overflow: auto; border-left: 1px solid var(--border); padding: 12px 0 12px 24px; scrollbar-gutter: stable; }
+.upstream-card-sidebar h2 { font-size: 14px; font-weight: 600; line-height: 22px; margin-bottom: 8px; }
+.upstream-card-sidebar nav { padding-bottom: 16px; }
+.upstream-card-sidebar nav button { display: block; text-align: left; width: 100%; min-height: 44px; padding: 8px; border: 0; background: none; color: var(--muted-foreground); border-radius: var(--radius-control); font: 13px/20px var(--dataset-sans); overflow-wrap: anywhere; cursor: pointer; }
+.upstream-card-sidebar nav button:hover { background: var(--muted); color: var(--foreground); }
+.upstream-card-sidebar nav button[aria-current=location] { color: var(--link); background: var(--primary-surface); }
+.upstream-card-sidebar nav button.depth-1 { font-weight: 600; color: var(--foreground); }
+.upstream-card-sidebar nav button.depth-3 { padding-left: 20px; font-size: 12px; }
+.upstream-metadata, .upstream-card-provenance { padding-top: 20px; margin-top: 8px; border-top: 1px solid var(--border); }
+.upstream-metadata > div { margin-bottom: 16px; }
+.upstream-metadata h3 { font-size: 12px; color: var(--muted-foreground); margin: 0 0 4px; font-weight: 400; }
+.upstream-metadata p { font-size: 13px; color: var(--foreground); overflow-wrap: anywhere; }
+.upstream-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.upstream-tags > span { font-size: 11px; line-height: 18px; padding: 2px 6px; background: var(--muted); border-radius: 3px; color: var(--muted-foreground); }
+.upstream-metadata details { margin-top: 12px; }
+.upstream-metadata summary { display: flex; align-items: center; gap: 8px; justify-content: space-between; min-height: 44px; font-size: 12px; cursor: pointer; list-style: none; }
+.upstream-metadata summary::-webkit-details-marker { display: none; }
+.upstream-metadata summary svg { width: 14px; height: 14px; }
+.upstream-metadata details[open] summary svg { transform: rotate(180deg); }
+.upstream-metadata pre { margin: 4px 0 12px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--muted); font: 10px/18px var(--dataset-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.upstream-card-provenance > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; }
+.upstream-card-provenance svg { width: 13px; height: 13px; }
+.upstream-card-provenance dl { margin: 8px 0 16px; }
+.upstream-card-provenance dt { font-size: 11px; color: var(--muted-foreground); margin-bottom: 4px; }
+.upstream-card-provenance dd { margin: 0 0 12px; overflow-wrap: anywhere; font: 10px/18px var(--dataset-mono); }
+.upstream-card-provenance > p { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.upstream-card-provenance small { display: block; font-size: 11px; line-height: 18px; color: var(--muted-foreground); margin-top: 12px; }
+.upstream-card-attribution { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding-block: 16px; color: var(--muted-foreground); }
+.upstream-card-attribution p { font-size: 13px; line-height: 22px; }
+.upstream-card-attribution span { font-size: 12px; }
+.upstream-card-attribution a { display: inline-flex; align-items: center; gap: 4px; }
+.upstream-card-attribution svg { width: 12px; height: 12px; }
+.upstream-veritas-notes { border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; background: var(--card); margin: 16px 0 32px; }
+.upstream-veritas-notes > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.upstream-veritas-notes h2 { font-size: 18px; font-weight: 600; }
+.upstream-veritas-notes p { margin-top: 12px; font-size: 14px; line-height: 23px; color: var(--muted-foreground); }
+.upstream-veritas-notes > div:last-child { justify-content: flex-start; margin-top: 16px; font-size: 12px; }
+.upstream-veritas-notes > div:last-child > span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); }
+.upstream-veritas-notes > div:last-child svg { width: 14px; height: 14px; }
+.upstream-card-loading { display: grid; gap: 20px; padding: 32px 4px; min-height: 420px; align-content: start; }
+.upstream-card-loading p { color: var(--muted-foreground); font-size: 14px; }
+.upstream-card-empty { min-height: 360px; }
+.upstream-card-empty > svg { margin: 0 auto 12px; color: var(--muted-foreground); }
+.upstream-card-empty > div { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+
+.upstream-card-sidebar > .upstream-metadata:first-child { border-top: 0; margin-top: 0; padding-top: 0; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }

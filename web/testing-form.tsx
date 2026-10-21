@@ -1,0 +1,83 @@
+import {ScoringFields} from './scoring-controls';
+import {useCallback,useEffect,useId,useRef,useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
+import {catalogOptions} from './query';
+import {X,Play,ArrowRight,ArrowLeft,ClipboardCheck,Check,LoaderCircle,AlertTriangle,Pencil} from 'lucide-react';
+import type {DatasetCard,TargetItem,JsonObject} from '../src/shared/types';
+import {Button,Input,NativeSelect,Sheet,SheetTitle,SheetDescription} from './ui';
+import {TestingDatasets,DatasetTestOptions} from './testing-datasets';
+import {TestingTarget} from './testing-target';
+import {api,adapterName} from './api';
+import {AdapterMark,PublisherMark,datasetName} from './brand';
+import {buildTestingRequest,defaultDatasetOptions,initialTestingDraft,testingCheckLimit,testingSelections,testingTarget,directionLabel,type TestingInitial,type TestingStep} from './testing-model';
+
+const steps: {id:TestingStep;label:string;description:string}[]=[
+  {id:'datasets',label:'Datasets',description:'Choose your sources'},
+  {id:'target',label:'Target',description:'Select a Guard connection'},
+  {id:'settings',label:'Execution',description:'Scope, concurrency & repeats'},
+  {id:'review',label:'Review',description:'Confirm and start'},
+];
+
+export function TestingForm({datasets,targets,initial,close,done}:{datasets:DatasetCard[];targets:TargetItem[];initial?:TestingInitial;close:()=>void;done:(id:string)=>void}){
+  const[draft,setDraft]=useState(()=>initialTestingDraft(initial)),[step,setStep]=useState<TestingStep>('datasets'),[furthest,setFurthest]=useState(0),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  const catalogQuery=useQuery(catalogOptions()),catalog=catalogQuery.data?.items??[],catalogError=catalogQuery.error?.message??'',catalogLoading=catalogQuery.isPending;
+  const fieldId=useId(),panelId=fieldId+'-panel',headingId=fieldId+'-heading',statusId=fieldId+'-status';
+  const inFlight=useRef(false),errorElement=useRef<HTMLDivElement>(null),mainPane=useRef<HTMLDivElement>(null),focusStep=useRef(false);
+  const selectedCards=draft.datasetIds.map(id=>datasets.find(d=>d.id===id)).filter((c):c is DatasetCard=>Boolean(c)),target=targets.find(t=>t.id===draft.targetId),bound=testingCheckLimit(draft),index=steps.findIndex(s=>s.id===step);
+  useEffect(()=>{mainPane.current?.scrollTo(0,0);},[step]);
+  const focusActiveStep=useCallback((node:HTMLHeadingElement|null)=>{if(node&&focusStep.current){node.focus({preventScroll:true});focusStep.current=false;}},[]);
+  useEffect(()=>{if(error)errorElement.current?.focus();},[error]);
+  const reason=(fn:()=>unknown)=>{try{fn();return '';}catch(e){return(e as Error).message;}};
+  const sourceReason=catalogLoading?'Loading Dataset configuration…':catalogError?'Retry loading Dataset configuration.':reason(()=>testingSelections(draft,datasets,catalog));
+  const targetReason=reason(()=>testingTarget(draft,targets)),runReason=sourceReason||targetReason||reason(()=>buildTestingRequest(draft,datasets,targets,catalog));
+  const blockers=[sourceReason,targetReason,runReason,''],disabledReason=step==='datasets'?sourceReason:step==='target'?sourceReason||targetReason:runReason;
+  const nextLabel=step==='review'?'Start testing':step==='settings'?'Review test':'Continue';
+  const boundLabel=draft.scope==='full'?'All benchmark cases':bound===null?'Set a valid case limit':'Up to '+bound.toLocaleString()+' checks';
+  function goToStep(value:TestingStep){focusStep.current=true;setStep(value);setFurthest(n=>Math.max(n,steps.findIndex(s=>s.id===value)));}
+  function update(values:Partial<typeof draft>){setDraft(d=>({...d,...values}));setError('');}
+  async function submit(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();if(inFlight.current||disabledReason)return;
+    if(step!=='review'){goToStep(steps[index+1].id);return;}
+    let id:string;
+    try{const request=buildTestingRequest(draft,datasets,targets,catalog);inFlight.current=true;setBusy(true);setError('');id=(await api<{id:string}>('/runs',request)).id;}
+    catch(e){inFlight.current=false;setBusy(false);setError((e as Error).message);return;}
+    // Acceptance is the handoff boundary: do not wait on unrelated list refreshes.
+    done(id);
+  }
+  return <Sheet onClose={close} busy={busy} className="testing-sheet"><form onSubmit={e=>void submit(e)} onInvalidCapture={e=>{const details=(e.target as HTMLElement).closest('details');if(details)details.open=true;}}>
+    <div className="dialog-header testing-dialog-header"><div className="testing-dialog-title"><span className="testing-title-icon"><Play aria-hidden="true"/></span><div><SheetTitle>Start testing</SheetTitle><SheetDescription>Build a test from your Datasets and a Guard Target.</SheetDescription></div></div><Button variant="ghost" disabled={busy} onClick={close} aria-label="Close testing form"><X/></Button></div>
+    <div className="testing-workspace">
+      <nav className="testing-stepper" aria-label="Testing setup steps"><ol>{steps.map((item,i)=>{
+        const completed=i<furthest&&!blockers[i],locked=i>furthest||Boolean(i>0&&sourceReason)||Boolean(i>1&&targetReason)||Boolean(i>2&&runReason);
+        return <li key={item.id} data-state={item.id==='review'&&error?'error':i===index?'current':completed?'complete':'upcoming'}><button type="button" aria-current={i===index?'step':undefined} aria-controls={panelId} disabled={busy||locked} onClick={()=>goToStep(item.id)}><span className="testing-step-number" aria-hidden="true">{item.id==='review'&&error?<AlertTriangle/>:completed&&i!==index?<Check/>:i+1}</span><span><strong>{item.label}</strong><small>{item.description}</small></span>{completed&&<span className="visually-hidden">Completed</span>}</button></li>;
+      })}</ol><p className="testing-stepper-note"><ClipboardCheck aria-hidden="true"/>One test, one Report.<br/>Selections stay saved as you move between steps.</p></nav>
+      <fieldset className="testing-layout" disabled={busy} aria-busy={busy}><legend className="visually-hidden">Testing configuration</legend><div className="testing-main-pane" ref={mainPane}>
+        {error&&<div className="testing-submit-error" role="alert" tabIndex={-1} ref={errorElement}><AlertTriangle aria-hidden="true"/><div><strong>Test was not started</strong><p>{error}</p><small>Your selections and settings have been kept. Edit the configuration and try again.</small></div></div>}
+        {catalogError&&<div className="notice error" role="alert">{catalogError}<Button variant="outline" onClick={()=>void catalogQuery.refetch()}>Retry Dataset configuration</Button></div>}
+        <section key={step} id={panelId} aria-labelledby={headingId} className="testing-step-panel">
+          <header className="testing-section-heading"><span className="testing-step-caption">Step {index+1} of {steps.length}</span><h3 id={headingId} ref={focusActiveStep} tabIndex={-1}>{step==='datasets'?'Choose Datasets':step==='target'?'Choose a Target':step==='settings'?'Configure execution':'Review your test'}</h3><p>{step==='datasets'?'Choose one or more original source Datasets. Each source keeps its own benchmark scope.':step==='target'?'Choose one preconfigured Guard connection for all selected Datasets.':step==='settings'?'Set the case scope and shared execution parameters.':'Confirm the requests you are about to send. Starting opens your Report automatically.'}</p></header>
+          {step==='datasets'&&<><TestingDatasets cards={datasets} selected={draft.datasetIds} disabled={busy} onChange={ids=>update({datasetIds:ids})}/>
+            {selectedCards.length>0&&<section className="testing-dataset-settings" aria-label="Dataset settings"><div className="testing-settings-heading"><h3>Source settings</h3><span>Recommended scopes are selected by default.</span></div>{selectedCards.map(card=><DatasetTestOptions key={card.id} card={card} entry={catalog.find(d=>d.id===card.id)} value={draft.options[card.id]??defaultDatasetOptions()} onChange={value=>update({options:{...draft.options,[card.id]:value}})}/>)}</section>}</>}
+          {step==='target'&&<TestingTarget targets={targets} selected={draft.targetId} onChange={targetId=>update({targetId})} close={close}/>}
+          {step==='settings'&&<>
+            <fieldset className="testing-scope"><legend>Test scope</legend><div className="testing-scope-options"><label className={draft.scope==='full'?'selected':''}><input type="radio" name="test-scope" aria-label="Complete benchmark scope" value="full" checked={draft.scope==='full'} onChange={()=>update({scope:'full'})}/><span><strong>Complete benchmark scope</strong><small>All converted cases from the chosen benchmark files.</small></span></label><label className={draft.scope==='limited'?'selected':''}><input type="radio" name="test-scope" aria-label="Limit cases per Dataset" value="limited" checked={draft.scope==='limited'} onChange={()=>update({scope:'limited'})}/><span><strong>Limit cases per Dataset</strong><small>Use a small source-order batch to verify the connection.</small></span></label></div>
+              {draft.scope==='limited'?<div className="testing-case-limit"><label>Max cases per Dataset<Input type="number" aria-label="Max cases per Dataset" name="limit" min="1" value={draft.limit} onChange={e=>update({limit:e.target.value})} required/></label><p className="help">Applies to each Dataset before repeats. Excluding unreviewed cases can reduce the count. This is not random sampling.</p></div>:<p className="help">Uses the selected benchmark scope, not every training or auxiliary file in the archive. The converted case count is determined during preparation.</p>}
+            </fieldset>
+            <div className="testing-execution-fields"><label>Concurrency<Input type="number" aria-label="Concurrency" aria-describedby={fieldId+'-concurrency-help'} name="concurrency" min="1" max="100" value={draft.concurrency} onChange={e=>update({concurrency:e.target.value})} required/><span className="help" id={fieldId+'-concurrency-help'}>Maximum checks running at once, shared across Datasets.</span></label><label>Repeats per case<Input type="number" aria-label="Repeats per case" aria-describedby={fieldId+'-repeat-help'} name="repeat" min="1" max="100" value={draft.repeat} onChange={e=>update({repeat:e.target.value})} required/><span className="help" id={fieldId+'-repeat-help'}>Repeat each case to measure decision instability.</span></label></div>
+            <details className="testing-scoring-settings"><summary>Scoring rules · {draft.scorer.name}</summary><p className="help">Rules are saved with this test. You can re-score the same evidence later from its Report.</p><ScoringFields config={draft.scorer} onChange={scorer=>update({scorer})}/></details>
+            <section className="testing-evidence-settings"><label>Evidence type<NativeSelect value={draft.evidence} onChange={e=>update({evidence:e.target.value as typeof draft.evidence})}><option value="endpoint">Measured Target decisions</option><option value="synthetic-local-demo">Synthetic toolchain verification</option></NativeSelect></label><p className="help">{draft.evidence==='synthetic-local-demo'?'Choose a local mock Target. This labels the Report as synthetic verification; it does not measure a deployed Guard.':'Decisions are measured at the selected Target. Response checks use saved Dataset responses rather than generating model answers.'}</p></section>
+            <label className="testing-expectations"><input type="checkbox" aria-label="Exclude cases without reviewed expectations" aria-describedby={fieldId+'-expectations-help'} checked={draft.skipUnlabeled} onChange={e=>update({skipUnlabeled:e.target.checked})}/><span><strong>Exclude cases without reviewed expectations</strong><small id={fieldId+'-expectations-help'}>Otherwise, preparation stops when a source case has no reviewed expected action. A Dataset with no evaluable cases still cannot run.</small></span></label>
+          </>}
+          {step==='review'&&<div className="testing-final-review" aria-label="Test summary">
+            <div className="testing-review-plan"><div><span className="metric-label">Planned checks</span><strong>{boundLabel}</strong><p>{draft.scope==='limited'&&bound!==null?draft.datasetIds.length+' Datasets × '+draft.limit+' cases × '+draft.repeat+' repeats. The actual count may be lower.':'Converted cases × repeats. The actual count appears in the Report after preparation.'}</p></div><ClipboardCheck aria-hidden="true"/></div>
+            <section className="testing-review-section"><header><h4>Datasets <span>{selectedCards.length}</span></h4><Button variant="ghost" onClick={()=>goToStep('datasets')} aria-label="Edit Datasets"><Pencil/>Edit</Button></header><ul className="testing-review-source-list">{selectedCards.map(card=>{const options=draft.options[card.id]??defaultDatasetOptions(),entry=catalog.find(c=>c.id===card.id),spec=options.sourceSpec!==''?entry?.files[Number(options.sourceSpec)]:null;return <li key={card.id}><PublisherMark publisher={card.publisher} size="sm"/><div><strong>{datasetName(card)}</strong><small>{spec?spec.config+' / '+spec.split:'Recommended benchmark scope'} · {directionLabel(card.id,options,entry)}{options.field?' · Category: '+options.field:''}{options.domain?' · Domain: '+options.domain:''}</small></div></li>;})}</ul></section>
+            <section className="testing-review-section"><header><h4>Target</h4><Button variant="ghost" onClick={()=>goToStep('target')} aria-label="Edit Target"><Pencil/>Edit</Button></header>{target&&<div className="testing-review-connection"><AdapterMark adapter={target.target.adapter}/><div><strong>{target.name}</strong><small>{adapterName(target.target.adapter)} · {target.target.outputMode==='paired'?'Paired response':'Standalone text'}</small><code>{target.target.url}</code></div></div>}</section>
+            <section className="testing-review-section"><header><h4>Execution</h4><Button variant="ghost" onClick={()=>goToStep('settings')} aria-label="Edit execution"><Pencil/>Edit</Button></header><dl className="testing-review-facts"><div><dt>Scope</dt><dd>{draft.scope==='full'?'Complete benchmark':draft.limit+' cases per Dataset'}</dd></div><div><dt>Concurrency</dt><dd>{draft.concurrency}</dd></div><div><dt>Repeats per case</dt><dd>{draft.repeat}</dd></div><div><dt>Unreviewed cases</dt><dd>{draft.skipUnlabeled?'Excluded':'Stop preparation'}</dd></div><div><dt>Scoring rules</dt><dd>{draft.scorer.name}</dd></div><div><dt>Evidence</dt><dd>{draft.evidence==='synthetic-local-demo'?'Synthetic verification':'Measured Target decisions'}</dd></div></dl></section>
+            <div className={'testing-review-notice'+(draft.evidence==='synthetic-local-demo'?' synthetic':'')}><AlertTriangle aria-hidden="true"/><p>{draft.evidence==='synthetic-local-demo'?'Mock Target results verify the testing workflow. They are not deployed Guard accuracy.':'Source records are sent to the selected Target as individual requests. The Dataset scope and Target configuration are frozen in the Report.'}</p></div>
+          </div>}
+        </section>
+      </div></fieldset>
+    </div>
+    <footer className="testing-footer"><Button variant="ghost" disabled={busy} onClick={close}>Cancel</Button><div className="testing-footer-status" role="status" id={statusId}>{busy?<><LoaderCircle className="testing-spinner" aria-hidden="true"/><span>Preparing cases. Your Report opens when queued.</span></>:<span>{disabledReason|| (step==='review'?'Ready to prepare and start your test.':`Step ${index+1} of ${steps.length}`)}</span>}</div><div>{index>0&&<Button variant="outline" disabled={busy} onClick={()=>goToStep(steps[index-1].id)}><ArrowLeft/>Back</Button>}<Button type="submit" aria-describedby={statusId} disabled={busy||Boolean(disabledReason)}>{busy?<><LoaderCircle className="testing-spinner"/>Preparing…</>:<>{step==='review'?<Play/>:null}{nextLabel}{step!=='review'?<ArrowRight/>:null}</>}</Button></div></footer>
+  </form></Sheet>;
+}

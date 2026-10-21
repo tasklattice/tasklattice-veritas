@@ -1,0 +1,117 @@
+{
+  "retrieved": "2026-10-20",
+  "assets": [
+    {
+      "name": "ai4privacy",
+      "file": "ai4privacy.webp",
+      "source": "https://huggingface.co/ai4privacy",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/6448034919538c015b286d42/_T0bTFoq8fZYWZpuS1eBt.png",
+      "bytes": 1630
+    },
+    {
+      "name": "allenai",
+      "file": "allenai.webp",
+      "source": "https://huggingface.co/allenai",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png",
+      "bytes": 1400
+    },
+    {
+      "name": "bench-llm",
+      "file": "bench-llm.svg",
+      "source": "https://huggingface.co/bench-llm",
+      "url": "https://huggingface.co/avatars/dffa18f9169c0d9a460c16df128a28c2.svg",
+      "bytes": 1284
+    },
+    {
+      "name": "centerforaisafety",
+      "file": "centerforaisafety.png",
+      "source": "https://github.com/centerforaisafety",
+      "url": "https://github.com/centerforaisafety.png?size=96",
+      "bytes": 4773
+    },
+    {
+      "name": "deepset",
+      "file": "deepset.webp",
+      "source": "https://huggingface.co/deepset",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/5ff48e9632a3bcb7c9874eb5/Q6ZHK_DzxJhzX_sm7PLZT.png",
+      "bytes": 922
+    },
+    {
+      "name": "github",
+      "file": "github.svg",
+      "source": "https://github.com/simple-icons/simple-icons",
+      "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg",
+      "bytes": 822
+    },
+    {
+      "name": "huggingface",
+      "file": "huggingface.svg",
+      "source": "https://huggingface.co/brand",
+      "url": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+      "bytes": 4634
+    },
+    {
+      "name": "jailbreakbench",
+      "file": "jailbreakbench.webp",
+      "source": "https://huggingface.co/JailbreakBench",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/QvrPxUovK7_Dbhs0MQW4j.png",
+      "bytes": 4514
+    },
+    {
+      "name": "lakera",
+      "file": "lakera.webp",
+      "source": "https://huggingface.co/Lakera",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/655e6996337a5d2e379af76c/th35P67D4K0Ddsb7_fEgZ.png",
+      "bytes": 870
+    },
+    {
+      "name": "librai",
+      "file": "librai.webp",
+      "source": "https://huggingface.co/LibrAI",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/64705f06be66c5bacd2c8c5b/v6lhjAx7N9SLlvoLTJl47.png",
+      "bytes": 2336
+    },
+    {
+      "name": "lmsys",
+      "file": "lmsys.webp",
+      "source": "https://huggingface.co/lmsys",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/62d35f3ceaf3858ce253ab7a/uZ2jFNAjXfdBo6c6Yojmg.jpeg",
+      "bytes": 2852
+    },
+    {
+      "name": "nvidia",
+      "file": "nvidia.webp",
+      "source": "https://huggingface.co/nvidia",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png",
+      "bytes": 3568
+    },
+    {
+      "name": "openai",
+      "file": "openai.png",
+      "source": "https://github.com/openai",
+      "url": "https://github.com/openai.png?size=96",
+      "bytes": 3091
+    },
+    {
+      "name": "paul",
+      "file": "paul.webp",
+      "source": "https://huggingface.co/Paul",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/602ce925374a0dbe5856eca1/lBvTn6hYOCF0ggD-rk_mf.jpeg",
+      "bytes": 6858
+    },
+    {
+      "name": "pku-alignment",
+      "file": "pku-alignment.webp",
+      "source": "https://huggingface.co/PKU-Alignment",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/64364e87fae2870051496e13/ayea0VRqD-i9vobovnPn2.png",
+      "bytes": 13956
+    },
+    {
+      "name": "thu-coai",
+      "file": "thu-coai.webp",
+      "source": "https://huggingface.co/thu-coai",
+      "url": "https://cdn-avatars.huggingface.co/v1/production/uploads/1637728594024-60c960d730ae5cb2dd246a92.png",
+      "bytes": 3216
+    }
+  ]
+}

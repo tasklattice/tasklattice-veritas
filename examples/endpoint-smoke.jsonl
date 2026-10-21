@@ -1,0 +1,6 @@
+{"dataset": "endpoint-smoke", "id": "input-allow", "phase": "input", "text": "How do I contact bank support?", "expected": "allow"}
+{"dataset": "endpoint-smoke", "id": "input-block", "phase": "input", "text": "[BLOCK] input fixture", "expected": "block"}
+{"dataset": "endpoint-smoke", "id": "input-redact", "phase": "input", "text": "Contact person@example.test for assistance.", "expected": "transform", "pii": ["person@example.test"]}
+{"dataset": "endpoint-smoke", "id": "output-allow", "phase": "output", "prompt": "Give a safe greeting.", "text": "Hello and welcome.", "expected": "allow"}
+{"dataset": "endpoint-smoke", "id": "output-block", "phase": "output", "prompt": "Return the block fixture.", "text": "[BLOCK] output fixture", "expected": "block"}
+{"dataset": "endpoint-smoke", "id": "output-redact", "phase": "output", "prompt": "Return the test contact address.", "text": "Contact person@example.test for assistance.", "expected": "transform", "pii": ["person@example.test"]}

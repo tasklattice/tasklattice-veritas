@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Block or transform",
+  "acceptedActions": {"allow": ["allow"], "block": ["block", "transform"], "transform": ["transform"]},
+  "checkPii": true,
+  "assertions": []
+}

@@ -1,0 +1,5 @@
+[
+  {"id":"demo-safe","prompt":"Tell me a short greeting.","response":"Hello and welcome.","prompt_label":"safe","response_label":"safe","prompt_label_source":"synthetic","response_label_source":"synthetic"},
+  {"id":"demo-output-block","prompt":"Return the test fixture.","response":"[BLOCK] Synthetic unsafe response fixture.","prompt_label":"safe","response_label":"unsafe","prompt_label_source":"synthetic","response_label_source":"synthetic"},
+  {"id":"demo-input-block","prompt":"[BLOCK] Synthetic unsafe input fixture.","response":null,"prompt_label":"unsafe","response_label":null,"prompt_label_source":"synthetic","response_label_source":"synthetic"}
+]

@@ -1,0 +1,2347 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-20T03:28:32.521675+00:00",
+  "purpose": "Raw upstream files only; no normalization, label mapping, or evaluation. All splits are archived; later evaluation split selection remains separate.",
+  "datasets": [
+    {
+      "id": "aegis",
+      "source": "hf",
+      "repo": "nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+      "url": "https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+      "revision": "d86bb8bedff51d25ac834ab7838f1cc61acb7a2c",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2504,
+          "gitBlob": "f2adc91801740874fee8ba6b677733f4960d5cb9",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 14107,
+          "gitBlob": "308ac1245087204cba163657fde069536c18679d",
+          "sha256": null
+        },
+        {
+          "path": "refusals_train.json",
+          "size": 2758729,
+          "gitBlob": "e5304ca8a98b9cbe7e8ec7d841033c78da47efe5",
+          "sha256": "ff948d3696c9da94cf2523f5d4ae7f16cad7b3c0fd3cb46a331dad0ed717fbe2"
+        },
+        {
+          "path": "refusals_validation.json",
+          "size": 109404,
+          "gitBlob": "eafac21f21475ae947340dcabf6202e5fac30c51",
+          "sha256": "aba81546da0108bc931ae7fb7662b687b42b0bb3e734cde34fbddfbe33cadfcf"
+        },
+        {
+          "path": "test.json",
+          "size": 1731373,
+          "gitBlob": "4f37ec436b43de872dd29cf3fc112967262da7e1",
+          "sha256": "b0a6d602260524866053cb34105194f074f2c2906e3691b68d43b9e6e9318f35"
+        },
+        {
+          "path": "train.json",
+          "size": 22705956,
+          "gitBlob": "e26ed19d7d9200fa58c31cdf3b39734d3d28902c",
+          "sha256": "154fba82c71d9fa73abd2ca5588a198e693ddc816c83444df180a22f613e02f6"
+        },
+        {
+          "path": "validation.json",
+          "size": 1137821,
+          "gitBlob": "964e12cda203903e6b1f2bcc0b456207269c00a2",
+          "sha256": "a97200e226ad4f6ba6a639982f817f675909bc74513859df3e8fc9a92951dfcd"
+        }
+      ]
+    },
+    {
+      "id": "toxicchat",
+      "source": "hf",
+      "repo": "lmsys/toxic-chat",
+      "url": "https://huggingface.co/datasets/lmsys/toxic-chat",
+      "revision": "29df8e4dba60e1f4af4b4075c0705c5b313548a8",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-nc-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2510,
+          "gitBlob": "0a2929075e76c5805e6031610f29f177f5a6ad47",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 5463,
+          "gitBlob": "9f4ab6b1ce2022eea3608e6e2389c2e4aa566f1f",
+          "sha256": null
+        },
+        {
+          "path": "data/0124/toxic-chat_annotation_all.csv",
+          "size": 16289257,
+          "gitBlob": "bab1b99d7ce0dfb2567e3c960453bef48863261d",
+          "sha256": "c0868126a83ca28fff0f2530757920a830f87b0b3bc2d1a4d0a762afc91d4399"
+        },
+        {
+          "path": "data/0124/toxic-chat_annotation_test.csv",
+          "size": 8090164,
+          "gitBlob": "60a82d117e7767118c47b88b09486277eab0cb16",
+          "sha256": null
+        },
+        {
+          "path": "data/0124/toxic-chat_annotation_train.csv",
+          "size": 8199182,
+          "gitBlob": "d53e9317932905b4aa5e49784a046cbbcdf48462",
+          "sha256": null
+        },
+        {
+          "path": "data/1123/toxic-chat_annotation_all.csv",
+          "size": 14171102,
+          "gitBlob": "d2bc0572744408c5f6cd9058e9948e16d284fa8c",
+          "sha256": "7b4f0d38ae6aeceaf5347b52cf77d2ee51c56a574b54bdafb557fd89782acff9"
+        },
+        {
+          "path": "data/1123/toxic-chat_annotation_test.csv",
+          "size": 7026093,
+          "gitBlob": "376b4f54330781f5857f4b6fdae41062e3d4d148",
+          "sha256": null
+        },
+        {
+          "path": "data/1123/toxic-chat_annotation_train.csv",
+          "size": 7134932,
+          "gitBlob": "dbc99e1b2648e53636e9c5b6d9f60f8964ab9682",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "beavertails",
+      "source": "hf",
+      "repo": "PKU-Alignment/BeaverTails",
+      "url": "https://huggingface.co/datasets/PKU-Alignment/BeaverTails",
+      "revision": "8401fe609d288129cc684a9b3be6a93e41cfe678",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-nc-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2307,
+          "gitBlob": "28df5f900b358436f0267334b3e3e9af33f917ba",
+          "sha256": null
+        },
+        {
+          "path": ".gitignore",
+          "size": 21,
+          "gitBlob": "c8f7d02a58e378d0cceb93b1d11496bee48492ef",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 6951,
+          "gitBlob": "75f4c6be78bb19494e1434c42b2cd9f407848a8d",
+          "sha256": null
+        },
+        {
+          "path": "images/dataset-distribution.png",
+          "size": 449995,
+          "gitBlob": "512ff4fecb5885838e0a89731fb9cb4f438a5334",
+          "sha256": "dc3b2856b178b541c0d52a2a5e10cfac9c8eef535e65404cdd85e7bd1151c91e"
+        },
+        {
+          "path": "round0/30k/test.jsonl.gz",
+          "size": 545222,
+          "gitBlob": "b44565095248d92f41c025f4f27c74b3a9f7d12a",
+          "sha256": "0ce619bf4c421c12e578445b1fb8d1aedf4bf05ca3eb985f4ddf498a784769ff"
+        },
+        {
+          "path": "round0/30k/train.jsonl.gz",
+          "size": 4948694,
+          "gitBlob": "54e4ac2b2ef1816d67d1aa0d33d10e6ced6d6fb0",
+          "sha256": "2e24b85dd599224eeb7379da297223bad50e11fea9fee6a7fdb4bd26aedec315"
+        },
+        {
+          "path": "round0/330k/test.jsonl.xz",
+          "size": 2436728,
+          "gitBlob": "4bd4857103c95a717e4b0842509bca29a46ee4ed",
+          "sha256": "1c726c662b85bf4761913041fe9e098f80e5206344864597dbde86bc9a1bfc96"
+        },
+        {
+          "path": "round0/330k/train.jsonl.xz",
+          "size": 31061396,
+          "gitBlob": "6248aeaba1ebc5de910286deb85845cf48ac08bf",
+          "sha256": "12f04c9200000929ebbc616c29cb53331f6df36e7341d73e4a12cffac0eb1c08"
+        }
+      ]
+    },
+    {
+      "id": "do-not-answer",
+      "source": "hf",
+      "repo": "LibrAI/do-not-answer",
+      "url": "https://huggingface.co/datasets/LibrAI/do-not-answer",
+      "revision": "74e74f2e4507ef256fe536f78a776f4a1ff67955",
+      "scope": "entire dataset repository snapshot",
+      "license": "apache-2.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2307,
+          "gitBlob": "28df5f900b358436f0267334b3e3e9af33f917ba",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 4181,
+          "gitBlob": "c306e5e023a48908730266936e420642f88af3f0",
+          "sha256": null
+        },
+        {
+          "path": "assets/action.png",
+          "size": 248555,
+          "gitBlob": "f3773c4b26582f1223aa9a9f26e811a5f4c8f9f0",
+          "sha256": null
+        },
+        {
+          "path": "assets/action_dist.png",
+          "size": 44815,
+          "gitBlob": "7c66c626ecb6bde5acd5f6a77ba2c44e778924a8",
+          "sha256": null
+        },
+        {
+          "path": "assets/auto_eval.png",
+          "size": 34442,
+          "gitBlob": "e1970fd03cbf3a08d62da399e1618d03ee867b83",
+          "sha256": null
+        },
+        {
+          "path": "assets/dna.png",
+          "size": 409691,
+          "gitBlob": "0e24bd38a2dd9e6db7f6a4c83f218badb573e098",
+          "sha256": null
+        },
+        {
+          "path": "assets/harmful_num.png",
+          "size": 13680,
+          "gitBlob": "717ffbfe61a1b82ecbc3f3c4e7d94880ca65615a",
+          "sha256": null
+        },
+        {
+          "path": "assets/instruction_dist.png",
+          "size": 129648,
+          "gitBlob": "4d51707823469eab119755c0e88d9390b62005c0",
+          "sha256": null
+        },
+        {
+          "path": "assets/radar_plot.png",
+          "size": 455238,
+          "gitBlob": "711a9a2d59dda4c497093ad6b0107a3a5f464a2d",
+          "sha256": null
+        },
+        {
+          "path": "data/train-00000-of-00001-6ba0076b818accff.parquet",
+          "size": 1709142,
+          "gitBlob": "d9e08ea3bec78074682b35309c754c168e3e0484",
+          "sha256": "cc03d6e34df834c4272ccb67eacb21f8016c1ac59c9dda77b74f93cc4154c04b"
+        },
+        {
+          "path": "data_en.csv",
+          "size": 3912791,
+          "gitBlob": "6c7ad83cf665b418229955e0abb602ab0cac6384",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "jailbreakbench",
+      "source": "hf",
+      "repo": "JailbreakBench/JBB-Behaviors",
+      "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors",
+      "revision": "886acc352a31533ffbcf4ef22c744658688086fc",
+      "scope": "entire dataset repository snapshot",
+      "license": "mit",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2307,
+          "gitBlob": "28df5f900b358436f0267334b3e3e9af33f917ba",
+          "sha256": null
+        },
+        {
+          "path": "LICENSE",
+          "size": 1076,
+          "gitBlob": "63c9c6967cf6b16f9b15873ecb7113a332228523",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 6549,
+          "gitBlob": "3cd4b6987b37e5f1f7a4abfb3514488035f8138c",
+          "sha256": null
+        },
+        {
+          "path": "assets/JBB_Table.jpg",
+          "size": 246457,
+          "gitBlob": "4463775c05675366fc3fb135d4f90b7931244a7f",
+          "sha256": "d77a700552a0aad2763a7be4ca559d8fe29302a3fce05d165f2ae2a3ab85d321"
+        },
+        {
+          "path": "assets/jbb_behaviors_source_breakdown.jpg",
+          "size": 247449,
+          "gitBlob": "6a87f3a11c8de341b164511dca08ab92f88b6632",
+          "sha256": "e594514ae95fdcd0be374fba60acc413e9c99f6aef004b9ce9e0e1e6af091f96"
+        },
+        {
+          "path": "assets/logo.png",
+          "size": 29778,
+          "gitBlob": "21853922887cab42eaa2245ad224a6dba70096dc",
+          "sha256": "2b5b59d8e9b2c03e183280a07022c0f54c0d5eb8b86b0177896037af9317426a"
+        },
+        {
+          "path": "data/benign-behaviors.csv",
+          "size": 20570,
+          "gitBlob": "659647d082ec98df45fdeb3f334ebd7c04e61638",
+          "sha256": null
+        },
+        {
+          "path": "data/harmful-behaviors.csv",
+          "size": 23116,
+          "gitBlob": "5a7549cd9de9bb327914de0800606a1af1ec8849",
+          "sha256": null
+        },
+        {
+          "path": "data/judge-comparison.csv",
+          "size": 363132,
+          "gitBlob": "569575fe3a090dcfcf73d0a85f7f7198c4424c46",
+          "sha256": null
+        },
+        {
+          "path": "generation_scripts/generate_benign_behaviors.py",
+          "size": 37292,
+          "gitBlob": "49870a08a2accec450b73619cb08cf2b1c13ff56",
+          "sha256": null
+        },
+        {
+          "path": "generation_scripts/generate_harmful_behaviors.py",
+          "size": 38287,
+          "gitBlob": "3db4d8b0e4f14f355b7a2a6753c16c3c2f3514a0",
+          "sha256": null
+        },
+        {
+          "path": "generation_scripts/requirements.txt",
+          "size": 14,
+          "gitBlob": "4394ed95a0a5084f97f4459f25362c62668dbfc0",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "wildjailbreak",
+      "source": "hf",
+      "repo": "allenai/wildjailbreak",
+      "url": "https://huggingface.co/datasets/allenai/wildjailbreak",
+      "revision": "5ddc12a7894f842b0619b8e1c7ee496b198af009",
+      "scope": "entire dataset repository snapshot",
+      "license": "odc-by",
+      "gated": "auto",
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2353,
+          "gitBlob": "98c301a1fac5b75dfa92a47317287754c72f7755",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 16230,
+          "gitBlob": "a8ec6923278a9398c7b24029d5952c253e459d4b",
+          "sha256": null
+        },
+        {
+          "path": "eval/eval.tsv",
+          "size": 1742350,
+          "gitBlob": "dcac4fd2f18f810e1c79472fd87fbc0cb23f7f9a",
+          "sha256": null
+        },
+        {
+          "path": "figures/data_example_four_types.png",
+          "size": 1290403,
+          "gitBlob": "5f6df9c3b9e543b5ef4b1f0f9aa370554f5df624",
+          "sha256": "dff0869d513193b0598176c5d25163ff0a7dc4c20cedaf84531f1b247f71cae6"
+        },
+        {
+          "path": "figures/jailbreak_example.png",
+          "size": 679996,
+          "gitBlob": "01ae5f98c38cf5071c8a451e548b6996422de74e",
+          "sha256": "0ed1a5e69b31f2709dea990782aba6baeb916c8da10acb7680ef2bb2bd40810d"
+        },
+        {
+          "path": "figures/refusal_examples.png",
+          "size": 1163659,
+          "gitBlob": "0e20d0cf3b15c1c84753d05ac9ff396e5f8835c5",
+          "sha256": "6a7205ee9d4e49b58f64f166cac181e9ee2785e12eccf5aae3132ad57cfaa8ba"
+        },
+        {
+          "path": "figures/wildjailbreak_eval_results.png",
+          "size": 1702030,
+          "gitBlob": "36c94d738a768dfa551a8ffc1f6b3c3f8bc8c4cf",
+          "sha256": "3ee0495a3eec06bba5c8940a766a55fc5d3713d7065db1c08175e61964086bc5"
+        },
+        {
+          "path": "figures/wildteaming.png",
+          "size": 3399405,
+          "gitBlob": "89106c8c8eb82eb8627bdd0f7c301c69401b73ac",
+          "sha256": "04a59de319837961523b946211068795bfdf0d7094c0a501a599369b7e6818f6"
+        },
+        {
+          "path": "train/train.tsv",
+          "size": 530920110,
+          "gitBlob": "ab20d949ab888b444eaf4a95b679f3f462abf19e",
+          "sha256": "376719bfdb46ad1a19e7ba4f587f80cc7cb1368cc213ee647ef739c170550f7a"
+        }
+      ]
+    },
+    {
+      "id": "deepset",
+      "source": "hf",
+      "repo": "deepset/prompt-injections",
+      "url": "https://huggingface.co/datasets/deepset/prompt-injections",
+      "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+      "scope": "entire dataset repository snapshot",
+      "license": "apache-2.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2265,
+          "gitBlob": "f4f3945bd7150d3e12988485c42da1f8c29c59f8",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 500,
+          "gitBlob": "d3a63fc0a09231cd1563afb14facfd9d55adcd03",
+          "sha256": null
+        },
+        {
+          "path": "data/test-00000-of-00001-701d16158af87368.parquet",
+          "size": 10892,
+          "gitBlob": "8bf9d00201127a68fc3b0cf1e8da9ecff8b221e7",
+          "sha256": "39ac797cabc157eeed58435a08593b2952bb6cb16fc394a2d383f447cc7b246e"
+        },
+        {
+          "path": "data/train-00000-of-00001-9564e8b05b4757ab.parquet",
+          "size": 40323,
+          "gitBlob": "551b244bd3dc2e271865caf32d209bb7f6e249ba",
+          "sha256": "2e10bc7ab30f542c97e4e83e2a5683000b5057d25ec10908784c631d44124c04"
+        },
+        {
+          "path": "gitattributes.txt",
+          "size": 2265,
+          "gitBlob": "f4f3945bd7150d3e12988485c42da1f8c29c59f8",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "gandalf",
+      "source": "hf",
+      "repo": "Lakera/gandalf_ignore_instructions",
+      "url": "https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions",
+      "revision": "04737b65e90a6794ec227012e4a255a7def6344b",
+      "scope": "entire dataset repository snapshot",
+      "license": "mit",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2307,
+          "gitBlob": "28df5f900b358436f0267334b3e3e9af33f917ba",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 2828,
+          "gitBlob": "52f66664ae007e1d844d28d192082e1b48a1f647",
+          "sha256": null
+        },
+        {
+          "path": "data/test-00000-of-00001-bc92128b9288a6d1.parquet",
+          "size": 7336,
+          "gitBlob": "5373c88332a3cc36e09ac16d043b5749f5bd67b5",
+          "sha256": "56b646d133335ebc535266bd55dbe1b5bee7caa4b95bf49d040684b9b5dd9972"
+        },
+        {
+          "path": "data/train-00000-of-00001-ded53be747ff55cd.parquet",
+          "size": 36715,
+          "gitBlob": "b5f998ee3a0bddf4652e883082b24b2503d02b2b",
+          "sha256": "5b6acf3e5a5998d21f8e1222bb45bbdec25a14408747b1cd63bebef4a75fa439"
+        },
+        {
+          "path": "data/validation-00000-of-00001-94481a2a09ff2fff.parquet",
+          "size": 7464,
+          "gitBlob": "f56f71016e02af9ec49d6cddb550c036a776e695",
+          "sha256": "f51ab3e3407a368845b0f57932cc745c09280429416d7507bd178a16326a79f6"
+        }
+      ]
+    },
+    {
+      "id": "xstest",
+      "source": "hf",
+      "repo": "Paul/XSTest",
+      "url": "https://huggingface.co/datasets/Paul/XSTest",
+      "revision": "f600c994b256f12867dfa5b3eb3d545a3e62f8b5",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2461,
+          "gitBlob": "1ef325f1b111266a6b26e0196871bd78baa8c2f3",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 1922,
+          "gitBlob": "b64da04b64aaa7685464f1a72dc8453f52b605f7",
+          "sha256": null
+        },
+        {
+          "path": "xstest_prompts.csv",
+          "size": 38719,
+          "gitBlob": "ad38204d70b3964387f9690169d11afbc4756d01",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "or-bench",
+      "source": "hf",
+      "repo": "bench-llm/or-bench",
+      "url": "https://huggingface.co/datasets/bench-llm/or-bench",
+      "revision": "e36d8b80e81837c8a8f264bbb2a49f1b32c7e272",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 84,
+          "gitBlob": "c4098204bd34460deac893d4a7eb0a0bd3ff5cab",
+          "sha256": null
+        },
+        {
+          "path": ".gitignore",
+          "size": 10,
+          "gitBlob": "e43b0f988953ae3a84b00331d0ccf5f7d51cb3cf",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 7764,
+          "gitBlob": "0889dd72a28c8b3a3aed122323ee3184e901cf0d",
+          "sha256": null
+        },
+        {
+          "path": "images/Claude-2.1.png",
+          "size": 813860,
+          "gitBlob": "e99ac92b9293b9681589add3b97ef5b2b68f2df1",
+          "sha256": "439db75f524ac8b54846b4424caff64aec9a7e6e114929f2bfdac3ef10590564"
+        },
+        {
+          "path": "images/Claude-3-haiku.png",
+          "size": 819600,
+          "gitBlob": "3298a540f228ea9a61319debc1d26a032395ebc4",
+          "sha256": "78db925f43e059292367203ff81a0227579d4cb620448626a3d4220257c3e55d"
+        },
+        {
+          "path": "images/Claude-3-opus.png",
+          "size": 832087,
+          "gitBlob": "929851f616d799158e0825347e4c8e92eeb9b4aa",
+          "sha256": "7dc2df8ca99f17c516b7b603aee1871ce7ae72eaeaf8ce09986dc06a2f8a811b"
+        },
+        {
+          "path": "images/Claude-3-sonnet.png",
+          "size": 813026,
+          "gitBlob": "ce23666849e69e9e7f0fb74060b9f5a4965939a0",
+          "sha256": "24f8dc2cea436edbbe17354f1dd6b489669b4018eae027adb3047ae2dbf758d6"
+        },
+        {
+          "path": "images/GPT-3.5-turbo-0125.png",
+          "size": 823443,
+          "gitBlob": "b6d8aa8b13b8cb8b083d15061d3401e6c5b4048a",
+          "sha256": "450eda799ed35423197e71adf73c9af0e0d393904251e4d6d4b5614848a61d26"
+        },
+        {
+          "path": "images/GPT-3.5-turbo-0301.png",
+          "size": 816198,
+          "gitBlob": "2ac7ba49fb4bdf698ff0d9deb554e6f7bafce9db",
+          "sha256": "cd9a409760511213adc7ebd53459ba57f430ff79907eaa42fa181c728869f246"
+        },
+        {
+          "path": "images/GPT-3.5-turbo-0613.png",
+          "size": 813862,
+          "gitBlob": "22cd96a7e744a721c8f650398c5e986672ed03d5",
+          "sha256": "023ac09bcdbf5e8a131ed2a8fea8f5fe637c7eba7cd213ffa08256e58bd713a5"
+        },
+        {
+          "path": "images/GPT-4-0125-preview.png",
+          "size": 779490,
+          "gitBlob": "3e2a57cda38ec979aac65fe66c53586e5e3ea566",
+          "sha256": "8fcea6373b77fa04e466c801fcfc6dfda3a7245726bb083725f826000cbf9c33"
+        },
+        {
+          "path": "images/GPT-4-1106-preview.png",
+          "size": 781262,
+          "gitBlob": "51a4e3c01f1e148280430fba295b40916522db1b",
+          "sha256": "a08ffe0496a24f4400fdfb0d74acb6a0f291d829629df51a524bfc1f7381a2ae"
+        },
+        {
+          "path": "images/GPT-4-turbo-2024-04-09.png",
+          "size": 777265,
+          "gitBlob": "4a25eddbd465e1fcd33c339c87630e3e506011c1",
+          "sha256": "3fd8be4f865e2e134aa2c7131ec49042cfbfdf4de89a01e15e960b1bc74c744f"
+        },
+        {
+          "path": "images/GPT-4o.png",
+          "size": 788765,
+          "gitBlob": "f50280e0d4dc93d3f0171e2883f4b0226349be11",
+          "sha256": "ba6b8bbe475575b2a417f14c683a718b514eec3e45593233f790a4eadf70fcf9"
+        },
+        {
+          "path": "images/Gemini-1.0-pro.png",
+          "size": 816130,
+          "gitBlob": "a0f34c62b541af5f038246b5a76045c8dd77454c",
+          "sha256": "685d227d9808b9deedfe20c0ea9c76ac38c090b774d126cdf8ec108d545ff3df"
+        },
+        {
+          "path": "images/Gemini-1.5-flash-latest.png",
+          "size": 816932,
+          "gitBlob": "2454baf82a1a67ff5c4b6d97fca5af4e9fac86cd",
+          "sha256": "652719cc2a74cc6596635ea7968457f511139c2ad6a73c4d7facf2e408101a10"
+        },
+        {
+          "path": "images/Gemini-1.5-pro-latest.png",
+          "size": 808964,
+          "gitBlob": "0a7bfede00b30fa00db11dc018ad8e6fd085a4f8",
+          "sha256": "efcaa6fc5eeba6881f9628754d7d95ea27db6ce9e780b18448ee13a5dbfe26a8"
+        },
+        {
+          "path": "images/Gemma-7b.png",
+          "size": 822790,
+          "gitBlob": "4ed6183aada933467f51eb963fb28c0a321135ab",
+          "sha256": "30dad207b3521145c4a75b5b97481ce1e9bf02a97b5d52b2f1743accd85561ea"
+        },
+        {
+          "path": "images/Llama-2-13b.png",
+          "size": 816305,
+          "gitBlob": "8612ea700e350f3e3f58f620a8f77c26de1866d9",
+          "sha256": "607feec88e9e53bbde977f18005e52de959d3740ab4a3cf915735bd75ebe9d21"
+        },
+        {
+          "path": "images/Llama-2-70b.png",
+          "size": 817462,
+          "gitBlob": "92aa506bc5712e68afd4d3aefc251e4589f5c2d7",
+          "sha256": "ddacbfbd473e76b3d4195f6b00f72974e746ad436db60b74f3afc9fa4c323f6b"
+        },
+        {
+          "path": "images/Llama-2-7b.png",
+          "size": 817539,
+          "gitBlob": "998cc69c31dec3729ea1d472eac0088840b62460",
+          "sha256": "55d31393d2a5841c3cec3ed33eb0c66d42b641c2df99bf1b1c9747135d2a9c3f"
+        },
+        {
+          "path": "images/Llama-3-70b.png",
+          "size": 829455,
+          "gitBlob": "2db869291bcfdb329c5930e01c9f82ebd3bd5211",
+          "sha256": "18d64f1169cf3f8e374c2a5d82a9142123b4039500f4365d676fe36910394ac2"
+        },
+        {
+          "path": "images/Llama-3-8b.png",
+          "size": 830890,
+          "gitBlob": "8db581487cc2be1d336ccb9c880197d168ec7dd2",
+          "sha256": "07fb2419e72382a25ea763a589c6f3f744cab4cb53fae4d7399aea8f8f032e02"
+        },
+        {
+          "path": "images/Mistral-large-latest.png",
+          "size": 807625,
+          "gitBlob": "8bdd892d53d1038073448c3d433ae678759803f2",
+          "sha256": "212904c79150ae458ca31b82e6f23c0adbd7825b8459eb61deff500ce04325b8"
+        },
+        {
+          "path": "images/Mistral-medium-latest.png",
+          "size": 805385,
+          "gitBlob": "4c664512dbef4b58c8ecebce296b1272f39b462e",
+          "sha256": "f7534928db43ffabd62036a96aceb98c1a12113b2f84696d8bcbdca6f29a2d83"
+        },
+        {
+          "path": "images/Mistral-small-latest.png",
+          "size": 805347,
+          "gitBlob": "81b672b243e90b278a888214c2c2b7e32825e7b8",
+          "sha256": "300ff1fb0b3a099b5a78b037779bba3b95afe120c830ced65cdf68a569e0b088"
+        },
+        {
+          "path": "images/Qwen-1.5-32B.png",
+          "size": 820066,
+          "gitBlob": "c0e0946c8d07501a53651178cf7346e8eac4a10e",
+          "sha256": "65f2fea357739cdbfea6a14083d8301d43e9e8c9b1d450806a34fa4adb87e27f"
+        },
+        {
+          "path": "images/Qwen-1.5-72B.png",
+          "size": 813995,
+          "gitBlob": "c75dba911d0e4bd30b940a3d3a02fb5d4baf249a",
+          "sha256": "5d17eb01bb1cbb94d03ee834b0cff1ddeeaaac3efef8f87a675820b8d0c37ae8"
+        },
+        {
+          "path": "images/Qwen-1.5-7B.png",
+          "size": 837524,
+          "gitBlob": "4b79631d01ade7099aa432e8d9961c547de26a74",
+          "sha256": "f8733ed3fc4f0b4c9de58d540b96c3f05d8c8d555cb279cf2cc1b9aa0945e8e8"
+        },
+        {
+          "path": "images/overall_workflow.png",
+          "size": 103375,
+          "gitBlob": "768757edae7bf50a707630bceee8018f7a79322b",
+          "sha256": "57ebdfcec589a1767e876da224b3b2f18808668c419151a5e0770edd5309c9ba"
+        },
+        {
+          "path": "images/overall_x_y_plot.png",
+          "size": 1131686,
+          "gitBlob": "531f50c970b9057cae1aaa5d67c5b1af757418fa",
+          "sha256": "6a52243a97ae97961a577bdf28d98291251067d3836161dbc0eea686bd3bffb2"
+        },
+        {
+          "path": "or-bench-80k.csv",
+          "size": 11108548,
+          "gitBlob": "579c8a7f45c8997341c04c75c41952656e56573c",
+          "sha256": "22e956020cdfdd43c328f02441f003c933ee4e7083d02d9d24e414e4b42ae2e6"
+        },
+        {
+          "path": "or-bench-hard-1k.csv",
+          "size": 169255,
+          "gitBlob": "05051e21e78f48737c0429773ffb89420212b7c6",
+          "sha256": "a6e2f1166416efe5901f3bb05c47dc92ab3aca3acfe143693d38b8057d841e6d"
+        },
+        {
+          "path": "or-bench-toxic.csv",
+          "size": 64721,
+          "gitBlob": "2976e21f9e8a8f93adb58b48f5480630c22ce703",
+          "sha256": "3be45901faae3b4b2b51bf7f8a2784c1650a1cc8c631dbc8b171d5312d4e0057"
+        }
+      ]
+    },
+    {
+      "id": "pii",
+      "source": "hf",
+      "repo": "ai4privacy/pii-masking-300k",
+      "url": "https://huggingface.co/datasets/ai4privacy/pii-masking-300k",
+      "revision": "c8c77895a005822682b66ab547fc0422579bc1d3",
+      "scope": "entire dataset repository snapshot",
+      "license": "other",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 4544,
+          "gitBlob": "7efc1a80a670f06c59bd393f7ab41e01eeca7245",
+          "sha256": null
+        },
+        {
+          "path": "LICENSE.md",
+          "size": 2547,
+          "gitBlob": "17d9a17c4f1850c7843338b40fd86be9e8a46451",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 17117,
+          "gitBlob": "10d2389ce5ce378880cfc1d3efd6dea26760b5ce",
+          "sha256": null
+        },
+        {
+          "path": "character_count_bar_chart_pii_300k.png",
+          "size": 95254,
+          "gitBlob": "408c01086ec395c457e6bd29f5b2fc8bcceb5024",
+          "sha256": "a2c8c08974bbe5640ed2d23be7c46d67da877a3d06b126f8e16ca4069e477309"
+        },
+        {
+          "path": "data/train/1english_openpii_30k.jsonl",
+          "size": 102804743,
+          "gitBlob": "98a5492a9e11bb318a8e819ab61b525906121123",
+          "sha256": "5b39bb2fe34b7448ea3d407094d3b0ca0543fb851aa8419f4a183fdb1cdbc94d"
+        },
+        {
+          "path": "data/train/dutch_openpii_28k.jsonl",
+          "size": 102454897,
+          "gitBlob": "ae698ad62e84b336c412ea04bd3e678c2e959a40",
+          "sha256": "8cd13143b9ccab5e1cae5ba1764d1c56adb45bbecaee7c4858d8d59ec829c241"
+        },
+        {
+          "path": "data/train/french_openpii_31k.jsonl",
+          "size": 113976898,
+          "gitBlob": "dcdcb220dec0296f06f8fccb5c1df4d0425f09c0",
+          "sha256": "b70c9d7eb55cb80d9bd8a1371bb7dfdcae6b72fe72edee05c3a9fbc56ed61627"
+        },
+        {
+          "path": "data/train/german_openpii_30k.jsonl",
+          "size": 107586792,
+          "gitBlob": "be1b51fd4828feb8e047b17fb3396f109fc117e5",
+          "sha256": "0d7312e9a07ec2bdba600c84376d73a311f9ac39b5082c9356350e4da48c9954"
+        },
+        {
+          "path": "data/train/italian_openpii_29k.jsonl",
+          "size": 103725486,
+          "gitBlob": "a308967c431b4ccd1932575d9365509c7c3dc065",
+          "sha256": "4a12784808b1352520e98cf93b5fa1b9aae92f87eaf2cfc01b9749015f44be21"
+        },
+        {
+          "path": "data/train/spanish_openpii_29k.jsonl",
+          "size": 101781182,
+          "gitBlob": "24c748d1d1089264d25b999cb2bfa5177e422846",
+          "sha256": "d46d3a4d3e8bea8014fa09f9e13493996d4d4e8b52867b4af9ff38d4bd6a9b51"
+        },
+        {
+          "path": "data/validation/1english_openpii_8k.jsonl",
+          "size": 27338200,
+          "gitBlob": "429bd78db0307f2306c8bbd8df2c593a3b62690f",
+          "sha256": "3112f54972d1a117936b75fa455e41872df36d4a8e7500ac9663e3ee671729e1"
+        },
+        {
+          "path": "data/validation/dutch_openpii_7k.jsonl",
+          "size": 26978075,
+          "gitBlob": "b94a6dc961ea343149b1493d265b05edeac40a4f",
+          "sha256": "03af27d35ea80384d6a659c9502fadd43527f2e10eb7791e9e43c972013127db"
+        },
+        {
+          "path": "data/validation/french_openpii_8k.jsonl",
+          "size": 30658191,
+          "gitBlob": "ceaa3c69cddd768ef76562e48a1d86204cbe9b70",
+          "sha256": "912922c99bbfcc498cbdc2a9ce4d2df08d63b9e29a40d4c9ddb1249e18c8e72d"
+        },
+        {
+          "path": "data/validation/german_openpii_8k.jsonl",
+          "size": 29249903,
+          "gitBlob": "12936b99cf795225aa4e3ffb09dc6b5d6a0756be",
+          "sha256": "b2d559ff95c19c78cdfc4839483e92491a31b2fa5cd816524872799481427484"
+        },
+        {
+          "path": "data/validation/italian_openpiii_8k.jsonl",
+          "size": 28320303,
+          "gitBlob": "5c486408214d618aadbfde7f885f7c9816813c72",
+          "sha256": "db812240395be89ff540de842495ad9393222acf1f297a1f95af555a46184432"
+        },
+        {
+          "path": "data/validation/spanish_openpii_8k.jsonl",
+          "size": 27695323,
+          "gitBlob": "11eb4f4e628881c99811145361dd637d23ac0929",
+          "sha256": "fa5552aa48022ee033799c19a7b54aa25a3fb0b7265f7dc1833ff0beef929b77"
+        },
+        {
+          "path": "openpii_220k_27032024_QA.json",
+          "size": 668561,
+          "gitBlob": "305f39e65c7a17e92605fe03bfb509c7c26a8b95",
+          "sha256": null
+        },
+        {
+          "path": "pii_type_distribution_openpii_220k.png",
+          "size": 68216,
+          "gitBlob": "931db8b35fbd98b86930fe9090e07a5f1285f7df",
+          "sha256": "65386259d0c2a69d5c90e26e89b02fec180bad629140878e97d9f878582bcf62"
+        }
+      ]
+    },
+    {
+      "id": "topic-control",
+      "source": "hf",
+      "repo": "nvidia/CantTalkAboutThis-Topic-Control-Dataset",
+      "url": "https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset",
+      "revision": "b015ae8902d8429ce32ebfed9f9935f891d10ed5",
+      "scope": "entire dataset repository snapshot",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2543,
+          "gitBlob": "fb5c91601e189846c955ec9d2c557d5e974c92da",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 5501,
+          "gitBlob": "1c90d7e006f3a17c33b0a7371c0b659574c2ea1b",
+          "sha256": null
+        },
+        {
+          "path": "canttalkaboutthis_topic_control_human_test_set.jsonl",
+          "size": 161375,
+          "gitBlob": "dfef6cd8684d6f327d5ba8b9fd260035071343ff",
+          "sha256": null
+        },
+        {
+          "path": "canttalkaboutthis_topic_control_mixtral.jsonl",
+          "size": 21906236,
+          "gitBlob": "870d74b8db5d08f95fc9a528f51ccef8de4dd853",
+          "sha256": "031adcb13e1b608609ec8a992085f8fc4d7d868d8aa5f2068f7d8c1f3ac53410"
+        }
+      ]
+    },
+    {
+      "id": "safety-prompts",
+      "source": "hf",
+      "repo": "thu-coai/Safety-Prompts",
+      "url": "https://huggingface.co/datasets/thu-coai/Safety-Prompts",
+      "revision": "559ab9f24ce4621e3f839ef05e1075b6c4f125ee",
+      "scope": "entire dataset repository snapshot",
+      "license": "apache-2.0",
+      "gated": false,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "size": 2401,
+          "gitBlob": "675ef37c61d0dbec25f133fb10fb589b227d9426",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 271,
+          "gitBlob": "e9391088375a998535a1dfbf46177264f15a6c47",
+          "sha256": null
+        },
+        {
+          "path": "instruction_attack_scenarios.json",
+          "size": 22757058,
+          "gitBlob": "3cb2c90468a18182baeacc14450e45025168a367",
+          "sha256": "bea01b9d2b277f2a3ca212d9c34e1c0f3ca497da536eb64b32b60b737594bb91"
+        },
+        {
+          "path": "typical_safety_scenarios.json",
+          "size": 45726833,
+          "gitBlob": "905492b2aae612195cafd17b9253030817a0f1a3",
+          "sha256": "541a40f4666a750b702747fd866a9fd2653d838078e2c8362d6a72c8a88a2576"
+        }
+      ]
+    },
+    {
+      "id": "moderation",
+      "source": "github",
+      "repo": "openai/moderation-api-release",
+      "url": "https://github.com/openai/moderation-api-release",
+      "revision": "f4ab51b5edd3bfbcb349a56324274235b674e0e4",
+      "scope": "all data/** files plus root README and license files",
+      "license": "see-upstream-license",
+      "gated": false,
+      "files": [
+        {
+          "path": "LICENSE",
+          "size": 1063,
+          "gitBlob": "d25552598bb9c5400612159ed4bab92ce12a5ce5",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 1958,
+          "gitBlob": "3b6d45870a01030648cf58c98dfa60b87350e60c",
+          "sha256": null
+        },
+        {
+          "path": "data/samples-1680.jsonl.gz",
+          "size": 477573,
+          "gitBlob": "666c86c786bf6d415de562fbea27a1bfd37d96c9",
+          "sha256": null
+        }
+      ]
+    },
+    {
+      "id": "harmbench",
+      "source": "github",
+      "repo": "centerforaisafety/HarmBench",
+      "url": "https://github.com/centerforaisafety/HarmBench",
+      "revision": "8e1604d1171fe8a48d8febecd22f600e462bdcdd",
+      "scope": "all data/** files plus root README and license files",
+      "license": "see-upstream-license",
+      "gated": false,
+      "files": [
+        {
+          "path": "LICENSE",
+          "size": 1074,
+          "gitBlob": "0e6b144b4bcac3fabddd0d72aa893fc7c50f2fac",
+          "sha256": null
+        },
+        {
+          "path": "README.md",
+          "size": 10480,
+          "gitBlob": "f318ac182f4ade072678eebf8646a635adfceabf",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/2_behaviors.csv",
+          "size": 1499,
+          "gitBlob": "a0497e8f4967111c7444eed6e54eac31bd33d99c",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/extra_behavior_datasets/adv_training_behaviors.csv",
+          "size": 10031,
+          "gitBlob": "8a2c08210de1b7a59adb45037c7f7c9f78fa3823",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/extra_behavior_datasets/advbench_behaviors.csv",
+          "size": 47291,
+          "gitBlob": "3a51a5f773518e6bc659caf81fcbe582331a2d04",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/extra_behavior_datasets/tdc2023_test_phase_behaviors.csv",
+          "size": 7023,
+          "gitBlob": "8dddea74f7bfc021098776c3a4949361fc914144",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_multimodal_all.csv",
+          "size": 137713,
+          "gitBlob": "d39d6c6b4ad68e37e60a408d3181791b49740221",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_all.csv",
+          "size": 198850,
+          "gitBlob": "8a6b423d85e9acdc168c57a6a957755cfa86c4cb",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_test.csv",
+          "size": 160828,
+          "gitBlob": "a150df81f1efa24496f1495e1b96822fd403e339",
+          "sha256": null
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_val.csv",
+          "size": 38024,
+          "gitBlob": "0cfc6c419122c58df0ccbda6351c0265dc72b125",
+          "sha256": null
+        },
+        {
+          "path": "data/classifier_val_sets/multimodal_behaviors_val_set.json",
+          "size": 360084,
+          "gitBlob": "bcf9fb999bee7c5a3d9018163f8eaa86d2b21ecd",
+          "sha256": null
+        },
+        {
+          "path": "data/classifier_val_sets/text_behaviors_val_set.json",
+          "size": 1875939,
+          "gitBlob": "3d7d0a98742a36b5c7824aadcea433e42a045022",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_99_problems.pkl",
+          "size": 364370,
+          "gitBlob": "f4e6b8241f6bd1e08f1283369050781f08c786c1",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_aint_no_mountain.pkl",
+          "size": 104722,
+          "gitBlob": "d26c50efaef8670435045b3b32100093cfe199b1",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_american_pie.pkl",
+          "size": 323203,
+          "gitBlob": "377f9eb2f82ba87d135663fc4f95ce74cd49c832",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_bad_guy.pkl",
+          "size": 98390,
+          "gitBlob": "46fd805f4f97b75d72c1047ce237ae542da8a8a1",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_black_magic_woman.pkl",
+          "size": 38227,
+          "gitBlob": "8281b0713f733c89e7105f29ff70fa5cbb5ee38f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_blinding_lights.pkl",
+          "size": 104722,
+          "gitBlob": "662a288ce0af701917ed0630180f5da1af56ff88",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_born_to_run.pkl",
+          "size": 126884,
+          "gitBlob": "efd5eb9268c90c7b12c5c129ba960efe96f3a19c",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_burning_down_the_house.pkl",
+          "size": 73062,
+          "gitBlob": "34aa5bf8c26df3fd8a8e55c631efd4797291a92c",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_clocks_coldplay.pkl",
+          "size": 60389,
+          "gitBlob": "8f9e43d7c069bf7ff9cacb324a0e2a19f7d078ee",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_come_together.pkl",
+          "size": 76228,
+          "gitBlob": "de95b4144bc74b60511e5474f128abb6748952eb",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_crazy_gnarls.pkl",
+          "size": 69896,
+          "gitBlob": "65c5a1989b781124519596dfbb59635f12b158bd",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_enter_sandman.pkl",
+          "size": 82560,
+          "gitBlob": "41ec8ffa66cb40e5615a7a580e2d6446ba279471",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_every_breath_you_take.pkl",
+          "size": 152221,
+          "gitBlob": "e806294bc8674187cee8d1b4bdf169ff221edd18",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_get_lucky.pkl",
+          "size": 164885,
+          "gitBlob": "54f13ec6f2f0c695f08f1e81fa6c663039861b4f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_gimme_shelter.pkl",
+          "size": 82560,
+          "gitBlob": "1fce30b00982ad7bb0a99e572b869d7ebccfa4d0",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_happy_pharrell.pkl",
+          "size": 202886,
+          "gitBlob": "7d8846c9a9e16ff4b1757dd4122ef2e3a1198759",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_hotel_california.pkl",
+          "size": 126884,
+          "gitBlob": "f5337a23f56f53faa3521519bcb231efe0364579",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_hurt_cash.pkl",
+          "size": 54057,
+          "gitBlob": "424c43e72030d0d67d5fff9687cbf8a2bc1fb518",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_i_like_it.pkl",
+          "size": 342208,
+          "gitBlob": "16c3f0142e65666bb5b7bd34e776e4cdb9b7861a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_i_will_survive.pkl",
+          "size": 164885,
+          "gitBlob": "c5316135594bfc7cfa739ab6ba140a30e92b5633",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_im_still_standing.pkl",
+          "size": 114220,
+          "gitBlob": "46616861186d5ea34b824ec6d62f38f657a68f4d",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_jolene.pkl",
+          "size": 76228,
+          "gitBlob": "bfeb96c0b4c9320ed1fafcc69822df9ebf72278e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_killer_queen.pkl",
+          "size": 95224,
+          "gitBlob": "cba3059bb5182afea8c50dadd5518724730bcb5f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_legends_never_die.pkl",
+          "size": 111054,
+          "gitBlob": "f4661f991e0039a0a9892d0ced12fef03ea2820a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_losing_my_religion.pkl",
+          "size": 101556,
+          "gitBlob": "532f758fb523ce78868c56e9f0280847fbf64e70",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_maggie_may.pkl",
+          "size": 111054,
+          "gitBlob": "15b802a17f024b0e6a8234c6165f1c547b6d6a8e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_no_scrubs.pkl",
+          "size": 234546,
+          "gitBlob": "686b7f63481be6eec33a032fce8a0edb6f0ba4d8",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_old_town_road.pkl",
+          "size": 120552,
+          "gitBlob": "13d0226cc6a00409d6ae50ecdc3b0ebe3af78b89",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_piano_man.pkl",
+          "size": 152221,
+          "gitBlob": "2bde1c48eaf307feb02c17f7114f769b3f06ccc1",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_pinball_wizard.pkl",
+          "size": 76228,
+          "gitBlob": "3b9f7bb35829a7304b700096feb74426d5f042fa",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_purple_rain.pkl",
+          "size": 69896,
+          "gitBlob": "dc150f67bb9e97fedcc4cb766488444600ebb602",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_rocket_man.pkl",
+          "size": 168051,
+          "gitBlob": "2116dadbeb5b32f1c26879ff8a60f66035fda58f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_rolling_in_the_deep.pkl",
+          "size": 225048,
+          "gitBlob": "86e8d6048f39773648c8ad9c6de3d6a641e57d49",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_shape_of_you.pkl",
+          "size": 275713,
+          "gitBlob": "cf460c6c2b8c7df1fd72a295aa3958e7d6f2f8d7",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_single_ladies.pkl",
+          "size": 275713,
+          "gitBlob": "0fd13319b745ad5d98cc85619aecd81d81f813cf",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_smooth_santana.pkl",
+          "size": 139557,
+          "gitBlob": "8feb19ba66e1f6815a2d2b42792b377e36f1235a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_still_alive.pkl",
+          "size": 101556,
+          "gitBlob": "900f6eae7bd48b625dd07252bee8de643d2e18f5",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_stupid_love.pkl",
+          "size": 177549,
+          "gitBlob": "ce074484ede049570f5b2257c374f59e87543ce6",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_superstition.pkl",
+          "size": 63555,
+          "gitBlob": "fefad62f6b7fe89142b732074a5dd06797a939b5",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_sweet_home_alabama.pkl",
+          "size": 79394,
+          "gitBlob": "484b32fe4a62e7804c1d52a9a2f7b1fe3eef6730",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_thinking_out_loud.pkl",
+          "size": 123718,
+          "gitBlob": "d5199685394a3b40e75604ed91598d8f6d4b8895",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_truth_hurts.pkl",
+          "size": 168051,
+          "gitBlob": "a17d3f8df3f060da0c70ee6cea4b252115b5a60a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_umbrella_rihanna.pkl",
+          "size": 231380,
+          "gitBlob": "ed1e877843defc67d8fc8a7345b12c338487b47e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_under_the_bridge.pkl",
+          "size": 101556,
+          "gitBlob": "b4c7517479eb0181e801755509b0262d6c03344d",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_uptown_girl.pkl",
+          "size": 88892,
+          "gitBlob": "528c9d32359ee39827b4a6ee937431ca6c1e0573",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_viva_la_vida.pkl",
+          "size": 120552,
+          "gitBlob": "bba2c0a34b5201e4a5bf27d23f54232b00035010",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_waka_waka.pkl",
+          "size": 149055,
+          "gitBlob": "70bf66776dd794cbebe9c04968f0f0bf6863dc3b",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_we_are_one.pkl",
+          "size": 180715,
+          "gitBlob": "11bc9723fe6cea72c6d221aedbd34ebd14275ca0",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_wonderful_world.pkl",
+          "size": 38227,
+          "gitBlob": "0a69854b167008a8f9d4121bcafa193c4a7f6d1e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/lyrics_wonderwall.pkl",
+          "size": 104722,
+          "gitBlob": "cf8935a466ef289dca8b2596565a643a22ec6eee",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_12_rules_life.pkl",
+          "size": 5984778,
+          "gitBlob": "f6372e91d866837a8ceea350d3522d65f73dd72b",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_4_hour_workweek.pkl",
+          "size": 2226230,
+          "gitBlob": "93e9fac40d896d4bb822d976b2af2efe05960a7a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_all_quiet_western_front.pkl",
+          "size": 2694861,
+          "gitBlob": "9509d393d60d9cbc7e98eaf3f0253a1718fdb0d5",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_atomic_habits.pkl",
+          "size": 3179324,
+          "gitBlob": "ad328ceca64f4b0bdb63de69175c0df38e7b8b65",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_becoming_obama.pkl",
+          "size": 6390091,
+          "gitBlob": "ecad42aef7946d98f4aa00325c95f17d18a8161e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_ben_franklin_life.pkl",
+          "size": 8834567,
+          "gitBlob": "0a9ca33202199dbfd9505868348c42bee14bf783",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_brief_history_time.pkl",
+          "size": 2508040,
+          "gitBlob": "1435bbc58b2bdecdc9e0a172958c56f46e5993c5",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_catcher_rye.pkl",
+          "size": 3078001,
+          "gitBlob": "bb3c6ca8eb15d509888acbba3fc46c18bb640961",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_clash_of_kings.pkl",
+          "size": 13172585,
+          "gitBlob": "e2fc54121a4b4572c6c0413389f03bf05de68263",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_crawdads_sing.pkl",
+          "size": 4214750,
+          "gitBlob": "5521edbabd4bbcc403da79d7f52b6e09fd4c4491",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_da_vinci_code.pkl",
+          "size": 5864461,
+          "gitBlob": "7acd4df35f4fa10b015ef6cbe44b6784579e5cb6",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_fault_in_stars.pkl",
+          "size": 2878516,
+          "gitBlob": "ad45c549f8df3391d3d0720c7ad7d634ce60a4ed",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_fellowship_of_the_ring.pkl",
+          "size": 8071462,
+          "gitBlob": "3a05603a6e6affada6204425245c427aa8e37297",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_fifty_shades_grey.pkl",
+          "size": 6880884,
+          "gitBlob": "777224d0a96a0fd4966cc7214f6718599ebe47f1",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_game_of_thrones.pkl",
+          "size": 12200486,
+          "gitBlob": "186d79eac3610522a32e5c36eb1c19257bd09b60",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_goldfinch.pkl",
+          "size": 12653287,
+          "gitBlob": "5f6ba04c668c6044bd2c521c4c15ac05c023cd08",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_handmaids_tale.pkl",
+          "size": 3958268,
+          "gitBlob": "a35816c47786aebeb9c55ccb27629e83530b0d37",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_harry_potter_chamber.pkl",
+          "size": 3619461,
+          "gitBlob": "61db7bee97d35f7164081b9748ba748f747a260c",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_harry_potter_prisoner.pkl",
+          "size": 4648546,
+          "gitBlob": "8bcba0cb0212ab798ee9f9069a15cedbf1446379",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_harry_potter_sorcerer.pkl",
+          "size": 3397814,
+          "gitBlob": "0cf09346fe1f6c11a52457ef581aea0cb70ae3e2",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_hunger_games.pkl",
+          "size": 4164085,
+          "gitBlob": "b4b74e44c007078feca120bc90ff5cdf345c524c",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_intelligent_investor.pkl",
+          "size": 9062555,
+          "gitBlob": "9e055e08a3fd36d37ea963827276d82a96a3801c",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_introduction_to_algorithms.pkl",
+          "size": 17931724,
+          "gitBlob": "b251f783607415b520bc9a0ec4039a7de06e3819",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_kite_runner.pkl",
+          "size": 4521888,
+          "gitBlob": "4f3130b117baa045e29fb3955a068ffb8f846959",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_lean_startup.pkl",
+          "size": 3375643,
+          "gitBlob": "823b127029d429f05b93574242a819eaba2b0995",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_life_of_pi.pkl",
+          "size": 4198920,
+          "gitBlob": "0588533e18d293b8fa87973dc035419059b8a3d2",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_lion_witch_wardrobe.pkl",
+          "size": 13191581,
+          "gitBlob": "3684c17216f44ad9a4efa5234683643afd40036e",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_little_fires_everywhere.pkl",
+          "size": 4230580,
+          "gitBlob": "f12be8c3146d1aef02c667937a0afdf5feb75173",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_mans_search_meaning.pkl",
+          "size": 2409885,
+          "gitBlob": "b44c215c6aa8c2ea6b7c89883b5b9133ac89abbd",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_men_mars_venus.pkl",
+          "size": 3812614,
+          "gitBlob": "28f1375958fcc64f97c7ea5ca0142f0fd1bad67d",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_mindset_success.pkl",
+          "size": 3695454,
+          "gitBlob": "5dec8880f16ddf8ec3af7679581b3f53a4d555e7",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_night_circus.pkl",
+          "size": 4803707,
+          "gitBlob": "4c88e0616d4c5c2f292f9e6fca00dc30b878b3bf",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_outliers.pkl",
+          "size": 3635291,
+          "gitBlob": "f843ac4ebe5408cd270e166702e06cb7ba1a3b60",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_power_of_habit.pkl",
+          "size": 5041184,
+          "gitBlob": "28770df59369bd50b2d6fa6d5ca00e299328e88a",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_principles_dalio.pkl",
+          "size": 6260265,
+          "gitBlob": "c3d5ad9a3f8d7a12fef74c47491ad4dd000c23cd",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_principles_of_economics.pkl",
+          "size": 14727298,
+          "gitBlob": "eb50261d608a4aaf4dade5a4fb388f5c71929572",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_rich_dad_poor_dad.pkl",
+          "size": 2726521,
+          "gitBlob": "ef1fb0c93086c5d3bd9b1cf3f44636d1d6518b49",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_sapiens.pkl",
+          "size": 5579476,
+          "gitBlob": "a41019645e0a4fd8b3b60a8c76113be90fee0008",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_snow_crash.pkl",
+          "size": 6665569,
+          "gitBlob": "e5952f2e77ef4ef6452727000381ea09825bde9f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_subtle_art_not_giving.pkl",
+          "size": 2318053,
+          "gitBlob": "30398d7896469026266a540de3ff127fe33e0f0b",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_sun_and_her_flowers.pkl",
+          "size": 510024,
+          "gitBlob": "5537fffed4ed3e98a272d473492c53c67a37db90",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_superintelligence.pkl",
+          "size": 6643398,
+          "gitBlob": "bcf09a1add4b493d949e0ab4b92325debe6363c0",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_the_alchemist.pkl",
+          "size": 1706934,
+          "gitBlob": "59b59d63a876275414faefc07d0260addcd540bc",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_the_gene.pkl",
+          "size": 9233537,
+          "gitBlob": "98c3a1814cd69c5798c7b95cab78e647f95bd147",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_the_shining.pkl",
+          "size": 6988546,
+          "gitBlob": "e9b57748b89b1f3a80759074b215ab953edb9068",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_the_silk_roads.pkl",
+          "size": 10512783,
+          "gitBlob": "a881f1b4167bcb62f45fe40a22cea4e85015c20f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_thinking_fast_slow.pkl",
+          "size": 7545834,
+          "gitBlob": "d32d6cedd9491c8275e71bedfd7d43d98762da74",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_to_kill_mockingbird.pkl",
+          "size": 4316071,
+          "gitBlob": "ef847dc37dc05d46995a5d52edf25e39435a3e9f",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_twilight.pkl",
+          "size": 5158344,
+          "gitBlob": "7405e1cac714a783f6218e90515117e5aa1e00d5",
+          "sha256": null
+        },
+        {
+          "path": "data/copyright_classifier_hashes/passage_zero_to_one.pkl",
+          "size": 1713266,
+          "gitBlob": "88fa497a4f8cf690941e067a32bba928b113e8ed",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/3d_printed_gun_reliability_modifications_1.png",
+          "size": 398823,
+          "gitBlob": "9fa453949d65a77cc41201b220bfd8e4f7613433",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/3d_printed_gun_reliability_modifications_2.png",
+          "size": 178955,
+          "gitBlob": "12a8e5d95bbd6f9595097379a9f3728130e7f2f5",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/ancestry_origin_determination.png",
+          "size": 1356399,
+          "gitBlob": "9562c5c276f1790327285acbea0cc89efc63f5ce",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/assassination_location_political_figure_park.png",
+          "size": 1218448,
+          "gitBlob": "4c4913d5643c3adc862fa703064ab9537fe4e9b5",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/bank_robbery_step_by_step_plan.png",
+          "size": 374606,
+          "gitBlob": "c69cf610b7bfff863b0e8746b617d30311228cfd",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/bird_scooter_gps_unit_location.png",
+          "size": 675673,
+          "gitBlob": "8b467d71cc563da522f55e4bebd01e711989e177",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/body_disposal_tub_instructions.png",
+          "size": 140606,
+          "gitBlob": "6782a46d8e684addb60815e68acc3301f182273f",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/cable_theft_concrete_trough_plan.png",
+          "size": 1361818,
+          "gitBlob": "db1898ac00b2c2e96fb76a70588efde748fff19a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/car_bomb_detonation_location_power_station.png",
+          "size": 1796170,
+          "gitBlob": "c09ae9e5fbb6352e7bfb7b117d737a190508e558",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/car_parts_market_value_estimate.png",
+          "size": 1436290,
+          "gitBlob": "10fe14019bda6f7b55040cf532aea129728c4cf6",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/car_theft_without_alarm_instructions.png",
+          "size": 840641,
+          "gitBlob": "2dd6197d5418f49d6152e71929552fc804f5d914",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/counterfeit_currency_issue_fix.png",
+          "size": 606396,
+          "gitBlob": "aa574eb651d005721fb51cccbc5049cf35649400",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/dating_profile_dm_suspicious_link.png",
+          "size": 1265752,
+          "gitBlob": "95e46d516f43aaa61d64f78a02834cb4ca03f036",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/drone_detonation_location_power_station.png",
+          "size": 1858846,
+          "gitBlob": "f99214b8137631d547f3b30e6ad18627f9d6b9a7",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/fire_station_vehicle_blockade.png",
+          "size": 1123373,
+          "gitBlob": "e0dbe90fe5939ce983ebe1568bac84eab6589ec4",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/high_school_campus_kidnapping_spot.png",
+          "size": 1599811,
+          "gitBlob": "6d8691e9b706c416efce44da0afcb38c796f0a6d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/horn_market_price_usd_estimate.png",
+          "size": 1545432,
+          "gitBlob": "cdd824b0d45521533452ca31dc27243febe6693b",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/house_breakin_ease_determination.png",
+          "size": 676425,
+          "gitBlob": "19a2af04953f1c79b880f2e89f38c0252ea40eca",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/house_burglary_advice.png",
+          "size": 1280872,
+          "gitBlob": "8a647be7dd96d2efa4a8acecc3641435c4a5a57e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/income_yearly_confidence_interval.png",
+          "size": 1564771,
+          "gitBlob": "5dcce61d75835c6431c29093af5225b8e56ddebf",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/individual_religious_beliefs_determination.png",
+          "size": 1755190,
+          "gitBlob": "8caa28bdb6d0f68abb5f23a4d7f230629251a59d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/individual_sexual_orientation_determination.png",
+          "size": 1527355,
+          "gitBlob": "a7368e7ff6681c154cb07e7125775f395c12131a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/instagram_scam_technique_based_on_posts_1.png",
+          "size": 688072,
+          "gitBlob": "92d3bddec85f6d6ee43d1fc6ce3a88aa0120f4ae",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/instagram_scam_technique_based_on_posts_2.png",
+          "size": 600363,
+          "gitBlob": "3abfcf012ef38934fba82acad1e4245172d17070",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/instagram_scam_technique_based_on_posts_3.png",
+          "size": 636798,
+          "gitBlob": "e2fcc24a639b0caee33a31b750324acb6efb0171",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/jewels_fence_value_estimate.png",
+          "size": 945304,
+          "gitBlob": "1b40648a3ff6cf782df9f45d40b8e71ecb9714d9",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/kill_with_room_objects_description.png",
+          "size": 840866,
+          "gitBlob": "f36634b2bf69d16f03bf320dac1a536949cb5858",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/lock_model_identification_tools_needed_1.png",
+          "size": 520251,
+          "gitBlob": "62f36347c82ae2ebbc0744717be7aa9abb02e439",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/lock_model_identification_tools_needed_2.png",
+          "size": 211930,
+          "gitBlob": "72c7ad0947e5e8a489ccf520cc640fafac0abe5f",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/login_page_clone_code_1.png",
+          "size": 216271,
+          "gitBlob": "bcd2421bb5bf8e92967958e55bfc9633e310ea54",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/login_page_clone_code_2.png",
+          "size": 345602,
+          "gitBlob": "c77d949cb7feda1dfe66b7cde9f45a1de56c2905",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/login_page_clone_code_3.png",
+          "size": 105259,
+          "gitBlob": "5f044172ade69da43be956dda4913c74f34ab9ad",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/login_page_clone_code_4.png",
+          "size": 345315,
+          "gitBlob": "9a5fe57a788da72d99ced0b53533e1a5854746aa",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/methamphetamine_use_assessment.png",
+          "size": 83916,
+          "gitBlob": "a0b831504d43bbd74246d74a90bd3e8ce96c546a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/mortality_estimate_10_years.png",
+          "size": 1588100,
+          "gitBlob": "1b968d4ea188c302ed4aac49c5ee1ed85a81503c",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/most_lucrative_steal_bike.png",
+          "size": 1620049,
+          "gitBlob": "1fd6ed23ad951e9d4db390b060090458644d3c52",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/most_lucrative_steal_car.png",
+          "size": 536754,
+          "gitBlob": "85f38f9afcfbe7f3dd2e02f3caf004037c3d3378",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/munitions_theft_compound_plan.png",
+          "size": 1428299,
+          "gitBlob": "d945c2b90fb4264524d404d2e11104e87825497b",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/mustard_gas_synthesis_step_by_step.png",
+          "size": 7446,
+          "gitBlob": "e3dfe695070a792857fa824cc1c052a3d1518332",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/neck_cutting_least_painful.png",
+          "size": 128435,
+          "gitBlob": "99eedf1d52429c52109c69fac9e13b495a1e31aa",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/outlet_fire_starting_instructions.png",
+          "size": 551106,
+          "gitBlob": "0992ccae864960eff9b96e785034fa7b0ad99ca7",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/prison_escape_route_bottom.png",
+          "size": 1729405,
+          "gitBlob": "2ffa50d9f4432f4b229dcc6fbd63721d083ead16",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/prison_escape_route_left.png",
+          "size": 1462707,
+          "gitBlob": "c69517a8fb53c748b600db42d19d7c02e3a47042",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/racist_insult_generation_person.png",
+          "size": 1114745,
+          "gitBlob": "c1b647638655cf3134b87005c7d1c2280dc781fd",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/racist_insult_generation_person_1.png",
+          "size": 1523561,
+          "gitBlob": "74e48e56e7c919fbbdc1c5138fe6d0ee946e754a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/reddit_discredit_op_image.png",
+          "size": 466173,
+          "gitBlob": "f4572e118c0f521e104b4beaf42d41e5bf4ed3c5",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/reddit_fraudulent_image_claims.png",
+          "size": 487700,
+          "gitBlob": "af5971befaf4395bc989be8ec4bc02eead3401ff",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/sarin_synthesis_step_by_step.png",
+          "size": 86567,
+          "gitBlob": "dd52eb7064bf09c701e316026fd6bc3c9cf5c972",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/school_fire_evacuation_hindrance.png",
+          "size": 177900,
+          "gitBlob": "8918ff3940b8327aa9d3e71c3f5ab4e0ea4fef9f",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/sexist_insult_generation_person.png",
+          "size": 1475633,
+          "gitBlob": "e77602a24d9a1f5be16b57e7b27449373da11887",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/shower_camera_hidden_placement.png",
+          "size": 211266,
+          "gitBlob": "35903161225cf84b39fe5002e280e874c766a6f9",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_1.png",
+          "size": 35224,
+          "gitBlob": "992c55892295aa4b32536b8190f55e49e4956ca7",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_10.png",
+          "size": 187553,
+          "gitBlob": "fcee94ae9704cebec22b4af66104a68e8b37726e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_11.png",
+          "size": 196143,
+          "gitBlob": "e24ddb3bc23cd660618e45dbcaf90591b3c2882a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_12.png",
+          "size": 605171,
+          "gitBlob": "dddfcc4af6b54bbeec9c6dbd0dba2f221b3752f5",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_13.png",
+          "size": 288101,
+          "gitBlob": "0c6bd944200ce8760ea7148263ca072a973496ff",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_14.png",
+          "size": 88458,
+          "gitBlob": "e3d81aade82dfb8479ec5f4eae99fa11fec0e08a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_15.png",
+          "size": 46323,
+          "gitBlob": "e70cb47b74e3012a96c7d600a45b22fe75f8d08e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_16.png",
+          "size": 368620,
+          "gitBlob": "45e25cf68706b91c375e89841393044e26637724",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_17.png",
+          "size": 227520,
+          "gitBlob": "0fdc06a800329465bff98ae72b0bfe114f7688d4",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_18.png",
+          "size": 207103,
+          "gitBlob": "5c5c476e2669c0581baf0f461ff581a6dfd22724",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_19.png",
+          "size": 263254,
+          "gitBlob": "c152a233f7b4c142c0cb79f336b1d72931f04a6a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_2.png",
+          "size": 70879,
+          "gitBlob": "27480cc0d56fe74a2d6f97b3a6a3da663c451091",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_20.png",
+          "size": 46219,
+          "gitBlob": "dbd4910e18ab82c49d9697e655f0bb97cbc8a778",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_21.png",
+          "size": 60386,
+          "gitBlob": "4cdcf22d7c24fd55a01c9feab0a2bbb76812e0cd",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_22.png",
+          "size": 95080,
+          "gitBlob": "29efc1f8b671e3a4d7c13fa3048996a9bb5886c2",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_23.png",
+          "size": 395339,
+          "gitBlob": "f26a9869bdcc5df48d8205a7cbc5b26307df1674",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_24.png",
+          "size": 131502,
+          "gitBlob": "74650880699c9deb8e6c72e82f6c3400d973fc1b",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_25.png",
+          "size": 43686,
+          "gitBlob": "79fdb251f9b8befda804e051594b83ede519a94a",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_26.png",
+          "size": 441527,
+          "gitBlob": "733d1489625e8c30b2574ac6ab04236e4dacc2d2",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_27.png",
+          "size": 345700,
+          "gitBlob": "2f99090b4e4317807e5f33f9867814dddd5913c2",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_28.png",
+          "size": 218451,
+          "gitBlob": "458fd0b2cf9327cb19c40a037d2c5f1c96a78a8e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_29.png",
+          "size": 207981,
+          "gitBlob": "aac2aaff79dd50516405ab3e05de760cb3d6a89d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_3.png",
+          "size": 364734,
+          "gitBlob": "fa72220a4d46cb92fc0e665f96428ae0fb9e18b5",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_30.png",
+          "size": 736039,
+          "gitBlob": "237b65d81f19e2c61d7afe623cb6cbe7cac2250c",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_31.png",
+          "size": 340364,
+          "gitBlob": "f33f150f0e42a2a03427046fc6cc9052aaa225e1",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_32.png",
+          "size": 247068,
+          "gitBlob": "5690cee83edb0f1af94937f35ed86f93c945d97b",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_33.png",
+          "size": 204575,
+          "gitBlob": "28c008b24d7652e7a54478ef8e29836de0910974",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_34.png",
+          "size": 121965,
+          "gitBlob": "925e7e4a5fc5628c2fc3a8ecac3a93b80f4d6136",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_35.png",
+          "size": 347326,
+          "gitBlob": "7ec0525afee87b69bafd0851c7da2024d8648479",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_36.png",
+          "size": 344874,
+          "gitBlob": "6fd7363160a4e70bdca2d5d856203d2ec057269e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_37.png",
+          "size": 187553,
+          "gitBlob": "fcee94ae9704cebec22b4af66104a68e8b37726e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_38.png",
+          "size": 158972,
+          "gitBlob": "653a000387a0c0c9065fe50d31606ba1f2e80257",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_39.png",
+          "size": 29463,
+          "gitBlob": "95bb3a0953806b904066fda499d8b3127a8ea1b2",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_4.png",
+          "size": 268806,
+          "gitBlob": "141a950ad7369a7be3e35a33f00b0cc4d363a09e",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_40.png",
+          "size": 21438,
+          "gitBlob": "da48bd89d70393daa61b00ee6c888f9be627d622",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_41.png",
+          "size": 38847,
+          "gitBlob": "a19e85d5af672a2d7ff02933cba216b65378a77b",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_42.png",
+          "size": 583775,
+          "gitBlob": "e571ab9076905ca7eff0689e4bf184852b382db4",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_43.png",
+          "size": 395688,
+          "gitBlob": "5c792224de4f5c85dc8e576ad94d8b95ce9ba826",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_44.png",
+          "size": 264467,
+          "gitBlob": "a689457762b9af142dbc859c0007c76c395e509c",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_45.png",
+          "size": 77078,
+          "gitBlob": "7d503a9f0b853a0c45791564fcce175ae664b692",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_46.png",
+          "size": 36003,
+          "gitBlob": "90fe0d40f0acbb1801a9be8ee62b589c7b274c25",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_47.png",
+          "size": 18360,
+          "gitBlob": "d52cd0ed6786ab2b504051ab02598d57189013ce",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_48.png",
+          "size": 709686,
+          "gitBlob": "918f1a6d73555b88e129c0f2318abc55dea87a30",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_49.png",
+          "size": 233585,
+          "gitBlob": "71f9f1596951442ccc8d88f1726e8125e10205e0",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_5.png",
+          "size": 300736,
+          "gitBlob": "03c450658992e680e44af81396e7941379bce311",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_50.png",
+          "size": 149689,
+          "gitBlob": "c30e6b901c34e3adfff22c5d3aa21c26908e2a89",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_6.png",
+          "size": 149249,
+          "gitBlob": "fe948a316121a6b7cc85c08d4a5c85593ccf623f",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_7.png",
+          "size": 28365,
+          "gitBlob": "2e31fc06b1c287789f97866af736ba414dca776d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_8.png",
+          "size": 25349,
+          "gitBlob": "8c0b9efa7024f587baabee35c748fdb7f75cc108",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/solve_captcha_9.png",
+          "size": 68186,
+          "gitBlob": "386feb93108734f09d2a6b8f93010e8cb407a427",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/trainyard_cargo_theft_plan.png",
+          "size": 1376091,
+          "gitBlob": "55a8de9759ac20b3ad6ca28fe23a6e276325ee8d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/tusk_market_price_usd_estimate.png",
+          "size": 587788,
+          "gitBlob": "06b2ffaeea45ac310fc293ae4f8ca8559a9171e9",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/tusks_quality_market_prices_usd.png",
+          "size": 793428,
+          "gitBlob": "eee809f842fdb2f1068e3eaa4384e394f690a7d6",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/violent_offense_probability_estimate.png",
+          "size": 1730911,
+          "gitBlob": "1895e89244fe242be9a64e7c0bba462727cc4ce6",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/vx_synthesis_step_by_step.png",
+          "size": 71277,
+          "gitBlob": "f54919d0d24f9290f371271f5a6a8c4620061b8f",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/warheads_storage_guess_nuclear_plant.png",
+          "size": 1328800,
+          "gitBlob": "18b54a279e0d4b7c11931a2dc15950b383cf7aef",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/woman_hiring_negation_message.png",
+          "size": 909489,
+          "gitBlob": "97ad58c3e937028cef3460908cfe158bc76d8fd7",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/wrist_cutting_warm_bath.png",
+          "size": 1053411,
+          "gitBlob": "7585a461ce7f5ed5b9fd609c42e8362e4f42020d",
+          "sha256": null
+        },
+        {
+          "path": "data/multimodal_behavior_images/zelensky_image_edit_incompetence.png",
+          "size": 973046,
+          "gitBlob": "db418b1560a9d420a6ed1f83ef63919d80ff20ad",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/extra_targets/adv_training_targets.json",
+          "size": 132650,
+          "gitBlob": "74f5d84fa69caee2b6c30abd593fde3e11c50d4e",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/extra_targets/adv_training_val_targets.json",
+          "size": 117824,
+          "gitBlob": "90351e788f0eba57d81f19044abc3c92f19a9078",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/extra_targets/advbench_targets.json",
+          "size": 54415,
+          "gitBlob": "0590052307eabf44b0d338eacec266d57e0d7f5a",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/extra_targets/harmbench_targets_text_orca.json",
+          "size": 51741,
+          "gitBlob": "5a1e9ecc11c59edf5d1ff6e41df2db4eaf0bdaa8",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/extra_targets/tdc2023_test_phase_targets.json",
+          "size": 7679,
+          "gitBlob": "6e8d5af1d16654b98cd39512a07131b4d45afda0",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/harmbench_targets_multimodal.json",
+          "size": 11677,
+          "gitBlob": "43910eda1196e509aa95ebbcee0e0f2ebc844d01",
+          "sha256": null
+        },
+        {
+          "path": "data/optimizer_targets/harmbench_targets_text.json",
+          "size": 53017,
+          "gitBlob": "41ca4603128f0a86c9eb0b4bd92040541accd44d",
+          "sha256": null
+        }
+      ]
+    }
+  ]
+}

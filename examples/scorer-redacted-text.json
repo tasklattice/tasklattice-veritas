@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "name": "Redacted text checks",
+  "acceptedActions": {"allow": ["allow"], "block": ["block"], "transform": ["transform"]},
+  "checkPii": true,
+  "assertions": [
+    {"type": "contains", "value": "[REDACTED]", "scope": "transformed"},
+    {"type": "not-contains", "value": "person@example.test", "scope": "transformed"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "adapter": "f5-scan",
+  "url": "https://guard.example.test/runtime/v1/endpoints/REPLACE_F5_ENDPOINT_ID/backend/v1/scans",
+  "apiKeyEnv": "VERITAS_F5_API_KEY",
+  "outputMode": "standalone",
+  "flagOnly": false,
+  "verbose": true,
+  "timeoutMs": 30000
+}

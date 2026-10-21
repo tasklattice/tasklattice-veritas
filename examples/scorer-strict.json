@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "name": "Strict action matching",
+  "acceptedActions": {"allow": ["allow"], "block": ["block"], "transform": ["transform"]},
+  "checkPii": true,
+  "assertions": []
+}

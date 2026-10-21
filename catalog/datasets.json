@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "datasets": [
+    {
+      "id": "aegis",
+      "source": "hf",
+      "repo": "nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+      "revision": "d86bb8bedff51d25ac834ab7838f1cc61acb7a2c",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Nemotron Content Safety / Aegis 2.0; test only by default; prompt and response labels are independent.",
+      "url": "https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+      "files": [
+        {
+          "config": "default",
+          "split": "test",
+          "path": "test.json",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "toxicchat",
+      "source": "hf",
+      "repo": "lmsys/toxic-chat",
+      "revision": "29df8e4dba60e1f4af4b4075c0705c5b313548a8",
+      "license": "cc-by-nc-4.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Toxicity label on user_input; CC-BY-NC-4.0.",
+      "url": "https://huggingface.co/datasets/lmsys/toxic-chat",
+      "files": [
+        {
+          "config": "toxicchat0124",
+          "split": "test",
+          "path": "data/0124/toxic-chat_annotation_test.csv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "beavertails",
+      "source": "hf",
+      "repo": "PKU-Alignment/BeaverTails",
+      "revision": "8401fe609d288129cc684a9b3be6a93e41cfe678",
+      "license": "cc-by-nc-4.0",
+      "gated": false,
+      "defaultPhase": "output",
+      "notes": "is_safe labels the response, never the prompt; CC-BY-NC-4.0.",
+      "url": "https://huggingface.co/datasets/PKU-Alignment/BeaverTails",
+      "files": [
+        {
+          "config": "default",
+          "split": "30k_test",
+          "path": "round0/30k/test.jsonl.gz",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "do-not-answer",
+      "source": "hf",
+      "repo": "LibrAI/do-not-answer",
+      "revision": "74e74f2e4507ef256fe536f78a776f4a1ff67955",
+      "license": "apache-2.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Questions mapped to strict refusal policy; this is a curated benchmark stored under train, not a held-out split.",
+      "url": "https://huggingface.co/datasets/LibrAI/do-not-answer",
+      "files": [
+        {
+          "config": "default",
+          "split": "train",
+          "path": "data_en.csv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "jailbreakbench",
+      "source": "hf",
+      "repo": "JailbreakBench/JBB-Behaviors",
+      "revision": "886acc352a31533ffbcf4ef22c744658688086fc",
+      "license": "mit",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Goal is the input. Target is an attack target prefix, not a model response. Both splits imported by default.",
+      "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors",
+      "files": [
+        {
+          "config": "behaviors",
+          "split": "harmful",
+          "path": "data/harmful-behaviors.csv",
+          "default": true
+        },
+        {
+          "config": "behaviors",
+          "split": "benign",
+          "path": "data/benign-behaviors.csv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "wildjailbreak",
+      "source": "hf",
+      "repo": "allenai/wildjailbreak",
+      "revision": "5ddc12a7894f842b0619b8e1c7ee496b198af009",
+      "license": "odc-by",
+      "gated": "auto",
+      "defaultPhase": "input",
+      "notes": "Gated; obtain access and set HF_TOKEN. eval is the source config, even though its loader split is train.",
+      "url": "https://huggingface.co/datasets/allenai/wildjailbreak",
+      "files": [
+        {
+          "config": "eval",
+          "split": "train",
+          "path": "eval/eval.tsv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "deepset",
+      "source": "hf",
+      "repo": "deepset/prompt-injections",
+      "revision": "4f61ecb038e9c3fb77e21034b22511b523772cdd",
+      "license": "apache-2.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "label=1 injection; this tests direct text detection, not indirect-injection execution.",
+      "url": "https://huggingface.co/datasets/deepset/prompt-injections",
+      "files": [
+        {
+          "config": "default",
+          "split": "test",
+          "path": "data/test-00000-of-00001-701d16158af87368.parquet",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "gandalf",
+      "source": "hf",
+      "repo": "Lakera/gandalf_ignore_instructions",
+      "revision": "04737b65e90a6794ec227012e4a255a7def6344b",
+      "license": "mit",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Known adversarial prompt corpus; no benign denominator unless labels are provided.",
+      "url": "https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions",
+      "files": [
+        {
+          "config": "default",
+          "split": "test",
+          "path": "data/test-00000-of-00001-bc92128b9288a6d1.parquet",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "xstest",
+      "source": "hf",
+      "repo": "Paul/XSTest",
+      "revision": "f600c994b256f12867dfa5b3eb3d545a3e62f8b5",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Use safe/unsafe label; source file is a benchmark despite train loader naming.",
+      "url": "https://huggingface.co/datasets/Paul/XSTest",
+      "files": [
+        {
+          "config": "default",
+          "split": "train",
+          "path": "xstest_prompts.csv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "or-bench",
+      "source": "hf",
+      "repo": "bench-llm/or-bench",
+      "revision": "e36d8b80e81837c8a8f264bbb2a49f1b32c7e272",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Hard benign and toxic subsets by default. 80k available via --config or-bench-80k.",
+      "url": "https://huggingface.co/datasets/bench-llm/or-bench",
+      "files": [
+        {
+          "config": "or-bench-hard-1k",
+          "split": "train",
+          "path": "or-bench-hard-1k.csv",
+          "default": true
+        },
+        {
+          "config": "or-bench-toxic",
+          "split": "train",
+          "path": "or-bench-toxic.csv",
+          "default": true
+        },
+        {
+          "config": "or-bench-80k",
+          "split": "train",
+          "path": "or-bench-80k.csv",
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "pii",
+      "source": "hf",
+      "repo": "ai4privacy/pii-masking-300k",
+      "revision": "c8c77895a005822682b66ab547fc0422579bc1d3",
+      "license": "other",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "English validation by default; exact annotated-value removal check; review upstream custom LICENSE.md.",
+      "url": "https://huggingface.co/datasets/ai4privacy/pii-masking-300k",
+      "files": [
+        {
+          "config": "default",
+          "split": "validation",
+          "path": "data/validation/1english_openpii_8k.jsonl",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "topic-control",
+      "source": "hf",
+      "repo": "nvidia/CantTalkAboutThis-Topic-Control-Dataset",
+      "revision": "b015ae8902d8429ce32ebfed9f9935f891d10ed5",
+      "license": "cc-by-4.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Human test set, commercial CC-BY-4.0 variant. Requires --domain and reviewed --labels matched to Endpoint policy.",
+      "url": "https://huggingface.co/datasets/nvidia/CantTalkAboutThis-Topic-Control-Dataset",
+      "files": [
+        {
+          "config": "mixtral",
+          "split": "test",
+          "path": "canttalkaboutthis_topic_control_human_test_set.jsonl",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "safety-prompts",
+      "source": "hf",
+      "repo": "thu-coai/Safety-Prompts",
+      "revision": "559ab9f24ce4621e3f839ef05e1075b6c4f125ee",
+      "license": "apache-2.0",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Nested category JSON. Requires --field; category is not a safety label. Review expectations via --labels.",
+      "url": "https://huggingface.co/datasets/thu-coai/Safety-Prompts",
+      "files": [
+        {
+          "config": "default",
+          "split": "train",
+          "path": "typical_safety_scenarios.json",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "moderation",
+      "source": "github",
+      "repo": "openai/moderation-api-release",
+      "revision": "f4ab51b5edd3bfbcb349a56324274235b674e0e4",
+      "license": "see-upstream-license",
+      "defaultPhase": "input",
+      "notes": "Multi-label moderation eval; missing annotations are not negatives.",
+      "url": "https://github.com/openai/moderation-api-release",
+      "files": [
+        {
+          "config": "default",
+          "split": "test",
+          "path": "data/samples-1680.jsonl.gz",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "harmbench",
+      "source": "github",
+      "repo": "centerforaisafety/HarmBench",
+      "revision": "8e1604d1171fe8a48d8febecd22f600e462bdcdd",
+      "license": "see-upstream-license",
+      "defaultPhase": "input",
+      "notes": "Text test behaviors; standard rows map to strict refusal; other functional categories require reviewed labels. Not official HarmBench ASR.",
+      "url": "https://github.com/centerforaisafety/HarmBench",
+      "files": [
+        {
+          "config": "default",
+          "split": "test",
+          "path": "data/behavior_datasets/harmbench_behaviors_text_test.csv",
+          "default": true
+        }
+      ]
+    }
+  ]
+}

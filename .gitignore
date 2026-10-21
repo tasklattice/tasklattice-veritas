@@ -1,0 +1,39 @@
+# Dependencies and generated builds
+node_modules/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local credentials and workstation configuration
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+*.local.json
+examples/tali-local.target.json
+
+# Dataset archives, Target configurations, execution evidence, and caches
+data/
+runs/
+.cache/
+.promptfoo/
+logs/
+*.log
+playwright-report/
+test-results/
+
+# Historical desktop captures may contain real environment information
+docs/screenshots/
+
+# Editor, OS, and obsolete local Python artifacts
+.DS_Store
+.idea/
+.venv/
+venv/
+__pycache__/
+*.py[cod]

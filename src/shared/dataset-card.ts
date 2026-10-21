@@ -1,0 +1,2 @@
+export type CardHeading={id:string;text:string;depth:number};
+export type UpstreamDatasetCard={id:string;repository:string;publisher:string;source:'hf'|'github';revision:string;filename:string;sourceUrl:string;readmeUrl:string;license:string|null;bytes:number;sha256:string;metadata:Record<string,unknown>;metadataError?:string;frontmatter:string;markdown:string;raw:string;headings:CardHeading[];assets:string[]};

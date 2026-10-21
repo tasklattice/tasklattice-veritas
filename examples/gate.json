@@ -1,0 +1,7 @@
+{
+  "minCoverage": 1,
+  "minAccuracy": 0.95,
+  "maxFalsePositiveRate": 0.05,
+  "maxFalseNegativeRate": 0.05,
+  "maxP95Ms": 3000
+}

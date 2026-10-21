@@ -1,0 +1,13 @@
+import { existsSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { root, save } from '../src/core/files.js';
+import { importDataset } from '../src/core/datasets.js';
+import { startMock } from './mock-endpoint.js';
+const mock=await startMock({port:38101});
+const out=join(root,'data/synthetic-smoke-v3');
+if(!existsSync(out)) await importDataset({dataset:'veritas',file:join(root,'examples/endpoint-smoke.jsonl'),out,limit:0});
+mkdirSync(join(root,'data/targets'),{recursive:true,mode:0o700});
+for(const [adapter,url] of [['f5-scan',mock.f5Url],['litellm-generic-guardrail',mock.url]] as const) save(join(root,'data/targets','synthetic-'+adapter+'.json'),{adapter,url});
+console.log('Synthetic mock listening on http://127.0.0.1:38101. Start npm run dev in another terminal.');
+console.log('Choose a source Dataset such as WildJailbreak and a synthetic Target. Select Limit cases per Dataset, set maximum cases to 20, and select Synthetic toolchain verification. The mock uses phrase matching; source datasets will have mismatches.');
+for(const signal of ['SIGINT','SIGTERM'] as const) process.once(signal,()=>void mock.close().then(()=>process.exit(0)));

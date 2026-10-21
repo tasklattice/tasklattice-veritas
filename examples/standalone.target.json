@@ -1,0 +1,7 @@
+{
+  "adapter": "litellm-generic-guardrail",
+  "url": "https://guard.example.test/runtime/v1/endpoints/REPLACE_ENDPOINT_ID/beta/litellm_basic_guardrail_api",
+  "apiKeyEnv": "VERITAS_LITELLM_API_KEY",
+  "outputMode": "standalone",
+  "timeoutMs": 30000
+}

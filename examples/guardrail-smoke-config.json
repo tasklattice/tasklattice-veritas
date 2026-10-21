@@ -1,0 +1,28 @@
+{
+  "name": "Veritas Endpoint Smoke",
+  "runtimeProfile": "llmrails_colang1_standard",
+  "draftConfig": {
+    "allowedTopics": [],
+    "restrictedTopics": [],
+    "safetyLevel": "balanced",
+    "outputDelivery": "full_buffered",
+    "policyBindings": [
+      {
+        "policyId": "configured-phrase-filter",
+        "policyVersion": "1.0.0",
+        "action": null,
+        "parameterValues": {
+          "phrase_entries": "[{\"id\":\"block\",\"phrase\":\"[BLOCK]\",\"action\":\"block\"},{\"id\":\"redact\",\"phrase\":\"person@example.test\",\"action\":\"transform\",\"replacement\":\"[EMAIL]\"}]"
+        },
+        "enabledRuleIds": [
+          "configured/phrases"
+        ],
+        "ruleActions": {},
+        "enabledRails": [
+          "input",
+          "output"
+        ]
+      }
+    ]
+  }
+}
