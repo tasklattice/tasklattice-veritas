@@ -1,0 +1,69 @@
+.testing-sampling-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(140px,1fr);gap:12px 20px;margin:20px 0}
+.testing-sampling-fields>label{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:500;min-width:0}
+.testing-sampling-fields>p{grid-column:1/-1;margin:0}
+.report-stage-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;margin:16px 0;border:1px solid var(--border);border-radius:var(--radius-card)}
+.report-stage-strip li{display:flex;align-items:center;gap:10px;padding:12px 16px;border-right:1px solid var(--border);font-size:13px;color:var(--muted-foreground)}
+.report-stage-strip li:last-child{border-right:0}
+.report-stage-strip li>span{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border:1px solid var(--border);border-radius:50%;font-size:12px;flex-shrink:0}
+.report-stage-strip li svg{width:14px;height:14px}
+.report-stage-strip li[data-state=current]{color:var(--link);background:var(--primary-surface);font-weight:600}
+.report-stage-strip li[data-state=current]>span{border-color:var(--primary-border)}
+.report-stage-strip li[data-state=complete]{color:var(--success)}
+.preparation-facts{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px;margin:16px 0;font-size:12px;color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+.preparation-facts strong{color:var(--foreground)}
+.preparation-facts code{flex-basis:100%;overflow-wrap:anywhere;font-size:11px}
+.report-stage-history{list-style:none;padding:0;margin:16px 0;border:1px solid var(--border);border-radius:var(--radius-card);font-size:12px}
+.report-stage-history li{display:grid;grid-template-columns:160px minmax(0,1fr) minmax(200px,auto);gap:16px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.report-stage-history li:last-child{border-bottom:0}
+.report-stage-history li>span,.report-stage-history small{color:var(--muted-foreground);font-size:12px}
+.report-stage-history small{display:flex;justify-content:flex-end;gap:20px;font-variant-numeric:tabular-nums}
+.report-comparison>.section-title h2{display:flex;align-items:center;gap:8px}
+.report-comparison>.section-title h2 svg{width:18px;height:18px;color:var(--muted-foreground)}
+.comparison-selectors{display:grid;grid-template-columns:minmax(0,2fr) minmax(200px,1fr) auto;gap:16px;align-items:end;margin:16px 0}
+.comparison-selectors>label{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:500;min-width:0}
+.comparison-selectors .select-wrap{min-width:0;width:100%}
+.comparison-selectors select{width:100%}
+.comparison-empty>svg{width:24px;height:24px;color:var(--muted-foreground);margin-bottom:8px}
+.comparison-empty p{max-width:600px;margin-inline:auto}
+.comparison-identity{display:flex;align-items:center;gap:24px;border-block:1px solid var(--border);padding:16px 0;margin:20px 0}
+.comparison-identity>span{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.comparison-identity strong{font-size:12px}
+.comparison-identity a,.comparison-identity code{font:11px var(--font-mono);overflow-wrap:anywhere}
+.comparison-identity small{color:var(--muted-foreground);font-size:12px}
+.comparison-identity>svg{width:18px;height:18px;color:var(--muted-foreground);flex-shrink:0}
+.comparison-issues{display:flex;gap:12px;padding:16px;border:1px solid var(--warning-border);background:var(--warning-surface);border-radius:var(--radius-card);font-size:13px;color:var(--warning);margin-bottom:16px}
+.comparison-issues>svg{width:18px;height:18px;flex-shrink:0}
+.comparison-issues ul{padding-left:20px;margin:8px 0 0}
+.comparison-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card);margin:16px 0 20px}
+.comparison-metrics>div{display:flex;flex-direction:column;gap:6px;min-width:0;padding:14px;border-right:1px solid var(--border)}
+.comparison-metrics>div:last-child{border:0}
+.comparison-metrics strong{font-size:21px;line-height:1.2;font-weight:600;font-variant-numeric:tabular-nums}
+.comparison-metrics small,.comparison-delta{font-size:11px;color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+.comparison-delta{display:flex;align-items:center;gap:4px;min-height:16px}
+.comparison-delta svg{width:12px;height:12px}
+.comparison-filters{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.comparison-filters button{font-size:12px;padding-inline:10px;gap:8px}
+.comparison-table-tools{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:12px 0;font-size:12px;color:var(--muted-foreground)}
+.comparison-table-tools .select-wrap{width:220px}
+.comparison-table th:first-child{width:35%}
+.comparison-table th:nth-child(2){width:21%}
+.comparison-table td{vertical-align:top}
+.comparison-table td>small{display:block;font-size:11px;line-height:1.5;color:var(--muted-foreground);margin-top:6px}
+.comparison-table td>strong{font-size:13px}
+.comparison-table .request-text{-webkit-line-clamp:3;margin:10px 0 6px;font-size:12px}
+.comparison-checks{display:flex;flex-direction:column;gap:2px;min-width:160px}
+.comparison-checks>button,.comparison-checks details button{display:flex;width:100%;justify-content:space-between;font-size:11px;gap:8px;padding:6px}
+.comparison-checks button svg{width:14px;height:14px;flex-shrink:0}
+.comparison-checks details summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--link);font-size:12px}
+.comparison-notes{font-size:12px;line-height:1.65;color:var(--muted-foreground);margin-top:16px}
+.comparison-notes summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--foreground)}
+.comparison-notes ul{padding-left:20px}
+
+/* Measurement scope stays adjacent to the task, without adding navigation. */
+.testing-focus { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px; align-items: center; margin-bottom: 20px; }
+.testing-focus label { display: grid; gap: 6px; font-weight: 500; }
+.testing-focus .help { margin: 0; }
+.benchmark-context { margin: 16px 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); font-size: 13px; line-height: 1.6; }
+.benchmark-context strong { color: var(--foreground); }
+.benchmark-context p { margin: 6px 0 0; color: var(--muted-foreground); }
+.benchmark-context ul { margin: 6px 0 0; padding-left: 18px; }

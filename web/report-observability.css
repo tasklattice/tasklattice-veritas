@@ -56,3 +56,26 @@
 .execution-history .activity-recent{padding:0 16px 16px}
 .dataset-results-table th,.dataset-results-table td{white-space:nowrap}
 .dataset-results .resource-list{overflow-x:auto}
+
+/* Model evidence stays distinct from final-action grades. Desktop console only. */
+.jev-evidence-summary{border:1px solid var(--border);border-radius:var(--radius-card);background:var(--card);padding:20px;margin:20px 0}
+.jev-evidence-summary .section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:16px}
+.jev-evidence-summary h2{font-size:16px;margin:0 0 4px}
+.jev-evidence-primary{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden}
+.jev-evidence-primary>button{height:auto;min-height:100px;justify-content:flex-start;align-items:flex-start;padding:16px;white-space:normal;border-radius:0;text-align:left}
+.jev-evidence-primary>button+button{border-left:1px solid var(--border)}
+.jev-evidence-primary>button>span{display:grid;gap:4px;flex:1}
+.jev-evidence-primary strong{font-size:26px;line-height:1.2;font-weight:600}
+.jev-evidence-primary small{font-size:12px;color:var(--muted-foreground)}
+.jev-evidence-secondary{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.jev-evidence-secondary button{font-size:12px;gap:8px}
+.jev-evidence-note{margin:8px 0 0}
+.jev-verdict{font-size:12px;white-space:normal;line-height:1.4;display:inline-block}
+.jev-check-details{border:1px solid var(--border);border-radius:var(--radius-card);padding:16px;margin:16px 0}
+.jev-check-details h3{margin:0 0 10px}
+.jev-model-evidence p{display:flex;justify-content:space-between;gap:16px;font-size:12px;margin:12px 0}
+.jev-model-evidence dl{display:grid;gap:8px;font-size:13px}
+.jev-model-evidence dl>div{display:flex;justify-content:space-between;gap:20px}
+.jev-model-evidence dd{margin:0;font-variant-numeric:tabular-nums}
+
+.pii-summary{border:1px solid var(--border);border-radius:8px;padding:20px;margin:20px 0}.pii-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:16px 0}.pii-metrics>div{display:flex;flex-direction:column;gap:4px}.pii-metrics strong{font-size:28px;line-height:1.2;font-variant-numeric:tabular-nums}.pii-metrics small{color:var(--muted-foreground)}.pii-outcomes{display:flex;flex-wrap:wrap;gap:4px;border-block:1px solid var(--border);padding:8px 0;margin-bottom:12px}.pii-outcomes strong{font-variant-numeric:tabular-nums}.pii-check-details{padding:16px 0;border-block:1px solid var(--border)}

@@ -25,7 +25,7 @@ export const Tr=(props:ComponentProps<'tr'>)=><TableRow {...props}/>;
 export const Th=({children,...props}:ComponentProps<'th'>)=><TableHead scope="col" {...(!children?{'aria-label':'Actions'}:{})} {...props}>{children}</TableHead>;
 export const Td=(props:ComponentProps<'td'>)=><TableCell {...props}/>;
 export function StateTag({state,label}:{state:string;label?:string}){
-  const tone=['completed','pass','ready','available'].includes(state)?'success':['failed','error','fail'].includes(state)?'danger':['gate-failed','interrupted','cancelled','unreviewed','unavailable'].includes(state)?'warning':['running','queued'].includes(state)?'info':'neutral';
+  const tone=['completed','pass','ready','available'].includes(state)?'success':['failed','error','fail'].includes(state)?'danger':['gate-failed','interrupted','cancelled','unreviewed','unavailable'].includes(state)?'warning':['running','queued','preparing','scoring'].includes(state)?'info':'neutral';
   return <span data-slot="badge" className={'state-tag status-'+tone}><i aria-hidden="true"/><span className="state-label">{label??state.replaceAll('-',' ')}</span></span>;
 }
 export function Sheet({children,onClose,busy=false,className=''}:{children:ReactNode;onClose:()=>void;busy?:boolean;className?:string}){

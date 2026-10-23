@@ -1,3 +1,4 @@
+import {isActiveRun} from '../src/shared/testing';
 import {QueryClient,queryOptions} from '@tanstack/react-query';
 import {api,ApiError} from './api';
 import type {DatasetCard,JsonObject,RunItem,TargetItem} from '../src/shared/types';
@@ -7,7 +8,7 @@ export const queryKeys={datasets:['datasets'] as const,targets:['targets'] as co
 export const datasetListOptions=()=>queryOptions({queryKey:queryKeys.datasets,queryFn:({signal})=>api<{items:DatasetCard[]}>('/datasets',undefined,'GET',signal),staleTime:60_000});
 export const targetListOptions=()=>queryOptions({queryKey:queryKeys.targets,queryFn:({signal})=>api<{items:TargetItem[]}>('/targets',undefined,'GET',signal),refetchInterval:15_000});
 export const targetDetailOptions=(id?:string)=>queryOptions({queryKey:['target',id] as const,queryFn:({signal})=>api<{item:TargetItem}>('/targets/'+id,undefined,'GET',signal),enabled:Boolean(id)});
-export const runListOptions=()=>queryOptions({queryKey:queryKeys.runs,queryFn:({signal})=>api<{items:RunItem[]}>('/runs',undefined,'GET',signal),refetchInterval:q=>q.state.data?.items.some(r=>['queued','running'].includes(r.status))?2000:15_000});
+export const runListOptions=()=>queryOptions({queryKey:queryKeys.runs,queryFn:({signal})=>api<{items:RunItem[]}>('/runs',undefined,'GET',signal),refetchInterval:q=>q.state.data?.items.some(r=>isActiveRun(r.status))?2000:15_000});
 export const catalogOptions=()=>queryOptions({queryKey:queryKeys.catalog,queryFn:({signal})=>api<{items:JsonObject[]}>('/catalog',undefined,'GET',signal),staleTime:60_000});
 
 export type SourceScope={config:string;split:string;files:string[];available:boolean;recommended:boolean;fields:string[]};

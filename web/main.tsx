@@ -20,6 +20,7 @@ import './dataset.css';
 import './upstream-card.css';
 import './scoring.css';
 import './report-observability.css';
+import './testing-next.css';
 function App(){
   const[route,setRoute]=useState(location.hash.slice(1)||'/runs'),[collapsed,setCollapsed]=useState(()=>{try{return localStorage.getItem('veritas-sidebar-collapsed')==='true';}catch{return false;}});
   const runsQuery=useQuery(runListOptions()),datasetsQuery=useQuery(datasetListOptions()),targetsQuery=useQuery(targetListOptions());

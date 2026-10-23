@@ -1,5 +1,6 @@
+import {isActiveRun} from '../src/shared/testing';
 import type {Attempt,Grade,JsonObject,RunItem} from '../src/shared/types';
-export type Evidence=Attempt&{expected?:string|null;grade?:Grade;samplePreview?:string|null;sampleTruncated?:boolean};
+export type Evidence=Attempt&{pii?:ReturnType<typeof import('../src/shared/pii').piiEvidence>;expected?:string|null;grade?:Grade;samplePreview?:string|null;sampleTruncated?:boolean};
 export type EvidencePage={items:Evidence[];total:number;allTotal:number;datasetTotal:number;unexpected:number;errors:number;skipped:number};
 export const count=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)?value.toLocaleString():'—';
 export function decisionResult(a:Pick<Evidence,'status'|'expected'|'action'|'grade'>){
@@ -14,7 +15,7 @@ export function decisionResult(a:Pick<Evidence,'status'|'expected'|'action'|'gra
   return {label:'Transformation mismatch',tone:'danger',kind:'unexpected'};
 }
 export function reportAttention(run:Pick<RunItem,'status'>,s:JsonObject){
-  if(['running','queued'].includes(run.status))return {label:'Testing in progress',tone:'info'};
+  if(isActiveRun(run.status))return {label:'Testing in progress',tone:'info'};
   if(s.failed>0)return {label:count(s.failed)+' unexpected '+(s.failed===1?'decision':'decisions'),tone:'danger'};
   if(s.errors>0)return {label:count(s.errors)+' execution '+(s.errors===1?'error':'errors'),tone:'warning'};
   if(s.missing>0||['cancelled','interrupted','failed'].includes(run.status))return {label:'Test incomplete',tone:'warning'};
