@@ -1,0 +1,14 @@
+services:
+  veritas:
+    image: tasklattice-veritas:0.3.0
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:38100:38100"
+    volumes:
+      - veritas-data:/var/lib/veritas
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+volumes:
+  veritas-data:

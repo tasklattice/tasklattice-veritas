@@ -18,17 +18,20 @@ import { datasets, datasetCards, targets, saveTarget, getTarget, updateTarget, d
 import {DatasetViewer, type ViewerQuery} from './dataset-viewer.js';
 import {scoringDirectory,activeScoringId,scoringHistory} from '../core/scoring-revisions.js';
 import type { JsonObject, RunRequest } from '../shared/types.js';
+import { serverConfig } from './config.js';
 
 export async function buildServer(options: {ui?: boolean} = {}) {
+  const {allowedHosts} = serverConfig();
   const app = Fastify({ logger: false, bodyLimit: 1024 * 1024 });
   const store = new RunStore(), viewer = new DatasetViewer();
   app.addHook('onClose', async () => {store.close(); await viewer.close();});
   app.addHook('onRequest', async (request, reply) => {
     const host = new URL('http://' + request.headers.host).hostname;
-    if (!['localhost', '127.0.0.1', '[::1]'].includes(host)) return reply.code(403).send({ error: 'Local access only' });
+    if (!allowedHosts.has(host)) return reply.code(403).send({ error: 'Host is not allowed' });
     if (request.headers.origin && new URL(request.headers.origin).host !== request.headers.host) return reply.code(403).send({ error: 'Cross-origin requests are not allowed' });
   });
   app.setErrorHandler((error: any, _request, reply) => reply.code(error.statusCode ?? 400).send({ error: error.message }));
+  app.get('/healthz', async () => ({status: 'ok'}));
   app.get('/api/datasets', async () => ({ items: datasetCards() }));
   app.get('/api/dataset-selections', async () => ({ items: datasets().map(({path, ...d}) => d) }));
   app.get<{Params:{id:string}}>('/api/datasets/:id/viewer', async request => viewer.metadata(request.params.id));
@@ -111,7 +114,8 @@ export async function buildServer(options: {ui?: boolean} = {}) {
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const { app } = await buildServer();
-  await app.listen({ host: '127.0.0.1', port: Number(process.env.PORT ?? 38100) });
-  console.log(`Veritas: http://localhost:${process.env.PORT ?? 38100}`);
+  const {host, port} = serverConfig();
+  await app.listen({ host, port });
+  console.log(`Veritas listening on ${host}:${port}`);
   for (const signal of ['SIGINT', 'SIGTERM'] as const) process.once(signal, () => { void app.close().then(() => process.exit(0)); });
 }

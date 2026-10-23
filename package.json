@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
     "start": "NODE_ENV=production tsx src/server/main.ts",
-    "test": "tsx --test test/*.test.ts",
+    "test": "tsx --test --test-concurrency=1 test/*.test.ts",
     "test:integration": "tsx scripts/demo.ts",
     "demo:serve": "tsx scripts/serve-demo.ts",
     "check:publication": "node scripts/check-publication.mjs"
@@ -43,6 +43,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "tailwind-merge": "^3.7.0",
+    "tsx": "^4.20.0",
     "unified": "^11.0.5",
     "yaml": "^2.9.1"
   },
@@ -53,7 +54,6 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.0.0",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.20.0",
     "typescript": "^5.9.0",
     "vite": "^7.0.0"
   }
