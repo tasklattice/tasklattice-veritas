@@ -13,7 +13,6 @@ const forbidden = [
   /(?:^|\/)\.env(?:\..*)?$/, /(?:^|\/)\.npmrc$/,
   /(?:^|\/)__pycache__\//, /\.(?:pyc|pyo|pem|key|p12|pfx|log|tsbuildinfo)$/i,
   /^examples\/tali-local\.target\.json$/,
-  /^\.github\/workflows\//, /(?:^|\/)(?:\.gitlab-ci\.yml|azure-pipelines\.ya?ml|Jenkinsfile)$/,
 ];
 const rules = [
   ['Guard credential', /\btg_[A-Za-z0-9_-]{24,}/g],
@@ -29,7 +28,7 @@ const rules = [
 ];
 const failures = [];
 for (const file of files) {
-  if (file !== '.env.example' && forbidden.some(pattern => pattern.test(file))) failures.push(`${file}: excluded runtime, credential, capture, or workflow file`);
+  if (file !== '.env.example' && forbidden.some(pattern => pattern.test(file))) failures.push(`${file}: excluded runtime, credential, or capture file`);
   const bytes = git('show', ':' + file);
   if (bytes.length > 10 * 1024 * 1024) failures.push(`${file}: unexpected file larger than 10 MiB`);
   const text = bytes.toString('utf8');

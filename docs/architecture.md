@@ -38,9 +38,11 @@ src/server/store.ts (single local queue)     |
 
 There is no separate Suite and no need to duplicate Tali Guard's internal Profile, Router or Guardrail objects. Configure and publish those in Guard, then create a Veritas Target using the Endpoint runtime URL. Veritas manages that Target connection independently; it does not create a Guard Endpoint. The UI contains one card per original source. Starting a test invokes `src/server/prepare-evaluation.ts`, verifies the pinned local files without network access, converts each selected source scope and freezes a combined case snapshot, per-source provenance and the scoring implementation. Each source keeps its original Dataset ID, revision, license and file checksums. Source options are independent; a limited UI/API test caps each Dataset before repeats, so the first source cannot consume the entire limit. Every selected source must contribute evaluable cases before any testing traffic starts. Internal converted copies are not a separate user selection.
 
-Preparation completes before the API returns HTTP 202; the UI shows a preparing state, then navigates to the queued Run. Preparation failures produce a form error before HTTP testing traffic. A process restart during preparation requires applying again; only queued/running execution jobs persist.
+Submission validates configuration, reserves the Report ID, freezes the request/Target, and returns HTTP 202 before preparation. The local queue performs source verification/conversion, execution and grade/report persistence. Atomic job metadata records `queued → preparing → running → scoring → completed/failed/cancelled`; the stage field/history additionally records report generation. Preparation callbacks yield between row batches and expose real Dataset/file/row/case counters. Failures and cancellation remain inspectable in the same Report without sending Target traffic. A restart marks unfinished work interrupted; this version does not automatically resume jobs.
 
-`src/core/datasets.ts` converts the 15 catalog sources using Node libraries. `src/core/raw.ts` downloads and verifies pinned files, reuses local HF credentials if available, and works with local archives offline. Raw text is untrusted data. It never becomes a system instruction or Guard policy.
+`core/sampling.ts` uses deterministic SHA-256 case ranking (`case-sampling-v1`) for random samples. Stratified samples allocate proportional quotas with minimum one case per present expected-action label, then rank within each stratum using the same explicit seed. Random and stratified sampling read the complete chosen scope; source-order mode retains its bounded conversion path. Per-source provenance freezes population/selected label counts, seed, quotas and actual selected IDs. Randomness controls the input selection only; model responses may still vary.
+
+`src/core/datasets.ts` converts the 17 catalog sources using Node libraries. `src/core/raw.ts` downloads and verifies pinned files, reuses local HF credentials if available, and works with local archives offline. CredData uses a local reconstruction step before conversion. Raw text is untrusted data. It never becomes a system instruction or Guard policy.
 
 ## Reusable backend entry point
 
@@ -75,15 +77,22 @@ HTTP requests have a timeout and response-size bound, and do not retry or redire
 
 New runs retain evidence schema 3 and use configurable scorer `guard-rules-v1`. promptfoo grades are saved per attempt and reports aggregate those saved results. Imported historical case files remain readable. Compatible legacy schema-3 grading retains its deterministic fallback; unknown historical scorers and schema-1/2 reports are preserved. An explicit offline re-score creates a separate version rather than overwriting a historical report. See [Scoring](scoring.md).
 
-Baseline comparison requires identical selected cases, scorer/provider implementation, engine version, repeat, concurrency, protocol, output mode, evidence type and full coverage. Use it to compare Endpoint configurations within a protocol. Rates and caller latency are reported; Guard-side cost remains explicitly unavailable until a trace/cost integration is implemented.
+The legacy relative gate requires identical cases and execution settings. The Report Compare tab additionally calls read-only `core/comparison.ts`: align saved case IDs and canonical case content, bind selected saved scoring versions, and classify new failures/fixes only when all repeated actions and grades are consistent. Errors/skips/missing evidence are incomparable; repeated variation is unstable. Different cohorts permit shared-case inspection but withhold overall deltas. Concurrency differences withhold latency deltas. Comparison has no Provider, credential lookup or fresh assertion execution; offline re-scoring remains the promptfoo replay path. Guard-side cost remains unavailable until a trace/cost integration exists.
 
 The first UI/API is a trusted local workbench, not a hardened multi-user deployment. Enterprise authentication, audit, destination allowlists and secret storage must be designed before remotely exposing it.
+
+The production image serves built frontend assets and the API in the same
+process. Compose publishes on host loopback; the Helm chart uses one replica,
+`Recreate` upgrades, a ClusterIP Service and one persistent state volume.
+Application paths remain stable through symlinks into `/var/lib/veritas`, so
+source fingerprints and saved artifacts keep their existing layout. See
+[Deployment](deployment.md) for the storage, access and credential contract.
 
 Reference: [promptfoo Node SDK](https://www.promptfoo.dev/docs/usage/node-package/).
 
 ## Resource lifecycle and Dataset viewer
 
-The desktop app separates Report list/detail, Target CRUD and source browsing. Reports use Overview/Checks/Configuration tabs; a check drawer fetches its saved source case only when opened. Targets support stable-ID rename/configuration updates and per-resource version checks. A queued Run uses an owner-only immutable Target file, so subsequent updates/deletion do not redirect traffic.
+The desktop app separates Report list/detail, Target CRUD and source browsing. Reports use Overview/Checks/Configuration/Compare tabs; a check drawer fetches its saved source case only when opened. Targets support stable-ID rename/configuration updates and per-resource version checks. A queued Run uses an owner-only immutable Target file, so subsequent updates/deletion do not redirect traffic.
 
 Target deletion physically removes the managed configuration and state directory; Report deletion removes its artifacts and job files. Neither has a restore API or UI. Active Runs and Reports used as active baselines cannot be deleted. Recreating a Target uses a fresh ID; a rename retains identity. Bundled example configurations are imported into the managed registry once, preserving older IDs; deleting a managed Target never deletes the documentation example. Published Guard services remain independent. Old tombstones are read only for compatibility so earlier deletions do not reappear; the upgrade does not bulk-purge historical user files.
 
@@ -103,7 +112,7 @@ References: [TanStack paginated queries](https://tanstack.com/query/latest/docs/
 
 ## Dataset discovery and data browsing
 
-The Dataset operator's task is to locate a suitable original benchmark, inspect source annotations and then start Testing. `web/dataset-filters.ts` groups the fifteen sources by capability, source and archive availability. Facets use OR within a group and AND across groups, and counts exclude the current group's selection. Available locally describes the archive, not a guarantee that policy-dependent labels are ready to score. The catalog search matches source metadata, not harmful record text.
+The Dataset operator's task is to locate a suitable original benchmark, inspect source annotations and then start Testing. `web/dataset-filters.ts` groups catalog sources by capability, source and archive availability. Facets use OR within a group and AND across groups, and counts exclude the current group's selection. Available locally describes the archive, not a guarantee that policy-dependent labels are ready to score. The catalog search matches source metadata, not harmful record text.
 
 `web/dataset-browser.tsx` presents compact source repository cards beside a sticky, collapsible filter panel modeled on Guard's Policy Library. Details separate the local Dataset card/provenance from original data browsing. `web/dataset-viewer.tsx` uses Query-backed scope/search/sort/filter/pages and separately cached full rows for in-place expansion and an optional inspector. The view URL restores location without making a Run or changing recommended Testing settings. Aegis browsing adds explicit upstream train/validation groups; training data remains unavailable as an implicit Testing default.
 

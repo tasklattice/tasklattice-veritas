@@ -19,18 +19,20 @@ Paths in the second column are relative to `data/raw/<id>/<revision>/`.
 | `do-not-answer` | `data_en.csv` | Input | Questions use a strict-refusal policy expecting block; this is a policy mapping, not a response label. |
 | `harmbench` | `data/behavior_datasets/harmbench_behaviors_text_test.csv` | Input | Standard behaviors use strict-refusal policy. Other functional categories need review. Context is retained as metadata; direct text scanning is not the full official HarmBench testing. |
 | `jailbreakbench` | `data/harmful-behaviors.csv`, `data/benign-behaviors.csv` | Input | `Goal` is the input; harmful expects block, benign expects allow. `Target` is an attack target prefix, not a saved model response. |
+| `jailbreakbench-attacks` | `attack-artifacts/**` (18 method/model scopes) | Input | Nonempty submitted `prompt` expects block. Never substitute the goal or model response; original attack success is not a detector label. |
 | `wildjailbreak` | `eval/eval.tsv` | Input | `label=0/1` maps to allow/block and is checked against `data_type`. Label conflicts fail conversion; missing labels remain unknown. |
 | `deepset` | `data/test-00000-of-00001-701d16158af87368.parquet` | Input | `label=1` marks injection. Tests text detection, not an indirect-injection execution chain. |
 | `gandalf` | `data/test-00000-of-00001-bc92128b9288a6d1.parquet` | Input | Known adversarial corpus expects block by policy. `similarity` is not a safety label. There is no benign denominator. |
 | `xstest` | `xstest_prompts.csv` | Input | Uses the safe/unsafe label; sensitive vocabulary alone does not imply block. |
 | `or-bench` | `or-bench-hard-1k.csv`, `or-bench-toxic.csv` | Input | Hard examples expect allow; toxic examples expect block. `or-bench-80k.csv` is available through an explicit config or local import. |
+| `creddata` | `records/reviewed.jsonl` (locally reconstructed) | Input; optional standalone output | Passwords, API keys, tokens and private keys: eligible T → block, F → allow. Overlapping annotations are merged; unknown/out-of-scope labels are separate. [Reconstruction and usage](creddata.md). |
 | `pii` | `data/validation/1english_openpii_8k.jsonl` | Input; output can use standalone mode | `privacy_mask` annotated values require transform and removal. Empty annotations expect allow. Custom license terms apply. |
 | `topic-control` | `canttalkaboutthis_topic_control_human_test_set.jsonl` | Input | Requires `--domain banking`; imports conversation user turns and distractors. Expected actions require target-policy review. Reference system instructions do not configure the Guard. |
 | `safety-prompts` | `typical_safety_scenarios.json` | Input; optional `--phase both` | Requires a JSON category through `--field`. The preparation example enumerates all seven categories. A category is not an allow/block label; cases need review. |
 
 Some curated benchmarks are named `train` by the upstream loader. Manifests preserve the actual config/split. For datasets with held-out files, the default selection uses test or validation. Aegis test selection does not prove it was unseen by every possible target model; record the tested model's training provenance separately.
 
-## Prepare every selected record from all 15 sources
+## Prepare selected records from the catalog
 
 ```sh
 npm run veritas -- datasets prepare \
@@ -40,7 +42,7 @@ npm run veritas -- datasets prepare \
   --out data/evaluation-packages-v1
 ```
 
-The preparation command uses the shared TypeScript importer with `--limit 0`, consumes only local raw files, and records a preparation plan with the pinned archive file paths. It produces 23 packages: the 15 sources plus separate JailbreakBench and OR-Bench splits and separate Safety-Prompts categories. Aegis uses `--phase both`; BeaverTails uses output; other sources use their catalog default direction. No Endpoint is called during preparation.
+The preparation command uses the shared TypeScript importer with `--limit 0`, consumes only local raw files, and records a preparation plan with the pinned archive file paths. The current catalog produces 42 packages across 17 sources, including separate JailbreakBench attack scopes, JBB-Behaviors and OR-Bench splits, and Safety-Prompts categories. Reconstruct CredData first if preparing the complete catalog. Aegis uses `--phase both`; BeaverTails uses output; other sources use their catalog default direction. No Endpoint is called during preparation.
 
 Use `--dataset wildjailbreak` to select one source ID; repeat the command with a new output root for another selection. `--limit 2` can verify conversion with two cases per package; omitting it imports the full selected contents. Choose a new output root for every version. The raw archive is broader than these testing selections: it also contains training data, additional variants, images, hashes, licenses, and documentation. Auxiliary binary files are not submitted as text requests.
 
@@ -138,7 +140,7 @@ Runs reject missing expectations by default. `--skip-unlabeled` explicitly exclu
 npm run veritas -- datasets download
 ```
 
-The verified archive contains all 15 listed sources, 360 files, and 1,973,932,164 source bytes. HF snapshots include every repository file at the pinned revision: all Aegis splits, ToxicChat versions, BeaverTails 30k/330k, WildJailbreak train/eval, OR-Bench subsets, PII languages, human/generated topic-control data, and both Safety-Prompts JSON files. GitHub archives include `data/**`, root README files, and licenses, including HarmBench auxiliary data.
+The current lock covers 17 sources and 790 files (2,174,654,535 declared bytes), including CredData's locally reconstructed records. These are lock totals, not a claim that all files are already present. HF snapshots include every repository file at the pinned revision: all Aegis splits, ToxicChat versions, BeaverTails 30k/330k, WildJailbreak train/eval, OR-Bench subsets, PII languages, human/generated topic-control data, and both Safety-Prompts JSON files. GitHub archives include `data/**`, root README files, and licenses, including HarmBench auxiliary data and original JailbreakBench attack artifacts.
 
 Check `data/raw/download-summary.json` for complete/missing datasets and each `_download-manifest.json` / `SHA256SUMS` for file integrity. The download step does not execute repository code or deserialize pickle files. Copy `data/raw/` and `catalog/raw-datasets.lock.json` to an isolated environment; no HF cache is required to retain the archive.
 

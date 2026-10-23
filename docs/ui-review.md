@@ -14,8 +14,9 @@ Veritas is a desktop testing workbench for a trusted local operator. Its primary
 - Select multiple Datasets; retain per-source scope and direction across step changes.
 - Retain the selected Target and execution draft while moving backward, searching, or recovering from a validation error.
 - Validate before advancing. Review must show the Target, source scopes, concurrency, repeats, scoring rules, and honest check-count bounds.
-- During conversion, disable duplicate submission and show preparation feedback. Preparation happens before a Report ID is returned.
-- After queuing, open the Report immediately. Verify active case identity, Dataset, direction, repeat, phase, elapsed time, recent completions, polling errors/retry, and cancellation.
+- Verify source-order, random and stratified selection; validate/freeze seeds, per-source limits and expected-action label quotas. Review must retain the selected method and seed. Full-scope requests must not inherit a stale sample setting.
+- Disable duplicate submission only until a Report ID is returned. Open the Report before conversion and show Dataset/file counters, converted/selected cases, cancellation and preparation errors.
+- Verify preparation, execution and scoring/report stages. Inspect active case identity, Dataset, direction, repeat, elapsed time, recent completions, polling errors/retry, cancellation and retained phase history. Short scoring stages may complete between polling intervals.
 
 ## Report
 
@@ -24,6 +25,7 @@ Veritas is a desktop testing workbench for a trusted local operator. Its primary
 - Open unexpected previews and recent finished checks to the frozen sample and complete request/response evidence. Show scoring pending while a Run is active.
 - Verify Dataset/result filters, empty states, pagination, CSV export of every recorded attempt, and version-specific JSON/Markdown downloads.
 - Re-score saved evidence, switch versions, and confirm that original execution data and Target-call counts stay unchanged.
+- Select a Baseline in Compare. Verify new failures, fixed cases, unstable repeats, incomparable cases, both evidence inspectors, label/cohort/version mismatch explanations, filters, pagination and retained Baseline links. No comparison action sends Target traffic.
 - Cancel an active test before deleting its Report. Deletion is permanent and has no restore flow.
 
 ## Datasets and Targets
