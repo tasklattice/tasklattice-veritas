@@ -1,4 +1,10 @@
+import {attackTemplateCatalog} from '../core/attack-templates.js';
+import {freezeAdvBenchAttacks} from '../core/attacks.js';
 import Fastify from 'fastify';
+import {jevDetection,jevLabels} from '../shared/detection.js';
+import {detectionCsv,detectionMarkdown} from '../core/guard-evidence.js';
+import {piiLabels} from '../shared/pii.js';
+import {piiCsv,piiMarkdown} from '../core/pii-report.js';
 import {classificationMarkdown} from '../core/classification.js';
 import {upstreamCard,upstreamCardAsset} from './upstream-card.js';
 import { existsSync, readFileSync } from 'node:fs';
@@ -32,6 +38,14 @@ export async function buildServer(options: {ui?: boolean} = {}) {
   app.get<{Params:{id:string}}>('/api/datasets/:id/card/raw',async(request,reply)=>{const card=upstreamCard(request.params.id);return reply.type('text/markdown; charset=utf-8').header('Content-Disposition','attachment; filename="README.md"').header('X-Content-Type-Options','nosniff').send(card.raw);});
   app.get<{Params:{id:string};Querystring:{path:string}}>('/api/datasets/:id/card/asset',async(request,reply)=>{const asset=upstreamCardAsset(request.params.id,request.query.path);return reply.type(asset.mime).header('X-Content-Type-Options','nosniff').send(asset.bytes);});
   app.get('/api/catalog', async () => ({ items: catalog() }));
+  app.get('/api/datasets/advbench/attack-templates',async()=>({items:(await attackTemplateCatalog()).map(({body:_body,...metadata})=>metadata)}));
+  app.post('/api/datasets/advbench/attacks', async request => {
+    const input=(request.body??{}) as JsonObject;
+    if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['seed','goalLimit','controlLimit','strategies','templates'].includes(k)))throw new Error('Expected seed, goalLimit, controlLimit, templates and offline strategies');
+    const out=join(root,'data/imports','advbench-attacks-'+randomUUID().slice(0,8));
+    await freezeAdvBenchAttacks({out,seed:input.seed,goalLimit:input.goalLimit,controlLimit:input.controlLimit,strategies:input.strategies,templates:input.templates});
+    const selection=datasets().find(d=>d.path===out)!;const {path:_path,...item}=selection;return {item};
+  });
   app.post('/api/datasets/import', async request => {
     const input = request.body as JsonObject, entry = catalog().find(e => e.id === input.dataset);
     if (!entry) throw new Error('Unknown dataset');
@@ -50,6 +64,7 @@ export async function buildServer(options: {ui?: boolean} = {}) {
   app.put<{Params:{id:string}}>('/api/targets/:id', async request => ({item:publicTarget(updateTarget(request.params.id,request.body as JsonObject))}));
   app.delete<{Params:{id:string}}>('/api/targets/:id', async request => ({deleted:deleteTarget(request.params.id).id}));
   app.post('/api/targets', async request => ({item:publicTarget(saveTarget(request.body as JsonObject))}));
+  app.get<{Params:{id:string};Querystring:{baseline:string;scoring?:string;baselineScoring?:string;filter?:string;dataset?:string;offset?:string;limit?:string}}>('/api/runs/:id/compare',async request=>store.compare(request.params.id,request.query.baseline,{...request.query,offset:request.query.offset===undefined?undefined:Number(request.query.offset),limit:request.query.limit===undefined?undefined:Number(request.query.limit)}));
   app.get<{Params:{id:string}}>('/api/runs/:id/activity', async request => store.activity(request.params.id));
   app.get('/api/runs', async () => ({ items: store.list().filter(r => !r.name.endsWith('/evaluation')).map(({...r}) => { delete (r as any).path; return r; }) }));
   app.delete<{Params:{id:string}}>('/api/runs/:id', async request => ({deleted:store.remove(request.params.id).id}));
@@ -60,10 +75,10 @@ export async function buildServer(options: {ui?: boolean} = {}) {
   app.get<{Params: {id: string}; Querystring: {offset?: string; limit?: string; filter?: string; dataset?: string; scoring?: string}}>('/api/runs/:id/attempts', async request => {
     const offset = Math.max(0, Number(request.query.offset) || 0), limit = Math.min(200, Math.max(1, Number(request.query.limit) || 50));
     const filter = request.query.filter ?? 'all';
-    if (!['all', 'unexpected', 'error', 'skipped'].includes(filter)) throw new Error('Unknown result filter');
+    if (!['all', 'unexpected', 'error', 'skipped',...Object.keys(jevLabels).map(k=>'jev-'+k),...Object.keys(piiLabels).map(k=>'pii-'+k)].includes(filter)) throw new Error('Unknown result filter');
     const allEvidence = store.evidence(request.params.id,request.query.scoring);
     const evidence = request.query.dataset ? allEvidence.filter(a => a.dataset === request.query.dataset) : allEvidence, unexpected = evidence.filter(a => a.status === 'completed' && a.grade?.pass === false);
-    const selected = filter === 'unexpected' ? unexpected : filter === 'error' || filter === 'skipped' ? evidence.filter(a => a.status === filter) : evidence;
+    const selected = filter.startsWith('pii-') ? evidence.filter(a=>a.pii?.status===filter.slice(4)) : filter.startsWith('jev-') ? evidence.filter(a=>a.status==='completed'&&jevDetection(a).status===filter.slice(4)) : filter === 'unexpected' ? unexpected : filter === 'error' || filter === 'skipped' ? evidence.filter(a => a.status === filter) : evidence;
     return {items: selected.slice(offset, offset + limit), total: selected.length, allTotal: allEvidence.length, datasetTotal: evidence.length, unexpected: unexpected.length, errors: evidence.filter(a => a.status === 'error').length, skipped: evidence.filter(a => a.status === 'skipped').length};
   });
   app.get<{Params: {id: string; file: string};Querystring:{scoring?:string}}>('/api/runs/:id/files/:file', async (request, reply) => {
@@ -73,6 +88,9 @@ export async function buildServer(options: {ui?: boolean} = {}) {
     const path = join(scoringDirectory(dir,scoringId), request.params.file);
     if (!existsSync(path)) return reply.code(404).send({ error: 'Artifact is not ready' });
     let content: string | Buffer = readFileSync(path);
+    if(request.params.file==='results.csv')content=piiCsv(detectionCsv(content.toString(),store.evidence(request.params.id,scoringId)),store.evidence(request.params.id,scoringId));
+    if(request.params.file==='report.md'&&!content.toString().includes('## PII outcomes'))content=content.toString()+'\n'+piiMarkdown(store.detail(request.params.id,scoringId).report!.summary);
+    if(request.params.file==='report.md'&&!content.toString().includes('## JEV model evidence'))content=content.toString()+'\n'+detectionMarkdown(store.detail(request.params.id,scoringId).report!.summary);
     if (request.params.file === 'report.json') content = JSON.stringify(store.detail(request.params.id,scoringId).report,null,2) + '\n';
     if (request.params.file === 'report.md' && !content.toString().includes('## Detection metrics')) content = content.toString() + '\n' + classificationMarkdown(store.detail(request.params.id,scoringId).report!.summary);
     return reply.header('content-disposition', `attachment; filename="${request.params.file}"`).type(request.params.file.endsWith('.json') ? 'application/json' : request.params.file.endsWith('.csv') ? 'text/csv; charset=utf-8' : 'text/plain; charset=utf-8').send(content);

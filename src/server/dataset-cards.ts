@@ -1,11 +1,13 @@
 import type { DatasetCard, DatasetItem, JsonObject } from '../shared/types.js';
 
 const descriptions: Record<string,string> = {
+  creddata: 'Passwords, API keys, tokens and private keys from pinned Samsung CredData. Reconstructed with upstream obfuscation. Reviewed credential positives expect block; uncertain and out-of-scope labels are kept separately.',
   aegis: 'Content-safety prompts and saved responses with independent safety labels. The test selection uses the test split.',
   toxicchat: 'Real chat prompts annotated for toxicity, for testing unsafe-input detection and false positives.',
   beavertails: 'Model responses annotated for safety. Original prompts are retained for paired output testing.',
   'do-not-answer': 'Questions covering risk areas where a strict-refusal policy expects rejection.',
-  jailbreakbench: 'Harmful and benign behavior prompts for testing jailbreak detection and false positives.',
+  jailbreakbench: 'Behavior goals (Goal) for content-safety decisions, not submitted jailbreak attack prompts. The benign split supplies controls.',
+  'jailbreakbench-attacks': 'Official submitted attack prompts with method and attacked-model provenance. Add benign controls; upstream attack success is not a detector label.',
   wildjailbreak: 'Adversarial harmful and benign prompts. The test configuration uses the upstream train split.',
   deepset: 'Prompt-injection texts with binary labels for testing direct text detection.',
   gandalf: 'Adversarial prompts from the Gandalf challenge. This corpus does not supply a benign comparison group.',

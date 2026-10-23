@@ -1,6 +1,11 @@
+import {benchmarkScope} from '../shared/benchmark.js';
 import type {Attempt, Case, JsonObject} from '../shared/types.js';
 
+import {piiSummary} from '../shared/pii.js';
+import {jevSummary} from '../shared/detection.js';
+
 const ratio = (n: number, d: number) => d ? n / d : null;
+
 /** Detection metrics are independent of scorer assertions. Block and transform are interventions. */
 export function classificationMetrics(records: Attempt[], cases: Case[]) {
   const labels = new Map(cases.map(c => [c.id, c.expected]));
@@ -23,9 +28,10 @@ export function withClassification(report: JsonObject, snapshot: JsonObject, rec
   const cases = snapshot.cases as Case[];
   const add = (summary: JsonObject, selected: Case[]) => {
     const ids = new Set(selected.map(c => c.id));
-    return {...summary, ...classificationMetrics(records.filter(r => ids.has(r.caseId)), selected)};
+    const scoped=records.filter(r=>ids.has(r.caseId));
+    return {...summary, ...classificationMetrics(scoped, selected), jev:jevSummary(scoped), pii:piiSummary(scoped,selected,snapshot.repeat)};
   };
-  return {...report, summary: add(report.summary, cases),
+  return {...report, benchmark: benchmarkScope(snapshot), summary: add(report.summary, cases),
     datasets: Object.fromEntries(Object.entries(report.datasets ?? {}).map(([id, s]) => [id, add(s as JsonObject, cases.filter(c => c.dataset === id))])),
     groups: Object.fromEntries(Object.entries(report.groups ?? {}).map(([id, s]) => [id, add(s as JsonObject, cases.filter(c => `${c.dataset}/${c.phase}` === id))]))};
 }

@@ -22,7 +22,7 @@ test('LiteLLM paired output, input rejection, errors, PII removal and standalone
   assert.equal(r.steps[1].request.guardrail_context.query,'Safe input');
   const skipped=await call(p,{phase:'output',prompt:'[BLOCK]',text:'Never sent'});assert.equal(skipped.status,'skipped');assert.equal(skipped.steps.length,1);
   for(const text of ['[ERROR]','[MALFORMED]','[UNKNOWN]','[NO_ROUTE]']){const e=await call(p,{text});assert.equal(e.status,'error');assert.equal(score(e,{expected:'block'}).pass,false);}
-  const pii=await call(p,{text:'Email person@example.test'});assert.ok(score(pii,{expected:'transform',pii:['person@example.test']}).pass);
+  const pii=await call(p,{text:'Email person@example.test'});assert.ok(score(pii,{expected:'transform',text:'Email person@example.test',pii:['person@example.test']}).pass);
   const single=await call(new Provider({config:{target:{url:mock.url,outputMode:'standalone'}}}),{phase:'output'});assert.equal(single.steps.length,1);assert.equal(single.callId,null);assert.equal(single.status,'completed');
  }finally{await mock.close();}
 });

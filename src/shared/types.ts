@@ -3,8 +3,14 @@ export type Action = 'allow' | 'block' | 'transform';
 export type Phase = 'input' | 'output';
 export type Adapter = 'litellm-generic-guardrail' | 'f5-scan';
 export type JsonObject = Record<string, any>;
+export interface GuardContext {
+  query?: string;
+  targetSource?: 'user_input' | 'retrieved_content' | 'tool_output';
+  memory?: { operation: 'read' | 'write'; sourceQuery?: string };
+}
 export interface Case {
   id: string; dataset: string; phase: Phase; text: string; expected: Action | null;
+  guardContext?: GuardContext;
   prompt?: string; pii?: string[]; messages?: { role: 'user' | 'assistant'; content: string }[];
   metadata?: JsonObject; [key: string]: unknown;
 }
@@ -14,6 +20,7 @@ export interface Target {
 }
 export interface Step {
   phase: Phase; request: JsonObject; response?: JsonObject; startedAt: string; httpStatus?: number;
+  evaluationEvidence?: import('./detection.js').EvaluationEvidence;
   headers?: Record<string, string>; action?: Action; texts?: string[]; scanId?: string;
   status?: 'completed' | 'error'; error?: string; latencyMs: number;
 }
@@ -34,9 +41,10 @@ export interface DatasetCard {
 export interface EndpointItem { id: string; name: string; endpoint: Target; credentialAvailable: boolean }
 export interface TargetItem { id: string; name: string; target: Target; credentialAvailable: boolean; updatedAt?: string; version?: string }
 export interface DatasetSelection { datasetId: string; config?: string; split?: string; field?: string; domain?: string; phase?: Phase }
-export interface RunRequest { scorer?: ScorerConfig; datasets?: DatasetSelection[]; limitPerDataset?: number; selectionId?: string; endpointId?: string; config?: string; split?: string; field?: string; domain?: string; gate?: JsonObject; evidence?: 'endpoint' | 'synthetic-local-demo'; datasetId?: string; targetId?: string; repeat: number; concurrency: number; limit?: number; phase?: Phase; skipUnlabeled?: boolean; baselineId?: string }
+export interface RunRequest { testPurpose?: import('./benchmark.js').TestPurpose; sampling?: import('./testing.js').SamplingConfig; scorer?: ScorerConfig; datasets?: DatasetSelection[]; limitPerDataset?: number; selectionId?: string; endpointId?: string; config?: string; split?: string; field?: string; domain?: string; gate?: JsonObject; evidence?: 'endpoint' | 'synthetic-local-demo'; datasetId?: string; targetId?: string; repeat: number; concurrency: number; limit?: number; phase?: Phase; skipUnlabeled?: boolean; baselineId?: string }
 export interface RunItem {
-  id: string; name: string; status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted';
+  id: string; name: string; stage?: import('./testing.js').RunStage; stageHistory?: import('./testing.js').RunStage[];
+  status: 'queued' | 'preparing' | 'scoring' | 'running' | 'completed' | 'failed' | 'cancelled' | 'interrupted';
   createdAt: string; targetName?: string; targetId?: string; finishedAt?: string; datasetIds?: string[]; datasetId?: string; selectionId?: string; endpointId?: string; endpointName?: string; adapter?: Adapter; dataset?: string; target?: string; error?: string;
   evidence?: string; progress?: { completed: number; total: number }; summary?: JsonObject; gate?: JsonObject; exitCode?: number;
 }

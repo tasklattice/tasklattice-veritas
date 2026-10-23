@@ -85,7 +85,7 @@
       "license": "mit",
       "gated": false,
       "defaultPhase": "input",
-      "notes": "Goal is the input. Target is an attack target prefix, not a model response. Both splits imported by default.",
+      "notes": "Behavior goals (Goal), not attack prompts. Harmful maps to block for content-safety testing. For Jailbreak checks, select only benign controls and add JailbreakBench Attacks.",
       "url": "https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors",
       "files": [
         {
@@ -98,6 +98,127 @@
           "config": "behaviors",
           "split": "benign",
           "path": "data/benign-behaviors.csv",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "jailbreakbench-attacks",
+      "source": "github",
+      "repo": "JailbreakBench/artifacts",
+      "revision": "909e68c01d94222b8ad2e397a017e2e12e2adb73",
+      "license": "mit",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Official submitted attack prompts, not JBB-Behaviors goals. Blank prompts are excluded; upstream jailbroken is original-LLM success, not a detector label. Add JBB-Behaviors benign controls to measure false positives.",
+      "url": "https://github.com/JailbreakBench/artifacts",
+      "files": [
+        {
+          "config": "DSN/white_box/llama-2-7b-chat-hf",
+          "split": "attacks",
+          "path": "attack-artifacts/DSN/white_box/llama-2-7b-chat-hf.json",
+          "default": true
+        },
+        {
+          "config": "DSN/white_box/vicuna-13b-v1.5",
+          "split": "attacks",
+          "path": "attack-artifacts/DSN/white_box/vicuna-13b-v1.5.json",
+          "default": true
+        },
+        {
+          "config": "GCG/transfer/gpt-3.5-turbo-1106",
+          "split": "attacks",
+          "path": "attack-artifacts/GCG/transfer/gpt-3.5-turbo-1106.json",
+          "default": true
+        },
+        {
+          "config": "GCG/transfer/gpt-4-0125-preview",
+          "split": "attacks",
+          "path": "attack-artifacts/GCG/transfer/gpt-4-0125-preview.json",
+          "default": true
+        },
+        {
+          "config": "GCG/white_box/llama-2-7b-chat-hf",
+          "split": "attacks",
+          "path": "attack-artifacts/GCG/white_box/llama-2-7b-chat-hf.json",
+          "default": true
+        },
+        {
+          "config": "GCG/white_box/vicuna-13b-v1.5",
+          "split": "attacks",
+          "path": "attack-artifacts/GCG/white_box/vicuna-13b-v1.5.json",
+          "default": true
+        },
+        {
+          "config": "JBC/manual/gpt-3.5-turbo-1106",
+          "split": "attacks",
+          "path": "attack-artifacts/JBC/manual/gpt-3.5-turbo-1106.json",
+          "default": true
+        },
+        {
+          "config": "JBC/manual/gpt-4-0125-preview",
+          "split": "attacks",
+          "path": "attack-artifacts/JBC/manual/gpt-4-0125-preview.json",
+          "default": true
+        },
+        {
+          "config": "JBC/manual/llama-2-7b-chat-hf",
+          "split": "attacks",
+          "path": "attack-artifacts/JBC/manual/llama-2-7b-chat-hf.json",
+          "default": true
+        },
+        {
+          "config": "JBC/manual/vicuna-13b-v1.5",
+          "split": "attacks",
+          "path": "attack-artifacts/JBC/manual/vicuna-13b-v1.5.json",
+          "default": true
+        },
+        {
+          "config": "PAIR/black_box/gpt-3.5-turbo-1106",
+          "split": "attacks",
+          "path": "attack-artifacts/PAIR/black_box/gpt-3.5-turbo-1106.json",
+          "default": true
+        },
+        {
+          "config": "PAIR/black_box/gpt-4-0125-preview",
+          "split": "attacks",
+          "path": "attack-artifacts/PAIR/black_box/gpt-4-0125-preview.json",
+          "default": true
+        },
+        {
+          "config": "PAIR/black_box/llama-2-7b-chat-hf",
+          "split": "attacks",
+          "path": "attack-artifacts/PAIR/black_box/llama-2-7b-chat-hf.json",
+          "default": true
+        },
+        {
+          "config": "PAIR/black_box/vicuna-13b-v1.5",
+          "split": "attacks",
+          "path": "attack-artifacts/PAIR/black_box/vicuna-13b-v1.5.json",
+          "default": true
+        },
+        {
+          "config": "prompt_with_random_search/black_box/gpt-3.5-turbo-1106",
+          "split": "attacks",
+          "path": "attack-artifacts/prompt_with_random_search/black_box/gpt-3.5-turbo-1106.json",
+          "default": true
+        },
+        {
+          "config": "prompt_with_random_search/black_box/gpt-4-0125-preview",
+          "split": "attacks",
+          "path": "attack-artifacts/prompt_with_random_search/black_box/gpt-4-0125-preview.json",
+          "default": true
+        },
+        {
+          "config": "prompt_with_random_search/black_box/llama-2-7b-chat-hf",
+          "split": "attacks",
+          "path": "attack-artifacts/prompt_with_random_search/black_box/llama-2-7b-chat-hf.json",
+          "default": true
+        },
+        {
+          "config": "prompt_with_random_search/black_box/vicuna-13b-v1.5",
+          "split": "attacks",
+          "path": "attack-artifacts/prompt_with_random_search/black_box/vicuna-13b-v1.5.json",
           "default": true
         }
       ]
@@ -299,6 +420,31 @@
           "split": "test",
           "path": "data/behavior_datasets/harmbench_behaviors_text_test.csv",
           "default": true
+        }
+      ]
+    },
+    {
+      "id": "creddata",
+      "source": "github",
+      "repo": "Samsung/CredData",
+      "revision": "9a7a7e10b929de46a075ef4f5c83c4a310f3be57",
+      "license": "Apache-2.0 tooling; source files retain upstream licenses",
+      "gated": false,
+      "defaultPhase": "input",
+      "notes": "Pinned upstream obfuscated reconstruction. One request per overlapping annotated line group; preserve multiline private keys. Credential T -> block, F -> allow; X and positive categories outside passwords/API keys/tokens/private keys require review. Reviewed is a local scope, not an upstream held-out test split. Source class imbalance is retained. See docs/creddata.md.",
+      "url": "https://github.com/Samsung/CredData",
+      "files": [
+        {
+          "config": "credentials",
+          "split": "reviewed",
+          "path": "records/reviewed.jsonl",
+          "default": true
+        },
+        {
+          "config": "credentials",
+          "split": "needs-review",
+          "path": "records/needs-review.jsonl",
+          "default": false
         }
       ]
     }

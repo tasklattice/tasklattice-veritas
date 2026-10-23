@@ -1,14 +1,23 @@
+import {piiEvidence} from '../shared/pii.js';
+import { SnapshotMetadataCache } from './snapshot-metadata.js';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, rmSync, renameSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { root, hash, json, lines, save } from '../core/files.js';
 import { validateTarget } from '../core/provider.js';
 import { catalog } from '../core/datasets.js';
-import { prepareEvaluationDataset } from './prepare-evaluation.js';
+import {isActiveRun,validateSampling,type RunStage} from '../shared/testing.js';
+import {gateReport} from '../core/gates.js';
+import { prepareEvaluationDataset,resolveDatasetSelections } from './prepare-evaluation.js';
 import { buildDatasetCards, datasetIdForSelection } from './dataset-cards.js';
 import { score } from '../core/scoring.js';
 import {validateScorer} from '../shared/scorer.js';
 import {activeScoringId,scoringDirectory,scoringHistory,selectedScoring,rescoreRun,scoringBusy} from '../core/scoring-revisions.js';
+import {compareEvidence} from '../core/comparison.js';
+import {readEvidence} from '../core/grading.js';
+import {recordsForScoring} from '../core/execution-evidence.js';
+import {withEvaluationEvidence} from '../core/guard-evidence.js';
+import {validatePurpose} from '../shared/benchmark.js';
 import {withClassification} from '../core/classification.js';
 import type {ActivitySnapshot, RunActivity} from '../shared/activity.js';
 import type {Attempt} from '../shared/types.js';
@@ -117,11 +126,13 @@ function saveJob(path: string, value: JsonObject) {
 }
 
 export class RunStore {
+  constructor(private prepare = prepareEvaluationDataset) {}
   private controllers = new Map<string, AbortController>();
-  private queue: {id: string; options: RunOptions}[] = [];
+  private queue: {id: string; options: RunOptions; request?:RunRequest; catalogHash?:string}[] = [];
   private busy = false;
   private scoringController?: AbortController;
   private baselines = new Map<string,string>();
+  private snapshotMetadata = new SnapshotMetadataCache();
   list(): RunItem[] {
     const jobsDir = join(root, 'data/jobs');
     const jobs = existsSync(jobsDir) ? readdirSync(jobsDir).filter(n => n.endsWith('.json')).flatMap(n => {try {return [json<RunItem>(join(jobsDir, n))];} catch {return [];}}) : [];
@@ -130,7 +141,7 @@ export class RunStore {
     return [...dirs].flatMap(dir => {
       try {
         const job = jobsByName.get(relative(join(root, 'runs'), dir));
-        const snapshot = existsSync(join(dir, 'snapshot.json')) ? json(join(dir, 'snapshot.json')) : null;
+        const snapshot = this.snapshotMetadata.get(join(dir, 'snapshot.json'));
         const scoringId=activeScoringId(dir),view=scoringDirectory(dir,scoringId);
         const report = existsSync(join(view, 'report.json')) ? json(join(view, 'report.json')) : null;
         const gate = existsSync(join(view, 'gate.json')) ? json(join(view, 'gate.json')) : undefined;
@@ -138,10 +149,10 @@ export class RunStore {
         const deletedFile = join(root, 'data/deleted-reports', id + '.json'), deletedAt = existsSync(deletedFile) ? json(deletedFile).deletedAt : undefined;
         if (deletedAt) return [];
         let status = job?.status ?? (report ? ((report.summary?.errors || report.summary?.missing) ? 'failed' : 'completed') : 'interrupted');
-        if ((status === 'running' || status === 'queued') && !this.controllers.has(id)) status = 'interrupted';
-        return [{ ...job, id, name, status, targetId: job?.targetId ?? job?.endpointId ?? job?.target, targetName: job?.targetName ?? job?.endpointName, createdAt: job?.createdAt ?? snapshot?.createdAt ?? '', adapter: snapshot?.target?.adapter ?? report?.adapter ?? job?.adapter,
-          datasetIds: job?.datasetIds ?? [...new Set<string>(snapshot?.cases?.map((c: Case) => c.dataset) ?? [])],
-          evidence: snapshot?.evidence ?? report?.evidence ?? job?.evidence, dataset: job?.dataset ?? [...new Set(snapshot?.cases?.map((c: Case) => c.dataset))].join(', '),
+        if (isActiveRun(status) && !this.controllers.has(id)) status = 'interrupted';
+        return [{ ...job, id, name, status, targetId: job?.targetId ?? job?.endpointId ?? job?.target, targetName: job?.targetName ?? job?.endpointName, createdAt: job?.createdAt ?? snapshot?.createdAt ?? '', adapter: snapshot?.adapter ?? report?.adapter ?? job?.adapter,
+          datasetIds: job?.datasetIds ?? snapshot?.datasetIds ?? [],
+          evidence: snapshot?.evidence ?? report?.evidence ?? job?.evidence, dataset: job?.dataset ?? snapshot?.datasetIds.join(', ') ?? '',
           summary: report?.summary, gate, scoringId, scoringName:report?.scoring?.name, path: dir }];
       } catch { return []; }
     }).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -151,40 +162,75 @@ export class RunStore {
     const run = this.list().find(r => r.id === id); if (!run) failure('Report not found',404);
     const path = this.directory(id);
     const snapshot = existsSync(join(path, 'snapshot.json')) ? json<JsonObject>(join(path, 'snapshot.json')) : null;
-    const target = snapshot?.target,selected=selectedScoring(path,scoringId),history=scoringHistory(path);
-    const report = selected.report && snapshot ? withClassification(selected.report, snapshot, existsSync(join(path,'attempts.jsonl')) ? lines<Attempt>(join(path,'attempts.jsonl')) : []) : selected.report;
+    const pending=existsSync(join(root,'data/job-requests',id+'.json'))?json<JsonObject>(join(root,'data/job-requests',id+'.json')):null;
+    const target = snapshot?.target??(pending?json(join(root,'data/job-targets',id+'.json')):null),selected=selectedScoring(path,scoringId),history=scoringHistory(path);
+    const report = selected.report && snapshot ? withClassification(selected.report, snapshot, withEvaluationEvidence(path,recordsForScoring(path,existsSync(join(path,'attempts.jsonl')) ? lines<Attempt>(join(path,'attempts.jsonl')) : [],selected.saved?.metadata))) : selected.report;
     return {run:{...run,summary:report?.summary,gate:selected.gate}, report,
-      scoring:{selectedId:selected.id,versions:history,config:history.find(v=>v.id===selected.id)?.config,canRescore:snapshot?.schemaVersion===3 && !['running','queued'].includes(run.status) && existsSync(join(path,'execution.json')) && existsSync(join(path,'attempts.jsonl')),busy:scoringBusy(path),offline:selected.id!=='original'},
-      configuration: snapshot ? {gradesAvailable: !!selected.saved || snapshot.schemaVersion === 3 && snapshot.scorerHash === hash(readFileSync(join(root, 'src/core/scoring.ts'))), createdAt: snapshot.createdAt, repeat: snapshot.repeat, concurrency: snapshot.concurrency, caseCount: snapshot.cases?.length,
+      scoring:{selectedId:selected.id,versions:history,config:history.find(v=>v.id===selected.id)?.config,canRescore:snapshot?.schemaVersion===3 && !isActiveRun(run.status) && existsSync(join(path,'execution.json')) && existsSync(join(path,'attempts.jsonl')),busy:scoringBusy(path),offline:selected.id!=='original'},
+      configuration: snapshot ? {testPurpose:validatePurpose(snapshot.testPurpose),selection:snapshot.selection,gradesAvailable: !!selected.saved || snapshot.schemaVersion === 3 && snapshot.scorerHash === hash(readFileSync(join(root, 'src/core/scoring.ts'))), createdAt: snapshot.createdAt, repeat: snapshot.repeat, concurrency: snapshot.concurrency, caseCount: snapshot.cases?.length,
         engine: snapshot.engine, scorer: snapshot.scorer, skippedUnlabeled: snapshot.skippedUnlabeled, evidence: snapshot.evidence,
         target: target ? {url: target.url, adapter: target.adapter, outputMode: target.outputMode, timeoutMs: target.timeoutMs, apiKeyEnv: target.apiKeyEnv} : null,
-        sources: snapshot.manifest?.sources ?? (snapshot.manifest ? [snapshot.manifest] : [])} : null};
+        sources: Array.isArray(snapshot.manifest?.sources) ? snapshot.manifest.sources : snapshot.manifest?.sources && typeof snapshot.manifest.sources === 'object' ? Object.entries(snapshot.manifest.sources).map(([dataset, source]) => ({dataset, ...(source && typeof source === 'object' ? source : {source})})) : snapshot.manifest ? [snapshot.manifest] : []} : pending?{testPurpose:validatePurpose(pending.testPurpose),gradesAvailable:false,repeat:pending.repeat,concurrency:pending.concurrency,scorer:pending.scorer?.name,selection:pending.sampling,target,sources:pending.datasets?.map((s:JsonObject)=>({dataset:s.datasetId,config:s.config,split:s.split,phase:s.phase})),caseCount:null}:null};
+  }
+  compare(id:string,baselineId:string,options:{scoring?:string;baselineScoring?:string;filter?:string;dataset?:string;offset?:number;limit?:number}={}) {
+    if(id===baselineId)failure('Choose a different Report as the baseline');
+    const load=(runId:string,scoring?:string)=>{
+      const run=this.list().find(r=>r.id===runId);if(!run)failure('Report not found',404);
+      if(isActiveRun(run.status))failure('Wait for both tests to finish before comparing',409);
+      const dir=this.directory(runId);if(!existsSync(join(dir,'snapshot.json')))failure('This Report has no prepared case evidence',409);
+      const source=readEvidence(dir),selected=selectedScoring(dir,scoring);
+      if(!selected.report)failure('Report summary is unavailable',409);
+      const records=withEvaluationEvidence(dir,recordsForScoring(dir,source.records,selected.saved?.metadata));
+      return {run,selected,source,evidence:{snapshot:source.snapshot,records,grades:selected.saved?.grades,scorerHash:selected.saved?.metadata.scorerHash,report:withClassification(selected.report!,source.snapshot,records)}};
+    };
+    const a=load(baselineId,options.baselineScoring),b=load(id,options.scoring),result=compareEvidence(a.evidence,b.evidence);
+    const filter=options.filter??'all';if(filter!=='all'&&!Object.hasOwn(result.counts,filter))failure('Unknown comparison filter');
+    const offset=options.offset??0,limit=options.limit??25;
+    if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(limit)||limit<1||limit>100)failure('Invalid comparison pagination');
+    const rows=result.rows.filter(r=>(filter==='all'||r.change===filter)&&(!options.dataset||r.dataset===options.dataset));
+    const identity=(v:typeof a)=>({id:v.run.id,name:v.run.name,scoringId:v.selected.id,scoringName:v.selected.report!.scoring?.name??'Historical scoring'});
+    const {rows:_rows,...summary}=result;
+    return {...summary,baseline:identity(a),candidate:identity(b),total:rows.length,offset,limit,items:rows.slice(offset,offset+limit)};
   }
   activity(id: string): RunActivity {
     const run = this.list().find(r => r.id === id); if (!run) failure('Report not found',404);
     const path = this.directory(id);
     const saved = existsSync(join(path,'activity.json')) ? json<ActivitySnapshot>(join(path,'activity.json')) : null;
-    const active = ['queued','running'].includes(run.status);
+    const active = isActiveRun(run.status);
     return {...(saved ?? {schemaVersion:1, phase:active?'testing':'finished', updatedAt:run.createdAt,
       total:run.progress?.total??0, started:0, finished:0, completed:0, errors:0, skipped:0, active:[], recent:[]}),
-      phase: active ? saved?.phase??'testing' : 'finished', available: !!saved, runStatus:run.status, serverTime:new Date().toISOString(),
+      stage:run.stage, phase: active ? saved?.phase??'testing' : 'finished', available: !!saved, runStatus:run.status, serverTime:new Date().toISOString(),
       queuePosition:run.status==='queued'?Math.max(0,this.queue.findIndex(q=>q.id===id))+1:undefined,
       concurrency:saved?.concurrency, timeoutMs:saved?.timeoutMs, caseCount:saved?.caseCount,
       active:active?(saved?.active??[]):[], recent:(saved?.recent??[])} as RunActivity;
   }
   async start(request: RunRequest) {
     if (!request || typeof request !== 'object') throw new Error('Testing configuration is required');
-    validateScorer(request.scorer);
+    const testPurpose=validatePurpose(request.testPurpose);
+    const scorer=validateScorer(request.scorer),sampling=validateSampling(request.sampling);
     if (request.datasets === undefined && (request.selectionId || !catalog().some(e => e.id === request.datasetId))) return this.enqueue(request);
-    const endpoint = targets().find(t => t.id === (request.endpointId ?? request.targetId));
-    if (!endpoint) throw new Error('Target not found; create a Target first');
+    const selections=resolveDatasetSelections(request);
+    const endpoint=targets().find(t=>t.id===(request.targetId??request.endpointId));if(!endpoint)throw new Error('Target not found; create a Target first');
     if (!endpoint.credentialAvailable) throw new Error('Set ' + endpoint.target.apiKeyEnv + ' before running');
-    for (const value of [request.repeat ?? 1, request.concurrency ?? 2]) if (!Number.isSafeInteger(value) || value < 1) throw new Error('Counts must be positive integers');
-    const path = await prepareEvaluationDataset(request);
-    try {
-      const selection = datasets().find(d => d.path === path)!;
-      return this.enqueue({...request, selectionId: selection.id});
-    } catch (error) { rmSync(path, {recursive: true, force: true}); throw error; }
+    for (const n of [request.repeat??1,request.concurrency??2]) if (!Number.isSafeInteger(n)||n<1||n>100) throw new Error('Repeat and concurrency must be whole numbers between 1 and 100');
+    if(request.skipUnlabeled!==undefined&&typeof request.skipUnlabeled!=='boolean')throw new Error('skipUnlabeled must be boolean');
+    const evidence=request.evidence??'endpoint';if(!['endpoint','synthetic-local-demo'].includes(evidence))throw new Error('Invalid evidence type');
+    if(request.gate!==undefined&&(!request.gate||typeof request.gate!=='object'||Array.isArray(request.gate)))throw new Error('Gate must be an object');
+    gateReport({summary:{coverage:1,accuracy:1,falsePositiveRate:0,falseNegativeRate:0,latencyMs:{p95:0}}},request.gate,{accuracyDrop:0});
+    if(request.gate?.maxAccuracyDrop!==undefined&&!request.baselineId)throw new Error('maxAccuracyDrop requires a baseline');
+    const baseline=request.baselineId?this.directory(request.baselineId):undefined;
+    const name='run-'+new Date().toISOString().replaceAll(':','-')+'-'+randomUUID().slice(0,6),id=Buffer.from(name).toString('base64url');
+    const frozen=structuredClone({...request,testPurpose,scorer,sampling,repeat:request.repeat??1,concurrency:request.concurrency??2,evidence});
+    for(const dir of ['jobs','job-targets','job-requests'])mkdirSync(join(root,'data',dir),{recursive:true,mode:0o700});
+    const target=join(root,'data/job-targets',id+'.json');saveJob(target,endpoint.target);saveJob(join(root,'data/job-requests',id+'.json'),frozen);
+    const now=new Date().toISOString();
+    saveJob(join(root,'data/jobs',id+'.json'),{id,name,status:'queued',createdAt:now,targetId:endpoint.id,targetName:endpoint.name,endpointId:endpoint.id,endpointName:endpoint.name,adapter:endpoint.target.adapter,
+      datasetIds:selections.map(s=>s.entry.id),...(selections.length===1?{datasetId:selections[0].entry.id}:{}),dataset:selections.map(s=>s.entry.repo).join(' + '),evidence,
+      stage:{stage:'queued',message:'Waiting to prepare Datasets',updatedAt:now}});
+    this.controllers.set(id,new AbortController());if(baseline)this.baselines.set(id,baseline);
+    this.queue.push({id,request:frozen,catalogHash:hash(catalog()),options:{testPurpose,data:'',target,out:join(root,'runs',name),scorer,repeat:frozen.repeat,concurrency:frozen.concurrency,evidence,skipUnlabeled:frozen.skipUnlabeled,gate:frozen.gate,baseline}});
+    // Return the Report ID before source verification, conversion, or SDK startup.
+    setImmediate(()=>void this.pump());return {id};
   }
   enqueue(request: RunRequest) {
     const dataset = datasets().find(d => d.id === (request.selectionId ?? request.datasetId));
@@ -199,7 +245,7 @@ export class RunStore {
     const card = datasetCards(true).find(c => c.id === datasetIdForSelection(dataset))!;
     const name = 'run-' + new Date().toISOString().replaceAll(':', '-') + '-' + randomUUID().slice(0, 6);
     const path = join(root, 'runs', name), id = Buffer.from(name).toString('base64url');
-    const options: RunOptions = { scorer:request.scorer, data: dataset.path, target: targetPath(endpoint.id), out: path, repeat: request.repeat, concurrency: request.concurrency,
+    const options: RunOptions = { testPurpose:request.testPurpose,sampling:request.sampling,scorer:request.scorer, data: dataset.path, target: targetPath(endpoint.id), out: path, repeat: request.repeat, concurrency: request.concurrency,
       limit: request.limit, phase: request.phase, skipUnlabeled: request.skipUnlabeled, evidence: request.evidence, gate: request.gate, baseline: request.baselineId ? this.directory(request.baselineId) : undefined };
     const prepared = prepareRun(options);
     // A queued test must keep the exact Target it was started with, even after an edit/delete.
@@ -217,19 +263,42 @@ export class RunStore {
     const path = join(root, 'data/jobs', id + '.json');
     saveJob(path, { ...json<JsonObject>(path), ...values });
   }
+  private setStage(id:string,stage:RunStage['stage'],message:string,completed?:number,total?:number,preparation?:RunStage['preparation']) {
+    const value:RunStage={stage,message,completed,total,preparation,updatedAt:new Date().toISOString()};
+    const previous=json<JsonObject>(join(root,'data/jobs',id+'.json')),history:RunStage[]=previous.stageHistory??[];
+    if(history.at(-1)?.stage===stage)history[history.length-1]=value;else history.push(value);
+    this.update(id,{stage:value,stageHistory:history.slice(-6)});
+  }
   private async pump() {
     if (this.busy) return; this.busy = true;
     try {
       for (;;) {
         const item = this.queue.shift(); if (!item) break;
         const controller = this.controllers.get(item.id)!;
-        if (controller.signal.aborted) { this.update(item.id, { status: 'cancelled', finishedAt: new Date().toISOString() }); this.controllers.delete(item.id); this.baselines.delete(item.id); continue; }
-        this.update(item.id, { status: 'running' });
+        if (controller.signal.aborted) { this.update(item.id, { status: 'cancelled', finishedAt: new Date().toISOString() }); this.setStage(item.id,'finished','Test cancelled before preparation or execution'); this.controllers.delete(item.id); this.baselines.delete(item.id); continue; }
+        let preparedPath:string|undefined;
         try {
+          if(item.request){
+            this.update(item.id,{status:'preparing'});this.setStage(item.id,'preparing','Verifying pinned local Dataset sources');
+            if(item.catalogHash!==hash(catalog()))throw new Error('Dataset catalog changed after submission; start a new test');
+            preparedPath=await this.prepare(item.request,{signal:controller.signal,onProgress:p=>this.setStage(item.id,'preparing',p.message,p.filesCompleted,p.filesTotal,p)});
+            controller.signal.throwIfAborted();
+            const selection=datasets().find(d=>d.path===preparedPath);if(!selection)throw new Error('Prepared Dataset is unavailable');
+            item.options.data=preparedPath;this.update(item.id,{selectionId:selection.id});
+          }
+          controller.signal.throwIfAborted();
+          const plan=prepareRun(item.options);this.update(item.id,{status:'running',progress:{completed:0,total:plan.cases.length*plan.repeat}});
           const result = await runEvaluation({ ...item.options, signal: controller.signal,
-            onProgress: (completed, total) => this.update(item.id, { progress: { completed, total } }) });
+            onStage:(stage,message,completed,total)=>{this.update(item.id,{status:stage==='running'?'running':'scoring'});this.setStage(item.id,stage,message,completed,total);},
+            onProgress: (completed, total) => {this.update(item.id, { progress: { completed, total } });this.setStage(item.id,'running','Sending checks; promptfoo evaluates assertions as each request returns',completed,total);} });
           this.update(item.id, { status: controller.signal.aborted ? 'cancelled' : result.exitCode === 2 ? 'failed' : 'completed', exitCode: result.exitCode, finishedAt: new Date().toISOString() });
-        } catch (error) { this.update(item.id, { status: controller.signal.aborted ? 'cancelled' : 'failed', error: error instanceof Error ? error.message : 'Testing failed', finishedAt: new Date().toISOString() }); }
+          this.setStage(item.id,'finished',controller.signal.aborted?'Test cancelled; available evidence retained':'Report ready',result.report.summary.recordedAttempts,result.report.summary.plannedAttempts);
+        } catch (error) {
+          if(preparedPath&&!existsSync(join(item.options.out,'snapshot.json')))rmSync(preparedPath,{recursive:true,force:true});
+          this.update(item.id, { status: controller.signal.aborted ? 'cancelled' : 'failed', error: controller.signal.aborted?undefined:error instanceof Error ? error.message : 'Testing failed', exitCode:2,finishedAt: new Date().toISOString() });
+          const previous=json<JsonObject>(join(root,'data/jobs',item.id+'.json')).stage;
+          this.setStage(item.id,'finished',controller.signal.aborted?'Test cancelled before completion':'Test failed during '+(previous?.stage??'startup'),previous?.completed,previous?.total,previous?.preparation);
+        }
         this.controllers.delete(item.id); this.baselines.delete(item.id);
       }
     } finally { this.busy = false; }
@@ -240,7 +309,7 @@ export class RunStore {
     if(this.controllers.has(id))failure('Cancel this test and wait for it to finish before deleting its Report',409);
     if([...this.baselines.values()].includes(path))failure('This Report is a baseline for an active test. Wait for that test to finish before deleting it.',409);
     rmSync(path,{recursive:true,force:true});
-    for(const dir of ['jobs','job-targets','deleted-reports'])rmSync(join(root,'data',dir,id+'.json'),{force:true});
+    for(const dir of ['jobs','job-targets','job-requests','deleted-reports'])rmSync(join(root,'data',dir,id+'.json'),{force:true});
     return {id};
   }
   async rescore(id:string,scorer:unknown){
@@ -260,16 +329,16 @@ export class RunStore {
   }
   evidence(id: string, scoringId?: string) {
     const path = this.directory(id), nested = join(path, 'evaluation/attempts.jsonl');
-    const records = existsSync(nested) ? lines<any>(nested) : existsSync(join(path, 'attempts.jsonl')) ? lines<any>(join(path, 'attempts.jsonl')) : [];
+    const saved=selectedScoring(path,scoringId).saved;
+    const records = recordsForScoring(path,withEvaluationEvidence(path,existsSync(nested) ? lines<any>(nested) : existsSync(join(path, 'attempts.jsonl')) ? lines<any>(join(path, 'attempts.jsonl')) : []),saved?.metadata);
     const snapshot = existsSync(join(path, 'snapshot.json')) ? json<JsonObject>(join(path, 'snapshot.json')) : {};
     const cases = new Map<string, Case>((snapshot.cases ?? []).map((c: Case) => [c.id, c]));
-    const saved=selectedScoring(path,scoringId).saved;
     const compatibleScorer = snapshot.schemaVersion === 3 && snapshot.scorerHash === hash(readFileSync(join(root, 'src/core/scoring.ts')));
     return records.map(r => {
       const c = cases.get(r.caseId);
       // Bound list previews and preserve Unicode without consulting mutable source files.
       const samplePreview = typeof c?.text === 'string' ? Array.from(c.text.slice(0, 640)).slice(0, 320).join('') : null;
-      return {...r, expected: c?.expected, samplePreview, sampleTruncated: samplePreview !== null && c!.text.length > samplePreview.length, grade: saved ? saved.grades.get(r.attemptId) : c && compatibleScorer ? score(r, c) : undefined};
+      return {...r, pii:piiEvidence(r,c), expected: c?.expected, samplePreview, sampleTruncated: samplePreview !== null && c!.text.length > samplePreview.length, grade: saved ? saved.grades.get(r.attemptId) : c && compatibleScorer ? score(r, c) : undefined};
     });
   }
 }

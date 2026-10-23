@@ -1,3 +1,5 @@
+import {recordsForScoring,executionEvidenceHash} from './execution-evidence.js';
+import {withEvaluationEvidence} from './guard-evidence.js';
 import {existsSync, mkdirSync, readdirSync, renameSync, rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
@@ -31,7 +33,7 @@ export function scoringHistory(dir: string) {
 export function selectedScoring(dir: string, id = activeScoringId(dir)) {
   const path = scoringDirectory(dir,id), saved = readGrades(path,dir);
   const report = existsSync(join(path,'report.json')) ? json<JsonObject>(join(path,'report.json')) : null;
-  if (saved && report && (report.scoring?.sourceHash !== saved.metadata.sourceHash || report.scoring?.scorerHash !== saved.metadata.scorerHash)) failure('Report scoring metadata does not match its saved grades');
+  if (saved && report && (report.scoring?.sourceHash !== saved.metadata.sourceHash || report.scoring?.scorerHash !== saved.metadata.scorerHash || report.scoring?.executionEvidenceHash !== saved.metadata.executionEvidenceHash)) failure('Report scoring metadata does not match its saved grades');
   return {id,path,report,gate:existsSync(join(path,'gate.json')) ? json(join(path,'gate.json')) : undefined,saved};
 }
 export function evidenceGrades(dir: string, id = activeScoringId(dir)): Map<string, Grade> | undefined {
@@ -42,17 +44,17 @@ export async function rescoreRun(dir: string, value: unknown, options: {signal?:
   const config: ScorerConfig = validateScorer(value);
   if (locks.has(dir)) failure('This Report is already being re-scored');
   if (!existsSync(join(dir,'execution.json')) || !json(join(dir,'execution.json')).finishedAt) failure('Wait for the original test execution to finish before re-scoring');
-  const source = readEvidence(dir);
+  const source = readEvidence(dir), executionHash=executionEvidenceHash(dir);
   if (!source.records.length) failure('No recorded checks are available to re-score');
   locks.add(dir);
   const id = 's-' + randomUUID(), parent = join(dir,'scorings'), staging = join(parent,'.pending-'+id), published = join(parent,id);
   try {
     mkdirSync(staging,{recursive:true,mode:0o700});
     const native = await evaluateSavedEvidence(dir,config,options.signal);
-    if (readEvidence(dir).sourceHash !== source.sourceHash) failure('Request evidence changed during re-scoring');
+    if (readEvidence(dir).sourceHash !== source.sourceHash || executionEvidenceHash(dir)!==executionHash) failure('Request evidence changed during re-scoring');
     save(join(staging,'promptfoo-results.json'),native);
     const {metadata,grades} = persistGrading(staging,dir,native,config,id);
-    const report = writeReport(staging,source.snapshot,source.records,grades,metadata);
+    const report = writeReport(staging,source.snapshot,withEvaluationEvidence(dir,recordsForScoring(dir,source.records,metadata)),grades,metadata);
     const stats = nativeStats(native), s = report.summary;
     if (!stats || stats.successes !== s.passed || stats.failures !== s.failed + s.skipped || stats.errors !== s.errors) throw new Error('SDK grades and Report totals differ');
     // A changed rule set is a new assessment. Original execution/baseline gates remain in the original Report.

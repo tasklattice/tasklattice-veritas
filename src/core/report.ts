@@ -1,3 +1,5 @@
+import {ATTACK_TEMPLATE_LABELS,type AttackTemplateId} from '../shared/attack-templates.js';
+import {benchmarkScope, sampleKind} from '../shared/benchmark.js';
 import type { Attempt, Case, Grade, JsonObject } from '../shared/types.js';
 import { join } from 'node:path';
 import { writeFileSync } from 'node:fs';
@@ -5,6 +7,10 @@ import {classificationMetrics, classificationMarkdown} from './classification.js
 import * as scoring from './scoring.js';
 import { save } from './files.js';
 import { adapterType, outputMode } from './provider.js';
+
+import {piiSummary} from '../shared/pii.js';
+import {piiMarkdown,piiCells,piiColumns} from './pii-report.js';
+import {jevSummary,detectionCells,detectionColumns,detectionMarkdown} from './guard-evidence.js';
 
 const ratio = (a: number, b: number) => b ? a / b : null;
 function percentile(values: number[], p: number) {
@@ -30,7 +36,7 @@ export function summarize(records: Attempt[], cases: Case[], planned: number, gr
   const latency = valid.map(r => r.latencyMs!);
   const allSteps = records.flatMap(r => r.steps || []);
   return {
-    ...classificationMetrics(records, cases),
+    ...classificationMetrics(records, cases), jev:jevSummary(records), pii:piiSummary(records,cases,cases.length?planned/cases.length:undefined),
     plannedAttempts: planned, recordedAttempts: records.length,
     completed: valid.length, scored: scored.length, unscored: valid.length - scored.length, passed: pass, failed: scored.length - pass,
     errors: records.filter(r => r.status === 'error').length,
@@ -72,10 +78,21 @@ export function writeReport(out: string, snapshot: JsonObject, records: Attempt[
     const selected = cases.filter(c => c.dataset === dataset), ids = new Set(selected.map(c => c.id));
     datasets[dataset] = summarize(records.filter(r => ids.has(r.caseId)), selected, selected.length * snapshot.repeat, grades);
   }
+  const attackStrategies:Record<string,ReturnType<typeof summarize>>={};
+  for(const strategy of new Set(cases.filter(c=>c.dataset==='advbench-attacks').map(c=>c.metadata?.attack?.strategy as string))){
+    const selected=cases.filter(c=>c.expected==='allow'||c.dataset==='advbench-attacks'&&c.metadata?.attack?.strategy===strategy),ids=new Set(selected.map(c=>c.id));
+    attackStrategies[strategy]=summarize(records.filter(r=>ids.has(r.caseId)),selected,selected.length*snapshot.repeat,grades);
+  }
+  const attackTypes:Record<string,ReturnType<typeof summarize>>={};
+  for(const type of new Set(cases.filter(c=>c.dataset==='advbench-attacks'&&c.metadata?.attack?.attackType).map(c=>c.metadata!.attack.attackType as string))){
+    const selected=cases.filter(c=>c.expected==='allow'||c.dataset==='advbench-attacks'&&c.metadata?.attack?.attackType===type),ids=new Set(selected.map(c=>c.id));
+    attackTypes[type]=summarize(records.filter(r=>ids.has(r.caseId)),selected,selected.length*snapshot.repeat,grades);
+  }
   const adapter = adapterType(snapshot.target);
-  const report = { schemaVersion: 3, runId: snapshot.runId, scorer: grading?.scorer ?? scoring.VERSION, scoring: grading ? {id:grading.id, name:grading.name, createdAt:grading.createdAt, config:grading.config, scorerHash:grading.scorerHash, sourceHash:grading.sourceHash, engine:grading.engine, offline:grading.offline, targetCallsAdded:grading.targetCallsAdded} : undefined,
+  const benchmark = benchmarkScope(snapshot);
+  const report = { benchmark, schemaVersion: 3, runId: snapshot.runId, scorer: grading?.scorer ?? scoring.VERSION, scoring: grading ? {id:grading.id, name:grading.name, createdAt:grading.createdAt, config:grading.config, scorerHash:grading.scorerHash, sourceHash:grading.sourceHash, executionEvidenceHash:grading.executionEvidenceHash, engine:grading.engine, offline:grading.offline, targetCallsAdded:grading.targetCallsAdded} : undefined,
     adapter, outputMode: outputMode(snapshot.target),
-    evidence: snapshot.evidence, summary, datasets, groups: grouped,
+    evidence: snapshot.evidence, summary, datasets, groups: grouped, ...(Object.keys(attackStrategies).length?{attackStrategies}:{}), ...(Object.keys(attackTypes).length?{attackTypes}:{}),
     caveats: ['Endpoint decision testing, not model jailbreak success rate or certification.',
       'Latency is measured at the caller for the tested phase; input preparation is recorded separately.',
       'Unstable rate describes action variation; routing/model changes can also cause it.',
@@ -84,16 +101,17 @@ export function writeReport(out: string, snapshot: JsonObject, records: Attempt[
       ...(adapter === 'f5-scan' ? ['F5 Scan tests text independently. Original prompt and conversation history are not transmitted or correlated; flagged is an unscorable execution error.'] : [])] };
   save(join(out, 'report.json'), report);
   const byId = new Map(cases.map(c => [c.id, c]));
-  const csv: unknown[][] = [['case_id', 'attempt_id', 'dataset', 'phase', 'expected', 'actual', 'status', 'pass', 'latency_ms', 'reason', 'adapter', 'scan_id', 'scoring_id', 'scoring_name']];
+  const csv: unknown[][] = [['case_id', 'attempt_id', 'dataset', 'phase', 'expected', 'actual', 'status', 'pass', 'latency_ms', 'reason', 'adapter', 'scan_id', 'scoring_id', 'scoring_name', ...detectionColumns, ...piiColumns, 'test_purpose', 'sample_kind', 'attack_strategy', 'source_goal_id', 'attack_type', 'template_id', 'template_sha256']];
   for (const r of records) {
     const c = byId.get(r.caseId)!, result = grades ? grades.get(r.attemptId) : scoring.score(r, c);
     csv.push([r.caseId, r.attemptId, r.dataset, r.phase, c.expected, r.action, r.status,
-      r.status === 'completed' ? result?.pass ?? '' : '', r.latencyMs, result?.reason ?? r.error ?? r.skipReason ?? 'Unscored', adapter, r.scanId, grading?.id ?? 'original', grading?.name ?? snapshot.scorer]);
+      r.status === 'completed' ? result?.pass ?? '' : '', r.latencyMs, result?.reason ?? r.error ?? r.skipReason ?? 'Unscored', adapter, r.scanId, grading?.id ?? 'original', grading?.name ?? snapshot.scorer, ...detectionCells(r), ...piiCells(r,c), benchmark.purpose, sampleKind(c), c.metadata?.attack?.strategy, c.metadata?.attack?.sourceGoalId, c.metadata?.attack?.attackType, c.metadata?.attack?.template?.id, c.metadata?.attack?.template?.sha256]);
   }
   writeFileSync(join(out, 'results.csv'), csv.map(row => row.map(cell).join(',')).join('\n') + '\n', { mode: 0o600 });
   const md = [`# Guard Endpoint test report`, '', `Run: ${snapshot.runId}`, '',
     `Adapter: ${adapter} | Output mode: ${report.outputMode}`, '',
     snapshot.evidence === 'synthetic-local-demo' ? '**Synthetic samples and a local mock Endpoint: toolchain verification only.**' : '**Measured Endpoint decisions; not end-to-end model jailbreak success rate.**', '',
+    `Test focus: ${benchmark.label}`, '', benchmark.metricScope, '', ...benchmark.warnings.map(w => '> ' + w), '',
     '| Metric | Result |', '|---|---:|',
     `| Planned / completed | ${planned} / ${summary.completed} |`, `| Errors / skipped / missing | ${summary.errors} / ${summary.skipped} / ${summary.missing} |`,
     `| Coverage | ${fmt(summary.coverage)} |`, `| Completed-check accuracy | ${fmt(summary.accuracy)} |`,
@@ -104,7 +122,9 @@ export function writeReport(out: string, snapshot: JsonObject, records: Attempt[
     'Accuracy uses completed checks as its denominator. Read it together with coverage. Action acceptance follows the selected scoring rules. Additional text/PII failures do not change the action false-positive/false-negative counts.', '',
     '| Dataset / phase | Completed | Accuracy | Coverage |', '|---|---:|---:|---:|',
     ...Object.entries(grouped).map(([name,s]) => `| ${name.replaceAll('|', '\\|')} | ${s.completed} | ${fmt(s.accuracy)} | ${fmt(s.coverage)} |`), '',
-    classificationMarkdown(summary), ...report.caveats.map(x => '- ' + x), ''];
+    ...(Object.keys(attackStrategies).length?['## Frozen attack strategies','','Each row combines attacks from one strategy with the same benign controls. Controls are shared across rows; variants from one source goal are correlated.','','| Strategy | Recall | False-positive rate | Precision | F1 | Errors |','|---|---:|---:|---:|---:|---:|',...Object.entries(attackStrategies).map(([name,s])=>`| ${name} | ${fmt(s.recall)} | ${fmt(s.falsePositiveRate)} | ${fmt(s.precision)} | ${fmt(s.f1)} | ${s.errors} |`),'']:[]),
+    ...(Object.keys(attackTypes).length?['## Frozen attack types','','Each type uses the same benign controls. Attack and benign columns count completed checks, including repeats; errors are excluded from the metric denominators. Per-type F1 depends on this attack/control mix and must not be averaged into overall F1. Public templates are calibration examples, not an unseen-attack benchmark.','','| Attack type | Attacks | Benign controls | Detection rate | False-positive rate | Precision | F1 | Errors |','|---|---:|---:|---:|---:|---:|---:|---:|',...Object.entries(attackTypes).map(([name,s])=>`| ${ATTACK_TEMPLATE_LABELS[name as AttackTemplateId]??name} | ${s.expectedBlock} | ${s.expectedAllow} | ${fmt(s.recall)} | ${fmt(s.falsePositiveRate)} | ${fmt(s.precision)} | ${fmt(s.f1)} | ${s.errors} |`),'']:[]),
+    classificationMarkdown(summary), detectionMarkdown(summary), piiMarkdown(summary), ...report.caveats.map(x => '- ' + x), ''];
   writeFileSync(join(out, 'report.md'), md.join('\n'), { mode: 0o600 });
   return report;
 }

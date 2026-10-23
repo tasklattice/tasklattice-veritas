@@ -1,4 +1,6 @@
 import type { Action, Attempt, Case, JsonObject, Phase, Step, Target } from '../shared/types.js';
+import {executionFailure} from '../shared/detection.js';
+import {guardContextPayload} from './guard-context.js';
 import type {ActivityEvent} from '../shared/activity.js';
 import { appendFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -73,18 +75,21 @@ export default class TaliProvider {
 
   async check(testCase: Case, phase: Phase, text: string, callId: string | null, messages: Case["messages"], signal?: AbortSignal, attemptId?: string, preparation = false) {
     const scan = this.target.adapter === 'f5-scan';
+    const boundary = guardContextPayload(testCase);
+    if (scan && boundary) throw new Error('F5 Scan cannot preserve Guard boundary context; use a LiteLLM Target');
     const body: JsonObject = scan ? { input: text, scanDirection: phase === 'input' ? 'request' : 'response',
       flagOnly: false, verbose: this.target.verbose } : {
       input_type: phase === 'input' ? 'request' : 'response',
       texts: [text],
       structured_messages: messages,
+      ...(boundary ? {guardrail_context: boundary} : {}),
       ...(callId ? { litellm_call_id: callId } : {}),
       ...(this.target.model ? { model: this.target.model } : {}),
       ...(this.target.requestData ? { request_data: this.target.requestData } : {}),
     };
     // Dataset instructions remain untrusted context; they never configure Guard policy.
     if (!scan && testCase.prompt && phase === 'output') body.guardrail_context = { query: testCase.prompt };
-    const headers: Record<string, string> = { 'content-type': 'application/json' };
+    const headers: Record<string, string> = { 'content-type': 'application/json', 'x-guard-evidence': 'evaluations-v1' };
     const secret = this.target.apiKeyEnv ? process.env[this.target.apiKeyEnv] : undefined;
     if (this.target.apiKeyEnv && !secret) throw new Error(`Missing environment variable ${this.target.apiKeyEnv}`);
     if (secret) headers[scan ? 'authorization' : 'x-api-key'] = scan ? `Bearer ${secret}` : secret;
@@ -99,7 +104,7 @@ export default class TaliProvider {
       });
       step.httpStatus = response.status;
       // Retain evidence headers, never request credentials or arbitrary response headers.
-      step.headers = Object.fromEntries(['x-guard-runner-id', 'x-guard-route-assignment', 'x-request-id', 'x-tasklattice-scan-compatibility']
+      step.headers = Object.fromEntries(['x-guard-runner-id', 'x-guard-route-assignment', 'x-request-id', 'x-tasklattice-scan-compatibility', 'x-guard-evaluation-evidence']
         .filter(key => response.headers.has(key)).map(key => [key, secret ? response.headers.get(key)!.split(secret).join('[REDACTED_CREDENTIAL]') : response.headers.get(key)!]));
       const reader = response.body?.getReader();
       let raw = '', bytes = 0;
@@ -117,6 +122,7 @@ export default class TaliProvider {
       try { step.response = JSON.parse(raw); } catch { step.response = { raw }; }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       Object.assign(step, decodeResult(step.response!, phase, this.target.adapter));
+      const executionError=executionFailure(step);if(executionError)throw new Error(executionError);
       step.status = 'completed';
     } catch (error: any) {
       step.status = 'error';

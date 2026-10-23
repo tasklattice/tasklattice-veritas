@@ -24,7 +24,7 @@ test('Apply converts pinned WildJailbreak directly, executes checks and filters 
   const endpoint=saveTarget({name,target:{adapter:'f5-scan',url:mock.f5Url}});
   const created=await app.inject({method:'POST',url:'/api/runs',headers,payload:{datasetId:'wildjailbreak',endpointId:endpoint.id,limit:4,repeat:2,concurrency:2,evidence:'synthetic-local-demo'}});
   assert.equal(created.statusCode,202,created.body);id=created.json().id;
-  const deadline=Date.now()+20000;while(Date.now()<deadline&&['running','queued'].includes(store.detail(id).run.status))await new Promise(r=>setTimeout(r,30));
+  const deadline=Date.now()+20000;while(Date.now()<deadline&&['preparing','running','scoring','queued'].includes(store.detail(id).run.status))await new Promise(r=>setTimeout(r,30));
   const detail=store.detail(id);assert.equal(detail.run.status,'completed');assert.equal(detail.run.datasetId,'wildjailbreak');assert.equal(detail.run.endpointId,endpoint.id);
   assert.equal(detail.report!.summary.completed,8);assert.equal(mock.requests.length,8);
   selectionPath=datasets().find(d=>d.id===detail.run.selectionId)!.path;

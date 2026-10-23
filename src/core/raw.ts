@@ -21,7 +21,7 @@ async function verify(path: string, spec: JsonObject) {
   for await (const chunk of createReadStream(path)) { sha.update(chunk); git.update(chunk); }
   const digest = sha.digest('hex');
   if (spec.sha256 ? digest !== spec.sha256 : git.digest('hex') !== spec.gitBlob) throw new Error('Upstream hash mismatch');
-  return { bytes: size, sha256: digest, verification: spec.sha256 ? 'upstream-lfs-sha256' : 'upstream-git-blob-sha1' };
+  return { bytes: size, sha256: digest, verification: spec.generated ? 'pinned-reconstruction-sha256' : spec.sha256 ? 'upstream-lfs-sha256' : 'upstream-git-blob-sha1' };
 }
 function hfToken() {
   if (process.env.HF_TOKEN) return process.env.HF_TOKEN;
@@ -33,6 +33,7 @@ export async function downloadFile(dataset: string, file: string, verifyOnly = f
   const spec = entry?.files.find((f: JsonObject) => f.path === file);
   const path = sourcePath(dataset, file);
   if (!existsSync(path)) {
+    if (spec.generated) throw new Error('Reconstructed CredData file is missing. Follow docs/creddata.md and run datasets reconstruct creddata; this file is not an upstream download.');
     if (verifyOnly) throw new Error('Raw file is missing');
     mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
     const url = entry.source === 'hf' ? `https://huggingface.co/datasets/${entry.repo}/resolve/${entry.revision}/${file}` : `https://raw.githubusercontent.com/${entry.repo}/${entry.revision}/${file}`;
@@ -58,7 +59,7 @@ export async function downloadAll(options: {dataset?: string; verifyOnly?: boole
       try {
         const path = await downloadFile(entry.id, spec.path, options.verifyOnly);
         results.push({ dataset: entry.id, path: spec.path, status: 'verified', ...await verify(path, spec) });
-      } catch (error) { results.push({ dataset: entry.id, path: spec.path, status: 'missing', errorType: error instanceof Error ? error.name : 'Error' }); }
+      } catch (error) { results.push({ dataset: entry.id, path: spec.path, status: 'missing', errorType: error instanceof Error ? error.name : 'Error', ...(spec.generated ? {message:'Reconstruct this derived file with datasets reconstruct creddata; see docs/creddata.md.'} : {}) }); }
     }
   }));
   const summary: JsonObject = { schemaVersion: 1, updatedAt: new Date().toISOString(), lockSha256: hash(readFileSync(join(root, 'catalog/raw-datasets.lock.json'))), datasets: [] };

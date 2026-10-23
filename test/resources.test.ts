@@ -33,7 +33,7 @@ test('Source row index pages/searches original records, preserves full values an
 test('Target and Report deletion removes files permanently while preserving queued snapshots and assigning fresh recreated IDs',async()=>{
  const name='crud-test-'+randomUUID().slice(0,8),source=join(root,'data',name+'.jsonl'),data=join(root,'data',name),mockA=await startMock(),mockB=await startMock(),{app,store}=await buildServer({ui:false});
  const ids:string[]=[],paths=new Map<string,string>(),targetIds:string[]=[];
- const active=()=>store.list().filter(r=>ids.includes(r.id)&&['running','queued'].includes(r.status));
+ const active=()=>store.list().filter(r=>ids.includes(r.id)&&['preparing','running','scoring','queued'].includes(r.status));
  try{
   mkdirSync(join(root,'data'),{recursive:true});writeFileSync(source,Array.from({length:6},(_,i)=>JSON.stringify({id:String(i),dataset:'crud-fixture',phase:'input',text:'[SLOW] Safe',expected:'allow'})).join('\n')+'\n');await importDataset({dataset:'veritas',file:source,out:data});const selection=datasets().find(d=>d.path===data)!;
   const created=await app.inject({method:'POST',url:'/api/targets',headers,payload:{name,target:{adapter:'f5-scan',url:mockA.f5Url,timeoutMs:1234}}});assert.equal(created.statusCode,200,created.body);

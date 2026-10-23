@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Case } from '../shared/types.js';
+import {guardContextPayload} from './guard-context.js';
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const json = <T = any>(path: string): T => JSON.parse(readFileSync(path, 'utf8'));
 export const lines = <T = any>(path: string): T[] => readFileSync(path, 'utf8').split(/\r?\n/).filter(x => x.trim()).map((line, i) => {
@@ -19,5 +20,6 @@ export function validateCase(input: unknown): Case {
   if (c.prompt !== undefined && typeof c.prompt !== 'string') throw new Error(`${c.id}: prompt must be text`);
   if (c.pii && (!Array.isArray(c.pii) || c.pii.some(x => typeof x !== 'string' || !x))) throw new Error(`${c.id}: invalid PII values`);
   if (c.messages && (!Array.isArray(c.messages) || c.messages.some(m => !['user', 'assistant'].includes(m.role) || typeof m.content !== 'string'))) throw new Error(`${c.id}: messages support user/assistant text only`);
+  guardContextPayload(c);
   return c;
 }

@@ -1,3 +1,4 @@
+import {withExecutionEvidence,executionEvidenceHash} from './execution-evidence.js';
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {root, hash, json, lines, save, validateCase} from './files.js';
@@ -5,9 +6,10 @@ import {adapterType} from './provider.js';
 import type {Attempt, Case, Grade, JsonObject, SavedGrade} from '../shared/types.js';
 import {validateScorer, type ScorerConfig} from '../shared/scorer.js';
 
-export const GRADING_VERSION = 'guard-rules-v1';
+import {redactionCheck} from '../shared/pii.js';
+export const GRADING_VERSION = 'guard-rules-v3-pii-alignment';
 export function scorerFingerprint(config: ScorerConfig) {
-  return hash({config: validateScorer(config), implementation: ['src/core/grading.ts', 'src/shared/scorer.ts', 'src/core/action-assertion.ts', 'src/core/pii-assertion.ts', 'src/core/text-transform.ts'].map(file => hash(readFileSync(join(root, file))))});
+  return hash({config: validateScorer(config), implementation: ['src/core/grading.ts', 'src/shared/scorer.ts', 'src/core/action-assertion.ts', 'src/core/pii-assertion.ts', 'src/core/text-transform.ts', 'src/core/execution-evidence.ts', 'src/shared/detection.ts', 'src/shared/pii.ts'].map(file => hash(readFileSync(join(root, file))))});
 }
 export function engineEnvironment() {
   Object.assign(process.env, {PROMPTFOO_DISABLE_TELEMETRY:'1', PROMPTFOO_DISABLE_UPDATE:'1', PROMPTFOO_DISABLE_REMOTE_GENERATION:'1',
@@ -23,9 +25,10 @@ export function actionGrade(result: Attempt, c: Case, config: ScorerConfig): Gra
 }
 /** Domain assertions are callbacks; text checks are native promptfoo assertions. */
 export function piiGrade(output: string, c: Case): Grade {
-  const text = returnedText(output);
-  const pass = text.trim().length > 0 && !(c.pii ?? []).some(value => text.toLowerCase().includes(value.toLowerCase()));
-  return {pass,score:pass?1:0,reason:pass?'Transformed output removed all annotated PII values':'Empty transformed output or annotated PII remains'};
+  const result=parsed(output),check=redactionCheck(c,result.texts);
+  const pass=result.status==='completed'&&result.action==='transform'&&check.status==='complete';
+  const reason=result.action==='block'?'Blocked; complete redaction was not returned':result.action==='allow'?'Allowed; redaction was not performed':check.status==='complete'?'All annotated source spans were redacted':check.status==='partial'?`${check.remaining} annotated values remain wholly or partially visible`:check.status==='empty'?'Empty transformed output':'Cannot verify complete redaction against saved source spans';
+  return {pass,score:pass?1:0,reason};
 }
 export function buildAssertions(c: Case, config: ScorerConfig, serializable = false): any[] {
   const file = (name: string) => 'file://' + join(root,'src/core',name);
@@ -55,6 +58,20 @@ export function readEvidence(dir: string) {
 }
 export function nativeRows(native: JsonObject): JsonObject[] {return Array.isArray(native.results) ? native.results : native.results?.results ?? [];}
 export function nativeStats(native: JsonObject) {return native.stats ?? native.results?.stats;}
+/** Retain SDK grades and identities without duplicating raw requests/responses already frozen in attempts.jsonl. */
+export function gradeEvidenceSummary(native: JsonObject): JsonObject {
+  return {version:native.version, timestamp:native.timestamp, stats:nativeStats(native), projection:'veritas-native-grades-v1',
+    results:nativeRows(native).map(row => ({testIdx:row.testIdx, promptIdx:row.promptIdx, success:row.success,
+      error:row.error, failureReason:row.failureReason, gradingResult:row.gradingResult,
+      vars:{case:{id:row.vars?.case?.id}, ...(row.vars?.attempt ? {attempt:{attemptId:row.vars.attempt.attemptId}} : {})},
+      response:{metadata:{attemptId:row.response?.metadata?.attemptId}}}))};
+}
+function addNativeStats(total: JsonObject, next: JsonObject) {
+  for (const [key,value] of Object.entries(next)) {
+    if (typeof value === 'number') total[key] = (total[key] ?? 0) + value;
+    else if (value && typeof value === 'object' && !Array.isArray(value)) addNativeStats(total[key] ??= {}, value as JsonObject);
+  }
+}
 export function savedGrades(native: JsonObject, records: Attempt[]): SavedGrade[] {
   const rows = nativeRows(native), byId = new Map<string, JsonObject>();
   for (const row of rows) {
@@ -78,11 +95,11 @@ export function savedGrades(native: JsonObject, records: Attempt[]): SavedGrade[
   });
 }
 export function persistGrading(out: string, evidenceDir: string, native: JsonObject, config: ScorerConfig, id = 'original') {
-  const source = readEvidence(evidenceDir), grades = savedGrades(native, source.records);
+  const source = readEvidence(evidenceDir), executionHash=executionEvidenceHash(evidenceDir), grades = savedGrades(native, withExecutionEvidence(evidenceDir,source.records,executionHash));
   const contents = grades.map(g => JSON.stringify(g)).join('\n') + (grades.length ? '\n' : '');
   writeFileSync(join(out,'grades.jsonl'),contents,{mode:0o600});
   const metadata = {schemaVersion:1, id, name:config.name, createdAt:new Date().toISOString(), config:validateScorer(config), scorer:GRADING_VERSION,
-    scorerHash:scorerFingerprint(config), sourceHash:source.sourceHash, gradesHash:hash(contents), engine:{name:'promptfoo',version:json(join(root,'node_modules/promptfoo/package.json')).version},
+    scorerHash:scorerFingerprint(config), sourceHash:source.sourceHash, executionEvidenceHash:executionHash, gradesHash:hash(contents), engine:{name:'promptfoo',version:json(join(root,'node_modules/promptfoo/package.json')).version},
     offline:id !== 'original', targetCallsAdded:0};
   save(join(out,'grading.json'),metadata);
   return {metadata, grades:new Map(grades.map(g => [g.attemptId,g.grade]))};
@@ -92,6 +109,7 @@ export function readGrades(out: string, evidenceDir: string) {
   const metadata = json<JsonObject>(join(out,'grading.json')), source = readEvidence(evidenceDir);
   const bytes = readFileSync(join(out,'grades.jsonl'));
   if (metadata.sourceHash !== source.sourceHash || metadata.gradesHash !== hash(bytes)) throw new Error('Saved scoring or request evidence was modified');
+  if(metadata.executionEvidenceHash && metadata.executionEvidenceHash!==executionEvidenceHash(evidenceDir))throw new Error('Verified execution evidence was modified');
   const rows = lines<SavedGrade>(join(out,'grades.jsonl')), records = new Map(source.records.map(r => [r.attemptId,r]));
   if (rows.length !== records.size || new Set(rows.map(g => g.attemptId)).size !== rows.length || rows.some(g => records.get(g.attemptId)?.caseId !== g.caseId || typeof g.grade?.pass !== 'boolean' || !Number.isFinite(g.grade.score))) throw new Error('Saved grades do not match the evidence');
   return {metadata, grades:new Map(rows.map(g => [g.attemptId,g.grade]))};
@@ -99,17 +117,25 @@ export function readGrades(out: string, evidenceDir: string) {
 
 /** No Target configuration, credential lookup, fetch, or live provider is used here. */
 export async function evaluateSavedEvidence(dir: string, config: ScorerConfig, signal?: AbortSignal) {
-  const {cases, records} = readEvidence(dir), byId = new Map(cases.map(c => [c.id,c]));
+  const source=readEvidence(dir),cases=source.cases,records=withExecutionEvidence(dir,source.records), byId = new Map(cases.map(c => [c.id,c]));
   if (!records.length) throw new Error('No recorded checks are available to re-score');
   engineEnvironment();
   const {evaluate} = await import('promptfoo');
+  const combined: JsonObject = {version:3, timestamp:new Date().toISOString(), projection:'veritas-native-grades-v1', results:[], stats:{}};
+  // Bound SDK working memory and serialization size; every saved attempt is scored exactly once.
+  for(let offset=0;offset<records.length;offset+=1000) {
+  if(signal?.aborted) throw new Error('Re-scoring was cancelled');
+  const batch=records.slice(offset,offset+1000);
   const result = await evaluate({description:'Veritas offline re-scoring', sharing:false, writeLatestResults:false, prompts:['Saved check {{attempt.attemptId}}'],
     providers:[{id:() => 'veritas-saved-evidence', config:{maxRetries:0}, callApi:async (_prompt: string, context: any) => {
       const attempt = context.vars.attempt as Attempt;
       return {output:JSON.stringify(attempt), ...(attempt.status === 'error' ? {error:attempt.error ?? 'Recorded transport error'} : {}), cached:false, cost:0,
         tokenUsage:{total:0,prompt:0,completion:0}, metadata:{attemptId:attempt.attemptId}};
-    }}], tests:records.map(attempt => {const c = byId.get(attempt.caseId)!;return {description:attempt.attemptId, vars:{case:c,attempt}, assert:buildAssertions(c,config), options:{disableConversationVar:true}};})},
+    }}], tests:batch.map(attempt => {const c = byId.get(attempt.caseId)!;return {description:attempt.attemptId, vars:{case:c,attempt}, assert:buildAssertions(c,config), options:{disableConversationVar:true}};})},
     {cache:false, maxConcurrency:4, repeat:1, showProgressBar:false, abortSignal:signal});
   if (signal?.aborted) throw new Error('Re-scoring was cancelled');
-  return result.toEvaluateSummary();
+  const summary=gradeEvidenceSummary(await result.toEvaluateSummary());
+  combined.results.push(...summary.results);addNativeStats(combined.stats,summary.stats);
+  }
+  return combined;
 }

@@ -78,7 +78,7 @@ test('Activity API exposes in-flight SDK checks before completion; historical me
   await waitFor(()=>calls===2);
   const response=await app.inject({url:'/api/runs/'+ids[0]+'/activity',headers});assert.equal(response.statusCode,200);const live=response.json();assert.equal(live.active.length,2);assert.equal(live.finished,0);assert.equal(live.started,2);assert.equal(live.total,4);assert.ok(live.active.every((a:any)=>a.samplePreview==='Safe sample'&&a.caseNumber>0&&a.repeat>0&&a.stage.startsWith('scanning-')));assert.ok(!response.body.includes('authorization'));
   const queued=store.activity(ids[1]);assert.equal(queued.runStatus,'queued');assert.equal(queued.queuePosition,1);assert.equal(queued.active.length,0);store.cancel(ids[1]);
-  released=true;pending.splice(0).forEach(f=>f());await waitFor(()=>ids.every(id=>!['queued','running'].includes(store.detail(id).run.status)));
+  released=true;pending.splice(0).forEach(f=>f());await waitFor(()=>ids.every(id=>!['preparing','running','scoring','queued'].includes(store.detail(id).run.status)));
   const complete=store.activity(ids[0]);assert.equal(complete.finished,4);assert.equal(complete.active.length,0);assert.equal(complete.recent.length,4);assert.equal(calls,4);
   const dir=store.directory(ids[0]),saved=json(join(dir,'report.json'));
   // Simulate a report written before detection metrics existed, retaining its bound grades.

@@ -7,7 +7,7 @@ import {randomUUID} from 'node:crypto';
 import {defaultScorer,protectionScorer,validateScorer} from '../src/shared/scorer.js';
 import {runEvaluation,loadReport,compareRuns} from '../src/core/service.js';
 import {rescoreRun,selectedScoring,scoringHistory,activeScoringId} from '../src/core/scoring-revisions.js';
-import {readEvidence} from '../src/core/grading.js';
+import {readEvidence,gradeEvidenceSummary,savedGrades} from '../src/core/grading.js';
 import {root,save,json,hash,lines} from '../src/core/files.js';
 import {startMock} from '../scripts/mock-endpoint.js';
 import {buildServer} from '../src/server/main.js';
@@ -103,4 +103,16 @@ test('Report API selects one scoring version consistently for summary, filters, 
     const pending=store.rescore(id,defaultScorer());assert.throws(()=>store.remove(id),/re-scoring/);await assert.rejects(store.rescore(id,defaultScorer()),/Wait/);await pending;
     assert.equal(hash(readFileSync(join(out,'attempts.jsonl'))),digest);
   }finally{await app.close();if(!closed)await mock.close();rmSync(out,{recursive:true,force:true});rmSync(dir,{recursive:true,force:true});}
+});
+
+
+test('SDK grade projection preserves grading and attempt identity without duplicating large raw evidence',()=>{
+ const text='x'.repeat(1_000_000), gradingResult={pass:true,score:1,reason:'Matched',componentResults:[{pass:true,score:1,reason:'Matched',assertion:{metric:'Action match'}}]};
+ const stats={successes:1,failures:0,errors:0};
+ const native={version:3,stats,results:[{vars:{case:{id:'case-1',text,metadata:{text}},attempt:{attemptId:'attempt-1',text}},response:{output:text,metadata:{attemptId:'attempt-1'}},gradingResult,success:true}]};
+ const compact=gradeEvidenceSummary(native);
+ assert.deepEqual(compact.stats,stats);assert.strictEqual(compact.results[0].gradingResult,gradingResult);
+ assert.ok(JSON.stringify(compact).length<1500);assert.equal(native.results[0].vars.case.text,text);
+ const records=[{attemptId:'attempt-1',caseId:'case-1',status:'completed',action:'allow'}] as any;
+ assert.deepEqual(savedGrades(compact,records),savedGrades(native,records));
 });

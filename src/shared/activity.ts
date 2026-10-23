@@ -11,7 +11,7 @@ export interface ActivityEntry {
   status?: Attempt['status']; finishedAt?: string; action?: Action; error?: string; latencyMs?: number;
 }
 export interface ActivitySnapshot {
-  schemaVersion: 1; phase: 'testing' | 'finalizing' | 'finished'; updatedAt: string;
+  stage?: import('./testing.js').RunStage; schemaVersion: 1; phase: 'testing' | 'finalizing' | 'finished'; updatedAt: string;
   concurrency?: number; timeoutMs?: number; caseCount?: number;
   total: number; started: number; finished: number; completed: number; errors: number; skipped: number;
   active: ActivityEntry[]; recent: ActivityEntry[];

@@ -53,7 +53,7 @@ test('Two pinned source Datasets create one run with fair limits, complete prove
   assert.equal(invalid.statusCode,400);assert.equal(mock.requests.length,0);
   const created=await app.inject({method:'POST',url:'/api/runs',headers,payload:{...base,endpointId:endpoint.id,evidence:'synthetic-local-demo'}});
   assert.equal(created.statusCode,202,created.body);id=created.json().id;
-  const deadline=Date.now()+20000;while(Date.now()<deadline&&['running','queued'].includes(store.detail(id).run.status))await new Promise(r=>setTimeout(r,30));
+  const deadline=Date.now()+20000;while(Date.now()<deadline&&['preparing','running','scoring','queued'].includes(store.detail(id).run.status))await new Promise(r=>setTimeout(r,30));
   const {run,report}=store.detail(id);assert.equal(run.status,'completed');assert.deepEqual(run.datasetIds,['wildjailbreak','jailbreakbench']);assert.equal(run.datasetId,undefined);
   selectionPath=datasets().find(d=>d.id===run.selectionId)!.path;
   const snapshot=json(join(store.directory(id),'snapshot.json'));
@@ -71,7 +71,7 @@ test('Two pinned source Datasets create one run with fair limits, complete prove
   }
   const empty=await app.inject({url:'/api/runs/'+id+'/attempts?dataset=missing',headers});assert.equal(empty.json().total,0);
   const csv=await app.inject({url:'/api/runs/'+id+'/files/results.csv',headers});assert.equal(csv.body.trim().split('\n').length,9);assert.match(csv.body,/"wildjailbreak"/);assert.match(csv.body,/"jailbreakbench"/);
-  const cards=await app.inject({url:'/api/datasets',headers});assert.equal(cards.json().items.length,15);assert.ok(cards.json().items.every((c:any)=>c.source!=='local'));
+  const cards=await app.inject({url:'/api/datasets',headers});assert.equal(cards.json().items.length,catalog().length);assert.ok(cards.json().items.every((c:any)=>c.source!=='local'));
  }finally{
   await app.close();await mock.close();if(id){rmSync(store.directory(id),{recursive:true,force:true});rmSync(join(root,'data/jobs',id+'.json'),{force:true});}
   if(selectionPath)rmSync(selectionPath,{recursive:true,force:true});rmSync(join(root,'data/targets',name+'.json'),{force:true});

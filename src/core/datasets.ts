@@ -9,8 +9,9 @@ import { decompress } from 'lzma-native';
 import { root, json, hash, save, validateCase } from './files.js';
 import type { Action, Case, JsonObject, Phase } from '../shared/types.js';
 import { sourcePath, downloadFile } from './raw.js';
+import {normalizeCredData} from './creddata.js';
 
-export const ADAPTER_VERSION = 'dataset-adapters-v2-typescript';
+export const ADAPTER_VERSION = 'dataset-adapters-v3-typescript';
 export const catalog = (): JsonObject[] => json(join(root, 'catalog/datasets.json')).datasets;
 const bool = (v: unknown): boolean | null => [true, 1, '1', 'true', 'True'].includes(v as never) ? true : [false, 0, '0', 'false', 'False'].includes(v as never) ? false : null;
 const safety = (v: unknown): Action | null => ({ safe: 'allow', unsafe: 'block' } as const)[String(v).toLowerCase() as 'safe' | 'unsafe'] ?? null;
@@ -42,7 +43,7 @@ export async function* loadRows(path: string, field?: string): AsyncGenerator<Js
   } else if (format === '.json') {
     const decoder = new StringDecoder('utf8'); let text = ''; for await (const chunk of stream as AsyncIterable<Buffer>) text += decoder.write(chunk); text += decoder.end();
     const data = JSON.parse(text.replace(/^\uFEFF/, ''));
-    const rows = field ? data[field] : data;
+    const rows = field ? data[field] : data?.parameters && Array.isArray(data?.jailbreaks) ? data.jailbreaks : data;
     if (!Array.isArray(rows)) throw new Error('Nested JSON requires --field CATEGORY');
     yield* rows;
   } else throw new Error(`Unsupported file format: ${basename(path)}`);
@@ -50,6 +51,7 @@ export async function* loadRows(path: string, field?: string): AsyncGenerator<Js
 
 export function normalize(dataset: string, row: JsonObject, options: {phase: Phase | 'both'; split: string; config: string; field?: string; domain?: string}): Case[] {
   if (dataset === 'veritas') return [validateCase(row)];
+  if (dataset === 'creddata') return normalizeCredData(row, options);
   if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error('Source records must be objects');
   const { phase, split, config, field, domain } = options;
   const base: JsonObject = { dataset, split, config, metadata: { sourceId: row.id ?? row.Index, labelSource: 'source-label' } };
@@ -75,8 +77,16 @@ export function normalize(dataset: string, row: JsonObject, options: {phase: Pha
     }
     case 'do-not-answer': Object.assign(base.metadata, { labelSource: 'strict-refusal-policy', category: row.risk_area }); add(row.question, 'block'); break;
     case 'harmbench':
-      Object.assign(base.metadata, { labelSource: row.FunctionalCategory === 'standard' ? 'strict-refusal-policy' : 'needs-review', category: row.FunctionalCategory, context: row.ContextString });
+      Object.assign(base.metadata, { sourceId: row.BehaviorID, labelSource: row.FunctionalCategory === 'standard' ? 'strict-refusal-policy' : 'needs-review', category: row.FunctionalCategory, functionalCategory: row.FunctionalCategory, semanticCategory: row.SemanticCategory, context: row.ContextString });
       add(row.Behavior, row.FunctionalCategory === 'standard' ? 'block' : null); break;
+    case 'jailbreakbench-attacks': {
+      const [method, attackType, model] = config.split('/');
+      Object.assign(base.metadata, {sourceId: row.index, labelSource: 'submitted-attack-policy', category: row.category,
+        method, attackType, attackedModel: model, goal: row.goal, upstreamJailbroken: row.jailbroken});
+      // A successful attack on the original LLM is not required for a detector test.
+      // Never fall back to the goal or response when no attack prompt was submitted.
+      add(row.prompt, 'block'); break;
+    }
     case 'jailbreakbench':
       if (!['harmful', 'benign'].includes(split)) throw new Error('JailbreakBench requires harmful or benign split');
       Object.assign(base.metadata, { labelSource: 'split-policy', category: row.Category }); add(row.Goal, split === 'harmful' ? 'block' : 'allow'); break;
@@ -118,7 +128,7 @@ export function normalize(dataset: string, row: JsonObject, options: {phase: Pha
   return output;
 }
 
-export interface ImportOptions { dataset: string; file?: string; out: string; phase?: Phase | 'both'; split?: string; config?: string; field?: string; domain?: string; labels?: string; limit?: number; fetch?: boolean }
+export interface ImportOptions { dataset: string; file?: string; out: string; phase?: Phase | 'both'; split?: string; config?: string; field?: string; domain?: string; labels?: string; limit?: number; fetch?: boolean; signal?: AbortSignal; onProgress?: (rows: number, cases: number) => void }
 export async function importDataset(options: ImportOptions) {
   const entry = options.dataset === 'veritas' ? { id: 'veritas', defaultPhase: 'both', files: [], license: 'user-supplied' } : catalog().find(e => e.id === options.dataset);
   if (!entry) throw new Error('Choose a dataset from datasets list');
@@ -140,7 +150,9 @@ export async function importDataset(options: ImportOptions) {
   for (const { path, spec } of sources) {
     let scanned = 0, converted = 0, capped = false;
     for await (const row of loadRows(path, options.field)) {
+      options.signal?.throwIfAborted();
       scanned++;
+      if (scanned % 250 === 0) {options.onProgress?.(scanned, converted); await new Promise<void>(resolve=>setImmediate(resolve)); options.signal?.throwIfAborted();}
       const items = normalize(options.dataset, row, { ...options, phase: options.phase ?? entry.defaultPhase, config: spec.config, split: spec.split });
       if (!items.length) counts.rowsWithoutSelectedContent = (counts.rowsWithoutSelectedContent ?? 0) + 1;
       for (const item of items) {
@@ -152,13 +164,15 @@ export async function importDataset(options: ImportOptions) {
       }
       if (capped) break;
     }
+    options.onProgress?.(scanned, converted);
+    options.signal?.throwIfAborted();
     provenance.push({ file: spec.path ?? basename(path), sha256: hash(readFileSync(path)), split: spec.split, config: spec.config, scannedRows: scanned, cases: converted, limitReached: capped });
   }
   if (!cases.length) throw new Error('No cases produced; check phase, fields and source schema');
   if (Object.keys(labels).some(k => !seen.has(k))) throw new Error('Label overrides do not match selected cases');
   const data = cases.map(c => JSON.stringify(c)).join('\n') + '\n';
   mkdirSync(out, { recursive: true, mode: 0o700 }); writeFileSync(join(out, 'cases.jsonl'), data, { mode: 0o600 });
-  const manifest = { schemaVersion: 1, adapterVersion: ADAPTER_VERSION, adapterSha256: hash(readFileSync(join(root, 'src/core/datasets.ts'))), dataset: options.dataset, source: entry.url ?? null,
+  const manifest = { schemaVersion: 1, adapterVersion: ADAPTER_VERSION, adapterSha256: hash([readFileSync(join(root, 'src/core/datasets.ts'), 'utf8'), readFileSync(join(root, 'src/core/creddata.ts'), 'utf8')]), dataset: options.dataset, source: entry.url ?? null,
     revision: options.fetch ? entry.revision : null, license: entry.license, phase: options.phase ?? entry.defaultPhase, field: options.field ?? null, domain: options.domain ?? null,
     sampling: 'source-order selection per file; not representative random sampling', limitPerSource: limit, files: provenance, counts: { cases: cases.length, ...counts }, casesSha256: hash(data), reviewLabelsSha256: options.labels ? hash(labels) : null };
   save(join(out, 'manifest.json'), manifest); save(join(out, 'review-template.json'), Object.fromEntries(cases.filter(c => c.expected === null).map(c => [c.id, null])));
