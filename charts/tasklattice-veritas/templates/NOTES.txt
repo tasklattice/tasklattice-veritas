@@ -1,0 +1,14 @@
+Veritas runs as one process with a serialized local queue.
+
+Open a local tunnel:
+  kubectl --namespace {{ .Release.Namespace }} port-forward service/{{ include "veritas.fullname" . }} 38100:{{ .Values.service.port }}
+
+Then visit http://localhost:38100.
+
+The image must already be available to cluster nodes. This chart does not
+download upstream Datasets or deploy TaskLattice Guard.
+{{ if not .Values.persistence.enabled }}
+Persistence is disabled: all data and Reports are lost when the Pod is replaced.
+{{ else if and (not .Values.persistence.existingClaim) .Values.persistence.retain }}
+The PVC is retained on uninstall. Reuse it with persistence.existingClaim.
+{{ end }}

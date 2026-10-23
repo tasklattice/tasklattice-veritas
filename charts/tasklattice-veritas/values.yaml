@@ -1,0 +1,39 @@
+# Build this image locally or override repository/tag with your own registry.
+image:
+  repository: tasklattice-veritas
+  tag: "0.3.0"
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+# The queue and files have one owner. This chart always runs one replica.
+service:
+  port: 80
+
+# Loopback hosts are always allowed. Port-forward works without extra entries.
+# Add exact hostnames only when using a trusted authenticated proxy.
+allowedHosts: []
+
+# Keys become environment variables (for example VERITAS_F5_API_KEY, HF_TOKEN).
+# Create the Secret separately; never store credential values in this chart.
+existingSecret: ""
+extraEnv: []
+
+persistence:
+  enabled: true
+  existingClaim: ""
+  size: 20Gi
+  # null uses the cluster default; "" explicitly disables dynamic provisioning.
+  storageClass: null
+  # Retain the claim and evidence when uninstalling the release.
+  retain: true
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    memory: 2Gi
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
