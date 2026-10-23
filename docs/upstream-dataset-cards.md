@@ -1,6 +1,6 @@
 # Upstream Dataset cards
 
-The Dataset card tab renders the original README from the same pinned raw archive as the source data. It does not maintain a second, hand-written copy of the publisher's description. The implementation is shared by all fifteen source Datasets; all fifteen archived READMEs were verified readable locally.
+The Dataset card tab renders the original README from the same pinned raw archive as the source data. It does not maintain a second, hand-written copy of the publisher's description. The implementation is shared by the catalog sources. Card availability depends on the pinned README being archived locally.
 
 ## Content and provenance
 
@@ -23,7 +23,7 @@ The renderer reuses `react-markdown`, `remark-gfm`, `yaml`, `github-slugger` and
 ## Updating an upstream version
 
 1. Update the source's immutable revision and file hashes in `catalog/raw-datasets.lock.json`, and align its revision/scopes in `catalog/datasets.json`.
-2. Download and verify that pinned source using `npm run veritas -- datasets download --dataset aegis`. Preserve the old revision directory for historical provenance. The generic downloader's exit status reports completeness across all fifteen sources; inspect its per-source manifest when resuming one source.
+2. Download and verify that pinned source using `npm run veritas -- datasets download --dataset aegis`. Preserve the old revision directory for historical provenance. The generic downloader's exit status reports completeness across the catalog; inspect its per-source manifest when resuming one source.
 3. Refresh the Dataset registry/card and inspect the new source metadata. The card follows the new archived README automatically. No UI text needs to be recopied, and an ordinary card refresh does not fetch upstream HEAD or modify Testing mappings.
 4. Run `npm test` and `npm run build`, then inspect the Dataset card and recommended Testing scope.
 
