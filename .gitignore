@@ -29,6 +29,7 @@ test-results/
 
 # Historical desktop captures may contain real environment information
 docs/screenshots/
+.taste-skill/
 
 # Editor, OS, and obsolete local Python artifacts
 .DS_Store

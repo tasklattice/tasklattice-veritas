@@ -1,14 +1,14 @@
 /* Dataset surfaces follow the inspected Hugging Face viewer. Local font assets
    and Relay semantic color roles keep isolated deployments and both themes intact. */
-.hf-datasets-page, .hf-dataset-detail { --dataset-sans: 'Source Sans Pro', var(--font-sans); --dataset-mono: 'IBM Plex Mono', var(--font-mono); --dataset-filter-width: 224px; --dataset-inspector-width: 360px; --dataset-grid-height: clamp(380px,calc(100dvh - 440px),780px); font-family: var(--dataset-sans); --control-height: 44px; }
+.hf-datasets-page, .hf-dataset-detail { --dataset-sans: var(--font-sans); --dataset-mono: var(--font-mono); --dataset-filter-width: 212px; --dataset-inspector-width: 360px; --dataset-grid-height: clamp(380px,calc(100dvh - 440px),780px); font-family: var(--dataset-sans); --control-height: 44px; }
 .hf-datasets-page { max-width: 1600px; margin-inline: auto; }
 .hf-catalog-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .hf-catalog-heading > div { display: flex; align-items: center; gap: 10px; }
 .hf-catalog-heading > div > svg { width: 22px; height: 22px; color: var(--muted-foreground); }
 .hf-catalog-heading h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -.02em; }
-.hf-catalog-heading > div > span { color: var(--muted-foreground); font-size: 20px; font-weight: 400; }
+.hf-catalog-heading > div > span { color: var(--muted-foreground); font-size: 12px; font-weight: 500; line-height: 22px; padding: 0 7px; border-radius: 4px; background: var(--muted); }
 .hf-catalog-heading .ui-button { min-height: 44px; }
-.hf-catalog-description { font-size: 14px; line-height: 22px; color: var(--muted-foreground); margin: 0 0 16px; }
+.hf-catalog-description { font-size: 14px; line-height: 22px; color: var(--muted-foreground); margin: 6px 0 20px; }
 .hf-catalog-toolbar { display: flex; align-items: center; gap: 20px; padding-block: 12px; border-block: 1px solid var(--border); margin-bottom: 20px; }
 .hf-catalog-toolbar .search-control { flex: 1; max-width: 600px; }
 .hf-catalog-toolbar > span { font-size: 13px; color: var(--muted-foreground); margin-left: auto; white-space: nowrap; }
@@ -17,7 +17,7 @@
 .hf-sort { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted-foreground); }
 .hf-sort .ui-select { min-width: 142px; border-color: var(--border); font-family: var(--dataset-sans); font-size: 13px; }
 .hf-catalog-layout { display: grid; grid-template-columns: var(--dataset-filter-width) minmax(0,1fr); gap: 24px; align-items: start; }
-.hf-filters { border-right: 1px solid var(--border); padding-right: 20px; position: sticky; top: 76px; max-height: calc(100dvh - 96px); overflow-y: auto; }
+.hf-filters { border-right: 1px solid var(--border); padding-right: 16px; position: sticky; top: 76px; max-height: calc(100dvh - 96px); overflow-y: auto; }
 .hf-filter-heading { display: flex; align-items: center; justify-content: space-between; min-height: 44px; margin-bottom: 4px; }
 .hf-filter-heading h2 { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
 .hf-filter-heading svg { width: 16px; height: 16px; color: var(--muted-foreground); }
@@ -28,7 +28,7 @@
 .hf-filters summary::-webkit-details-marker, .hf-column-menu summary::-webkit-details-marker { display: none; }
 .hf-filters summary svg { width: 14px; height: 14px; color: var(--muted-foreground); transition: transform 150ms; }
 .hf-filters details[open] summary svg { transform: rotate(180deg); }
-.hf-filters label { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 8px; border-radius: var(--radius-control); cursor: pointer; color: var(--muted-foreground); font-size: 14px; }
+.hf-filters label { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 0; border-radius: var(--radius-control); cursor: pointer; color: var(--muted-foreground); font-size: 14px; }
 .hf-filters label:hover { background: var(--muted); color: var(--foreground); }
 .hf-filters label.selected { background: var(--primary-surface); color: var(--foreground); }
 .hf-filters input, .hf-column-menu input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); flex-shrink: 0; }
@@ -39,8 +39,8 @@
 .hf-active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .hf-active-filters .ui-button { min-height: 44px; font-size: 13px; padding-inline: 10px; }
 .hf-active-filters svg { width: 14px; height: 14px; }
-.hf-dataset-results-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
-.hf-source-card { position: relative; isolation: isolate; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-card); padding: 14px 16px 6px; background: var(--card); transition: border-color 150ms; }
+.hf-dataset-results-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.hf-source-card { position: relative; isolation: isolate; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-card); padding: 16px 16px 8px; background: var(--card); transition: border-color 150ms; }
 .hf-source-card:hover { border-color: var(--primary-border); }
 .hf-source-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .hf-source-title > .brand-mark { width: 22px; height: 22px; border-radius: 4px; flex-shrink: 0; }
@@ -53,7 +53,7 @@
 .hf-local-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted-foreground); white-space: nowrap; margin-left: auto; }
 .hf-local-status i { width: 5px; height: 5px; border-radius: 50%; background: var(--warning); }
 .hf-local-status.ready i { background: var(--success); }
-.hf-source-card > p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 40px; font-size: 13px; line-height: 20px; color: var(--muted-foreground); margin-top: 8px; }
+.hf-source-card > p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 42px; font-size: 13px; line-height: 20px; color: var(--muted-foreground); margin-top: 8px; }
 .hf-source-footer { display: flex; align-items: center; gap: 12px; min-height: 44px; color: var(--muted-foreground); font-size: 11px; }
 .hf-source-footer .dataset-category { font-size: 12px; white-space: nowrap; color: var(--secondary-foreground); }
 .hf-source-license { display: inline-flex; gap: 4px; align-items: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
