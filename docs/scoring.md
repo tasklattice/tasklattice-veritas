@@ -4,7 +4,7 @@ Testing and Report remain the only workflow concepts in the UI. Scoring rules ar
 
 ## Use the UI
 
-1. In **Start testing → Execution → Scoring rules**, use exact action matching, accept block or transform for an expected block, or configure the accepted-action matrix. PII removal checks are enabled by default. Optional text checks use promptfoo's native `contains`, `not-contains`, `equals` and `is-json` assertions.
+1. In **Start testing → Execution → Scoring rules**, choose intervention scoring (block or transform for either positive expectation), exact action matching, accept transform for an expected block, or configure the accepted-action matrix. PII removal checks are enabled by default. Optional text checks use promptfoo's native `contains`, `not-contains`, `equals` and `is-json` assertions.
 2. Start the test normally. The Report freezes the rules and stores each attempt's SDK grade, component outcomes and reason.
 3. Open a finished Report and click **Re-score**. Change the rules and click **Re-score results**. This reads existing request/response evidence; it does not resolve credentials, instantiate the live Target provider, or call a model.
 4. Use **Scoring** beside the Results table to switch between Original and later versions. Summary, evaluation thresholds, unexpected-check filters, check details and all exports refer to the selected version. **Rules** downloads a reusable JSON configuration.
@@ -33,7 +33,7 @@ npm run veritas -- report --run runs/content-safety-v1 --scoring s-REPLACE_WITH_
 npm run veritas -- report --run runs/content-safety-v1 --scoring original
 ```
 
-Examples: `scorer-strict.json`, `scorer-protection.json` and `scorer-redacted-text.json`. The last example intentionally requires a particular redaction marker; adapt its values to your Target's returned text. Assertions inspect `Attempt.texts`, not the complete response envelope or original Dataset text. A Target that does not return text supplies an empty string; text assertions may therefore fail even when its action is correct.
+Examples: `scorer-intervention.json`, `scorer-strict.json`, `scorer-protection.json` and `scorer-redacted-text.json`. The last example intentionally requires a particular redaction marker; adapt its values to your Target's returned text. Assertions inspect `Attempt.texts`, not the complete response envelope or original Dataset text. A Target that does not return text supplies an empty string; text assertions may therefore fail even when its action is correct.
 
 ```json
 {
@@ -81,3 +81,34 @@ Historical Report views and downloads derive these fields from frozen cases and 
 This version supports deterministic, local scoring. It does not add LLM judges, a Scorer registry, new sidebar entries, or distributed workers.
 
 References: [promptfoo Node SDK](https://www.promptfoo.dev/docs/usage/node-package/), [assertions](https://www.promptfoo.dev/docs/configuration/expected-outputs/), [custom providers](https://www.promptfoo.dev/docs/providers/custom-api/).
+
+## Intervention scoring and PII redaction
+
+Choose **Intervention (block or transform)** in Start testing or Re-score. For
+expected block and transform, either observed action passes; expected allow
+still requires allow. The preset disables the complete-redaction assertion,
+not the independent redaction measurements. Additional text assertions remain
+visible and still apply. Exact action matching remains the default.
+
+```sh
+npm run veritas -- rescore --run runs/YOUR_REPORT \
+  --scorer examples/scorer-intervention.json
+```
+
+The Report shows scoring accuracy and binary intervention accuracy separately.
+PII summaries retain complete, partial, blocked, allowed and unverified outcomes,
+regardless of scoring. Comparison charts also offer intervention accuracy and
+complete PII redaction. A partial transform can pass intervention scoring while
+failing complete redaction. A block never counts as complete redaction.
+
+Final-action metrics include interventions by other protections and conservative
+uncertainty blocks. They are not proof that the PII detector matched. JEV's
+explicit and uncertain verdicts remain in Evidence, separate from Guard actions.
+Transport/runtime failures remain errors, including verified fail-closed errors;
+changing scoring cannot turn these into successful detections.
+
+F5 Scan continues to request `flagOnly=false`, preserving cleared, blocked and
+redacted outcomes. LiteLLM preserves allow, block and transform. Neither protocol
+is changed, and no Dataset annotation or Guard Policy is rewritten. Re-score both
+sides of a baseline comparison with the same configuration; original scores,
+request evidence, latency and cost remain accessible.

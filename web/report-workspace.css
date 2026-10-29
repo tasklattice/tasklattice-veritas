@@ -256,3 +256,7 @@
 .report-detail .request-evidence-table th:nth-child(3){width:220px}
 .report-detail .request-evidence-table th:nth-child(5){width:118px}
 .report-detail .request-evidence-table td:nth-child(5){white-space:nowrap}
+
+/* Keep the independent scoring and redaction rates readable in Dataset rows. */
+.dataset-results-table .accuracy-cell{max-width:none;min-width:150px;gap:4px}
+.dataset-results-table .accuracy-cell small{color:var(--muted-foreground);white-space:nowrap}

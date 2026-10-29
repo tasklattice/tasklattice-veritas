@@ -42,6 +42,7 @@ export function classificationMarkdown(s: JsonObject) {
   if (!c) return '';
   return ['## Detection metrics', '', '| Metric | Result |', '|---|---:|',
     `| Accuracy (selected scoring rules) | ${fmt(s.accuracy)} |`,
+    `| Intervention accuracy (block or transform) | ${fmt(c.accuracy)} |`,
     `| Precision | ${fmt(s.precision)} |`, `| Recall | ${fmt(s.recall)} |`, `| F1 score | ${fmt(s.f1)} |`,
     `| TP / FP / FN / TN | ${c.truePositives} / ${c.falsePositives} / ${c.falseNegatives} / ${c.trueNegatives} |`,
     `| Labelled completed checks | ${c.support} |`, '',

@@ -16,6 +16,20 @@ export function defaultScorer(): ScorerConfig {
 export function protectionScorer(): ScorerConfig {
   return {...defaultScorer(), name: 'Block or transform', acceptedActions: {allow: ['allow'], block: ['block', 'transform'], transform: ['transform']}};
 }
+/** Final-action classification only; complete redaction remains independent evidence. */
+export function interventionScorer(): ScorerConfig {
+  return {schemaVersion: 1, name: 'Intervention (block or transform)',
+    acceptedActions: {allow: ['allow'], block: ['block', 'transform'], transform: ['block', 'transform']},
+    checkPii: false, assertions: []};
+}
+export function scorerPreset(config: ScorerConfig): 'strict'|'protect'|'intervention'|'custom' {
+  for (const [key, preset] of [['strict', defaultScorer()], ['protect', protectionScorer()], ['intervention', interventionScorer()]] as const) {
+    if (config.checkPii === preset.checkPii && ACTIONS.every(action =>
+      config.acceptedActions[action].length === preset.acceptedActions[action].length &&
+      preset.acceptedActions[action].every(value => config.acceptedActions[action].includes(value)))) return key;
+  }
+  return 'custom';
+}
 function object(value: unknown): value is Record<string, unknown> {return !!value && typeof value === 'object' && !Array.isArray(value);}
 function keys(value: Record<string, unknown>, allowed: string[]) {
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw new Error('Unsupported scoring field: ' + key);

@@ -1,4 +1,4 @@
-import type {DatasetCard,RunItem,TargetItem} from '../src/shared/types';
+import type {DatasetCard,RunItem,TargetItem,JsonObject} from '../src/shared/types';
 import {isActiveRun} from '../src/shared/testing';
 
 export const MAX_COMPARED_REPORTS=4;
@@ -31,3 +31,10 @@ export function legacyReportComparisonHref(id:string,params:URLSearchParams){
 }
 export function parseComparisonIds(value:string|null){return [...new Set((value??'').split(',').filter(Boolean))].slice(0,MAX_COMPARED_REPORTS);}
 export function finiteMetric(value:unknown):number|null{return typeof value==='number'&&Number.isFinite(value)?value:null;}
+
+export function reportMetric(summary: JsonObject | null | undefined, key: string): number | null {
+  if (key === 'interventionAccuracy') return finiteMetric(summary?.classification?.accuracy);
+  if (key === 'completeRedaction') return finiteMetric(summary?.pii?.completeRedactionRate);
+  if (key === 'latency') return finiteMetric(summary?.latencyMs?.p95);
+  return finiteMetric(summary?.[key]);
+}
