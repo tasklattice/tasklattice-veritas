@@ -58,6 +58,7 @@ for(const adapter of ['f5-scan','litellm-generic-guardrail'] as const)test(adapt
      const replay=await rescoreRun(out,interventionScorer());
      assert.equal(replay.report.summary.passed,8);assert.equal(replay.report.summary.failed,4);assert.equal(replay.report.summary.errors,2);
      assert.deepEqual(replay.report.summary.pii,original.report.summary.pii);
+     assert.ok(replay.report.summary.pii);
      assert.equal(replay.report.summary.pii.counts.blocked,2);assert.equal(replay.report.summary.pii.counts.partial,2);
      assert.equal(replay.report.summary.pii.completeRedactionRate,.25);
      assert.equal(replay.report.summary.accuracy,replay.report.summary.classification.accuracy);
