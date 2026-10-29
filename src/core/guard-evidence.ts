@@ -16,9 +16,9 @@ export function withEvaluationEvidence(dir:string,records:Attempt[]):Attempt[]{
   return records.map(r=>({...r,steps:r.steps.map(s=>s.headers?.['x-guard-evaluation-evidence']?s:{...s,...(byId.get(r.attemptId)?.get(s.phase)?{evaluationEvidence:byId.get(r.attemptId)!.get(s.phase)!}:{})})}));
 }
 export {jevSummary};
-export const detectionColumns=['jev_verdict','jev_model','jev_question_revision','jev_probabilities','jev_evidence_source'];
+export const detectionColumns=['jev_verdict','jev_model','jev_question_revision','jev_probabilities','jev_evidence_source','jev_evaluations'];
 export function detectionCells(r:Attempt){const d=jevDetection(r),rows=d.evidence?.evaluations??[];
-  return [d.status,[...new Set(rows.map(e=>e.model).filter(Boolean))].join(';'),[...new Set(rows.map(e=>e.questionRevision).filter(Boolean))].join(';'),JSON.stringify(rows.map(e=>e.probabilities??null)),d.evidence?.source??''];}
+  return [d.status,[...new Set(rows.map(e=>e.model).filter(Boolean))].join(';'),[...new Set(rows.map(e=>e.questionRevision).filter(Boolean))].join(';'),JSON.stringify(rows.map(e=>e.probabilities??null)),d.evidence?.source??'',JSON.stringify(rows)];}
 export function detectionMarkdown(s:{jev?:ReturnType<typeof jevSummary>}){
   const j=s.jev;if(!j)return '';
   return ['## JEV model evidence','','| Evidence | Completed checks |','|---|---:|',
@@ -33,6 +33,6 @@ export function detectionCsv(csv:string,records:Attempt[]){
   const existing=rows[0].map((name,i)=>detectionColumns.includes(name)?i:-1).filter(i=>i>=0).reverse();
   for(const i of existing)for(const row of rows)row.splice(i,1);
   const id=rows[0].indexOf('attempt_id'),byId=new Map(records.map(r=>[r.attemptId,r]));rows[0].push(...detectionColumns);
-  for(const row of rows.slice(1)){const r=byId.get(row[id]);row.push(...(r?detectionCells(r):['unavailable','','','','']));}
+  for(const row of rows.slice(1)){const r=byId.get(row[id]);row.push(...(r?detectionCells(r):['unavailable',...Array(detectionColumns.length-1).fill('')]));}
   return rows.map(row=>row.map(v=>'"'+(/^[=+\-@\t\r]/.test(String(v??''))?"'"+String(v??''):String(v??'')).replaceAll('"','""')+'"').join(',')).join('\n')+'\n';
 }

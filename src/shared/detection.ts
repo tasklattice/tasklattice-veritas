@@ -1,15 +1,15 @@
 import type {Attempt, Step} from './types.js';
 export type JevStatus = 'matched'|'uncertain-block'|'unknown'|'not_matched'|'not_run'|'error'|'unavailable';
 export interface ModelEvaluation {
-  evaluatorId:'typesafe-jev-jailbreak'|'typesafe-jev-content-safety';capability:'jailbreak'|'content_safety';model:string|null;policyId?:string|null;
+  evaluatorId:'typesafe-jev-jailbreak'|'typesafe-jev-content-safety'|'typesafe-jev-topic';capability:'jailbreak'|'content_safety'|'topic_control';model:string|null;policyId?:string|null;
   verdict:'matched'|'not_matched'|'unknown'|'error';enforcedAction:'block'|'transform'|'allow'|null;
   questionRevision?:string|null;thresholds?:{lower:number;upper:number};probabilities?:Record<string,number>;
 }
 export interface RuntimeExecutionEvidence {status:'complete'|'error'|'bypassed';failClosed:boolean;errorTypes:string[]}
 export function validExecutionEvidence(v:any):v is RuntimeExecutionEvidence {return !!v&&['complete','error','bypassed'].includes(v.status)&&typeof v.failClosed==='boolean'&&Array.isArray(v.errorTypes)&&v.errorTypes.length<=8&&v.errorTypes.every((s:unknown)=>typeof s==='string'&&/^[A-Za-z0-9_-]{1,64}$/.test(s));}
 export interface EvaluationEvidence {execution?:RuntimeExecutionEvidence;schemaVersion:1;complete:boolean;protectionMode:'enforce'|'monitor'|'bypass';modelRevisionId?:string|null;evaluations:ModelEvaluation[];source?:'endpoint-header'|'guard-telemetry'}
-const evaluatorCapabilities: Record<string,string> = {'typesafe-jev-jailbreak':'jailbreak','typesafe-jev-content-safety':'content_safety'};
-const probabilityKeys: Record<string,string[]> = {jailbreak:['jailbreak_attempt','unsafe_pretext'],content_safety:['unsafe_content']};
+const evaluatorCapabilities: Record<string,string> = {'typesafe-jev-jailbreak':'jailbreak','typesafe-jev-content-safety':'content_safety','typesafe-jev-topic':'topic_control'};
+const probabilityKeys: Record<string,string[]> = {jailbreak:['jailbreak_attempt','unsafe_pretext'],content_safety:['unsafe_content'],topic_control:['denied_task','unlisted_task']};
 const identity=(v:unknown)=>v===null||typeof v==='string'&&/^[A-Za-z0-9_.:/-]{1,160}$/.test(v);
 export function parseEvaluationEvidence(raw:unknown):EvaluationEvidence|null {
   try {
@@ -47,3 +47,6 @@ export function jevSummary(records:Attempt[]){
 }
 
 export function executionFailure(step:Step|undefined):string|null {const e=stepEvaluationEvidence(step)?.execution;return e?.status==='error'?'Guard execution error'+(e.failClosed?' (failed closed)':'')+(e.errorTypes.length?': '+e.errorTypes.join(', '):''):null;}
+
+export const capabilityLabels:Record<ModelEvaluation['capability'],string>={jailbreak:'Jailbreak',content_safety:'Content safety',topic_control:'Topic control'};
+export const probabilityLabels:Record<string,string>={jailbreak_attempt:'Instruction bypass',unsafe_pretext:'Unsafe pretext',unsafe_content:'Unsafe content',denied_task:'Denied task',unlisted_task:'Outside allowed topics'};

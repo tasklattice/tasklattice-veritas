@@ -58,3 +58,20 @@ test('Content safety evidence is independent of jailbreak and preserves uncertai
  assert.equal(row.jev_question_revision,'content-safety-input.v1');
  assert.match(row.jev_probabilities,/unsafe_content/);
 });
+
+test('Topic-only uncertainty explains a block even when the other model checks are clear',()=>{
+ const e=envelope('not_matched',null);
+ e.evaluations.push({evaluatorId:'typesafe-jev-topic',capability:'topic_control',model:'jev-1.13.0',policyId:'topic-policy',
+  verdict:'unknown',enforcedAction:'block',questionRevision:'topic-input.v1',thresholds:{lower:.1,upper:.9},probabilities:{denied_task:.2,unlisted_task:.3}});
+ const r=attempt(e);
+ assert.equal(jevDetection(r).status,'uncertain-block');
+ assert.equal(parseEvaluationEvidence(e)?.evaluations[1].capability,'topic_control');
+ const row=(parse(detectionCsv('"attempt_id"\n"a"\n',[r]),{columns:true}) as Record<string,string>[])[0];
+ const exported=JSON.parse(row.jev_evaluations);
+ assert.equal(exported[1].capability,'topic_control');assert.equal(exported[1].enforcedAction,'block');
+ assert.deepEqual(exported[1].probabilities,{denied_task:.2,unlisted_task:.3});
+ e.evaluations[1].enforcedAction=null;r.action='allow';r.steps[0].headers!['x-guard-evaluation-evidence']=JSON.stringify(e);
+ assert.equal(jevDetection(r).status,'unknown','Observed uncertainty is neither a match nor a block');
+ for(const invalid of [{...e.evaluations[1],capability:'content_safety'}, {...e.evaluations[1],probabilities:{unsafe_content:.4}}])
+  assert.equal(parseEvaluationEvidence({...e,evaluations:[invalid]}),null);
+});
