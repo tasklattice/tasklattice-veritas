@@ -7,7 +7,7 @@ Testing and Report remain the only workflow concepts in the UI. Scoring rules ar
 1. In **Start testing → Execution → Scoring rules**, use exact action matching, accept block or transform for an expected block, or configure the accepted-action matrix. PII removal checks are enabled by default. Optional text checks use promptfoo's native `contains`, `not-contains`, `equals` and `is-json` assertions.
 2. Start the test normally. The Report freezes the rules and stores each attempt's SDK grade, component outcomes and reason.
 3. Open a finished Report and click **Re-score**. Change the rules and click **Re-score results**. This reads existing request/response evidence; it does not resolve credentials, instantiate the live Target provider, or call a model.
-4. Use **Scoring** inside the Report to switch between Original and later versions. Summary, quality gate, unexpected-check filters, check details and all exports refer to the selected version. **Download rules** saves a reusable JSON configuration.
+4. Use **Scoring** beside the Results table to switch between Original and later versions. Summary, evaluation thresholds, unexpected-check filters, check details and all exports refer to the selected version. **Rules** downloads a reusable JSON configuration.
 
 Successful re-scoring makes the new version the Report's default view, including its list summary. Selecting an older version uses a shareable `?scoring=...` URL and does not change that default. The original artifacts remain untouched. Original test status/exit code describe the original execution; the selected scoring gate describes the selected assessment. Interrupted executions without a terminal `execution.json` cannot be re-scored.
 
@@ -61,7 +61,9 @@ GET `/api/runs/{id}` includes available versions, selected rules, eligibility an
 
 New POST `/api/runs` accepts an optional `scorer` with the same configuration. Missing rules select exact action matching with PII removal enabled. Configuration is data only: arbitrary JavaScript/Python, file assertions, transforms, providers and remote judges cannot be supplied through this API.
 
-## Versioning, gates and execution
+## Evaluation thresholds and execution
+
+The Report table's **Execution** column describes whether the original test finished. **Completed** can include unexpected decisions. Match rate and unexpected counts describe the results; **Metadata → Evaluation thresholds** shows the required values, actual measurements and policy source. Built-in Veritas defaults require 100% completed coverage and 100% scoring match rate. The browser test form displays those defaults in Review; it does not configure custom thresholds. CLI/API tests can override thresholds, which are saved in the test snapshot. Historical reports without a saved policy show only their recorded failed thresholds.
 
 - New runs save `grades.jsonl` and `grading.json` next to the original evidence. Reports aggregate these saved SDK grades rather than re-running scoring functions. Historical compatible schema-3 reports retain their original deterministic grading fallback; unknown historical scorers remain explicitly unscored.
 - Re-scoring uses a custom in-memory replay Provider with `promptfoo.evaluate()`, one test per recorded attempt and repeat=1. It cannot reach the Target. Domain assertions use callbacks; text assertions are native promptfoo assertions. Recorded transport errors and skips retain their status. Replay execution time does not replace original request latency or Guard cost.

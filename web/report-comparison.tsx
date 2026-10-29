@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
-import {ArrowRight,ArrowDown,ArrowUp,GitCompareArrows,RefreshCw,AlertTriangle} from 'lucide-react';
+import {ArrowRight,ChevronRight,ArrowDown,ArrowUp,GitCompareArrows,RefreshCw,AlertTriangle} from 'lucide-react';
 import type {DatasetCard,JsonObject} from '../src/shared/types';
 import type {ChangeKind,ComparedCheck,ReportComparison as ComparisonData} from '../src/shared/comparison';
 import {isActiveRun} from '../src/shared/testing';
@@ -12,24 +12,24 @@ import {PhaseLabel} from './report-evidence';
 import {EvidenceDialog} from './report-detail';
 import {percent,time} from './format';
 import {type Evidence,count} from './report-model';
+import {comparisonCasesHref} from './report-workspace-model';
 
 const labels:Record<ChangeKind,string>={'new-failure':'New failures',fixed:'Fixed','still-failing':'Still failing',unchanged:'Still matched',unstable:'Unstable','not-comparable':'Not comparable'};
 type Inspection={id:string;scoringId:string;attempt:Evidence};
-export function ReportComparison({id,scoringId,cards}:{id:string;scoringId:string;cards:DatasetCard[]}) {
-  const initial=new URLSearchParams(location.hash.split('?')[1]??'');
-  const [baseline,setBaseline]=useState(initial.get('baseline')??''),[baselineScoring,setBaselineScoring]=useState(initial.get('baselineScoring')??'original');
+export function ReportComparison({id,scoringId,cards,baselineId,baselineScoringId,mode}:{id:string;scoringId:string;cards:DatasetCard[];baselineId:string;baselineScoringId:string;mode:'history'|'targets'}) {
+  const [baseline,setBaseline]=useState(baselineId),[baselineScoring,setBaselineScoring]=useState(baselineScoringId);
   const [filter,setFilter]=useState('new-failure'),[dataset,setDataset]=useState(''),[offset,setOffset]=useState(0),[size,setSize]=useState(25),[inspection,setInspection]=useState<Inspection|null>(null),[inspectError,setInspectError]=useState('');
   const runs=useQuery(runListOptions()),choices=(runs.data?.items??[]).filter(r=>r.id!==id&&!isActiveRun(r.status)&&r.summary);
   const meta=useQuery({queryKey:['comparison-baseline',baseline],queryFn:({signal})=>api<JsonObject>('/runs/'+baseline,undefined,'GET',signal),enabled:!!baseline});
   const params=new URLSearchParams({baseline,scoring:scoringId,baselineScoring,filter,dataset,offset:String(offset),limit:String(size)});
   const query=useQuery({queryKey:['report-comparison',id,baseline,scoringId,baselineScoring,filter,dataset,offset,size],queryFn:({signal})=>api<ComparisonData>('/runs/'+id+'/compare?'+params,undefined,'GET',signal),enabled:!!baseline});
   useEffect(()=>{setOffset(0);setInspection(null);},[baseline,baselineScoring,scoringId,filter,dataset]);
-  function chooseBaseline(value:string){setBaseline(value);setBaselineScoring('original');setFilter('new-failure');setDataset('');setOffset(0);const p=new URLSearchParams(location.hash.split('?')[1]??'');if(value){p.set('baseline',value);p.set('baselineScoring','original');}else{p.delete('baseline');p.delete('baselineScoring');}location.hash='/runs/'+id+(p.size?'?'+p:'');}
-  function chooseScoring(value:string){setBaselineScoring(value);setOffset(0);const p=new URLSearchParams(location.hash.split('?')[1]??'');p.set('baselineScoring',value);location.hash='/runs/'+id+'?'+p;}
+  function chooseBaseline(value:string){setBaseline(value);setBaselineScoring('original');setFilter('new-failure');setDataset('');setOffset(0);if(value)location.hash=comparisonCasesHref(value,id,'original',scoringId,mode);}
+  function chooseScoring(value:string){setBaselineScoring(value);setOffset(0);location.hash=comparisonCasesHref(baseline,id,value,scoringId,mode);}
   async function inspect(runId:string,version:string,attemptId:string){try{setInspectError('');const data=await api<{attempt:Evidence}>(`/runs/${runId}/attempts/${encodeURIComponent(attemptId)}?scoring=${encodeURIComponent(version)}`);setInspection({id:runId,scoringId:version,attempt:data.attempt});}catch(error){setInspectError((error as Error).message);}}
   const d=query.data;
   return <section className="report-comparison" aria-label="Baseline comparison">
-    <div className="section-title"><div><h2><GitCompareArrows aria-hidden="true"/>Baseline comparison</h2><p className="help">Compare saved results. No new Target calls. Each row represents one case across all repeats.</p></div></div>
+    <div className="section-title"><div><h2>Case changes</h2></div></div>
     <div className="comparison-selectors"><label>Baseline Report<NativeSelect aria-label="Baseline Report" value={baseline} onChange={e=>chooseBaseline(e.target.value)}><option value="">Choose a finished Report</option>{choices.map(r=><option key={r.id} value={r.id}>{time(r.createdAt)} · {r.targetName??r.name} · {r.datasetIds?.join(' + ')}</option>)}</NativeSelect></label>{baseline&&<label>Baseline scoring<NativeSelect aria-label="Baseline scoring" value={baselineScoring} disabled={!meta.data} onChange={e=>chooseScoring(e.target.value)}>{(meta.data?.scoring?.versions??[{id:'original',name:'Original'}]).map((v:JsonObject)=><option key={v.id} value={v.id}>{v.id==='original'?'Original':'Re-scored'} · {v.name}</option>)}</NativeSelect></label>}<Button variant="ghost" disabled={!baseline||query.isFetching} onClick={()=>{void query.refetch();void runs.refetch();}}><RefreshCw/>Refresh</Button></div>
     {(runs.error||meta.error)&&<div className="notice error" role="alert">{(runs.error??meta.error)?.message}<Button variant="ghost" onClick={()=>{void runs.refetch();void meta.refetch();}}>Retry</Button></div>}
     {!baseline?<div className="empty comparison-empty"><GitCompareArrows/><h3>What changed since the baseline?</h3><p>Select a Report to find newly failing and fixed cases. For a fair comparison, use identical cases, labels, execution settings and scoring rules.</p></div>:query.isError?<div className="empty"><h3>Comparison unavailable</h3><p role="alert">{query.error.message}</p><Button variant="outline" onClick={()=>void query.refetch()}>Retry comparison</Button></div>:query.isPending?<div className="empty" role="status">Aligning saved cases and scoring versions…</div>:d&&<>
@@ -50,6 +50,6 @@ export function ReportComparison({id,scoringId,cards}:{id:string;scoringId:strin
 function CheckGroup({rows,inspect}:{rows:ComparedCheck[];inspect:(attemptId:string)=>void}) {
   if(!rows.length)return <span className="help">No recorded checks</span>;
   const shown=rows.slice(0,3),rest=rows.slice(3);
-  const button=(r:ComparedCheck,i:number)=><Button key={r.attemptId} variant="ghost" aria-label={'Inspect comparison check '+r.attemptId} title={r.reason} onClick={()=>inspect(r.attemptId)}><span>Check {i+1} · {r.status==='completed'?r.action:r.status}</span><span className={r.status!=='completed'?'text-warning':r.pass===false?'text-danger':r.pass===true?'text-success':'muted'}>{r.status==='completed'?(r.pass===true?'Matched':r.pass===false?'Failed':'Unscored'):'No grade'}</span><ArrowRight/></Button>;
+  const button=(r:ComparedCheck,i:number)=><Button key={r.attemptId} variant="ghost" aria-label={'Inspect comparison check '+r.attemptId} title={r.reason} onClick={()=>inspect(r.attemptId)}><span>Check {i+1} · {r.status==='completed'?r.action:r.status}</span><span className={r.status!=='completed'?'text-warning':r.pass===false?'text-danger':r.pass===true?'text-success':'muted'}>{r.status==='completed'?(r.pass===true?'Matched':r.pass===false?'Failed':'Unscored'):'No grade'}</span><ChevronRight/></Button>;
   return <div className="comparison-checks">{shown.map(button)}{rest.length>0&&<details><summary>{rest.length} more checks</summary>{rest.map((r,i)=>button(r,i+3))}</details>}</div>;
 }

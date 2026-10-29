@@ -170,16 +170,16 @@ small { display: block; color: var(--muted-foreground); font-size: 12px; line-he
 .brand-wordmark > span { color: var(--muted-foreground); font-weight: 500; }
 .nav-content { padding: 24px 12px; }
 .nav-group-label { color: var(--muted-foreground); font-size: 12px; font-weight: 500; padding: 0 12px; margin-bottom: 12px; }
-nav { display: grid; gap: 4px; }
-nav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control); color: var(--sidebar-foreground); font-size: 14px; }
-nav a:hover { background: var(--sidebar-accent); text-decoration: none; }
-nav a[aria-current=page] { background: var(--primary-surface); color: var(--accent-foreground); font-weight: 600; box-shadow: inset 3px 0 0 var(--primary); }
-nav a small { display: inline; margin: 0 0 0 auto; font-variant-numeric: tabular-nums; }
+.sidebar nav { display: grid; gap: 4px; }
+.sidebar nav a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control); color: var(--sidebar-foreground); font-size: 14px; }
+.sidebar nav a:hover { background: var(--sidebar-accent); text-decoration: none; }
+.sidebar nav a[aria-current=page] { background: var(--primary-surface); color: var(--accent-foreground); font-weight: 600; box-shadow: inset 3px 0 0 var(--primary); }
+.sidebar nav a small { display: inline; margin: 0 0 0 auto; font-variant-numeric: tabular-nums; }
 .collapsed { --sidebar-width: 72px; }
 .collapsed .brand { padding: 0; justify-content: center; }
-.collapsed .brand-wordmark, .collapsed nav span, .collapsed nav small, .collapsed .nav-group-label { display: none; }
+.collapsed .brand-wordmark, .collapsed .sidebar nav span, .collapsed .sidebar nav small, .collapsed .nav-group-label { display: none; }
 .collapsed .nav-content { padding: 24px 8px; }
-.collapsed nav a { justify-content: center; padding: 0; }
+.collapsed .sidebar nav a { justify-content: center; padding: 0; }
 main { grid-column: 2; min-width: 0; }
 .topbar { position: sticky; top: 0; z-index: var(--layer-header); display: flex; align-items: center; justify-content: space-between; gap: 20px; height: var(--header-height); padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--background); }
 .breadcrumb { display: flex; align-items: center; flex: 1; min-width: 0; gap: 10px; color: var(--muted-foreground); font-size: 14px; white-space: nowrap; overflow: hidden; }

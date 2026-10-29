@@ -1,17 +1,16 @@
 import type {Attempt,JsonObject} from '../src/shared/types';
 import {jevDetection,jevLabels,type JevStatus} from '../src/shared/detection';
-import {Button} from './ui';
+import {Button,Disclosure} from './ui';
 import {count} from './report-model';
-import {ArrowRight,ShieldCheck,ShieldQuestion} from 'lucide-react';
 
 const tone=(s:JevStatus)=>s==='matched'?'text-danger':s==='uncertain-block'||s==='unknown'||s==='error'?'text-warning':'';
 export function JevBadge({attempt}:{attempt:Attempt}){const d=jevDetection(attempt);return <span className={'jev-verdict '+tone(d.status)}>{jevLabels[d.status]}</span>;}
 export function JevSummary({summary,openChecks}:{summary:JsonObject;openChecks:(filter:string)=>void}){
   const j=summary.jev;if(!j)return null;
-  return <section className="jev-evidence-summary" aria-label="JEV model evidence"><div className="section-title"><div><h2>JEV model evidence</h2><p className="help">Separate the model verdict from the action enforced by Guard. Counts are per completed check.</p></div><span className="help">{count(j.available)} / {count(j.completed)} with evidence</span></div>
-    <div className="jev-evidence-primary">{[{key:'matched',label:'Explicit model match',note:'JEV returned a positive verdict',Icon:ShieldCheck},{key:'uncertain-block',label:'Uncertain · blocked',note:'Conservative policy intervention',Icon:ShieldQuestion}].map(({key,label,note,Icon})=><Button key={key} variant="ghost" onClick={()=>openChecks('jev-'+key)} disabled={!j.counts[key]}><Icon aria-hidden="true"/><span><span>{label}</span><strong>{count(j.counts[key])}</strong><small>{note}</small></span><ArrowRight aria-hidden="true"/></Button>)}</div>
-    <div className="jev-evidence-secondary">{(['not_matched','not_run','unknown','error','unavailable'] as JevStatus[]).map(key=><Button key={key} variant="ghost" disabled={!j.counts[key]} onClick={()=>openChecks('jev-'+key)}>{jevLabels[key]}<strong>{count(j.counts[key])}</strong></Button>)}</div>
-    <p className="help jev-evidence-note">Final-action recall includes local rules and uncertainty blocks. It does not measure native JEV recall. Missing evidence is shown as unavailable.</p></section>;
+  return <section className="jev-evidence-summary" aria-label="JEV model evidence"><div className="section-title"><div><h2>JEV</h2></div><span className="help">{count(j.available)} / {count(j.completed)} completed with evidence</span></div>
+    <div className="jev-evidence-primary">{[{key:'matched',label:'Explicit model match'},{key:'uncertain-block',label:'Uncertain · blocked'}].map(({key,label})=><Button key={key} variant="ghost" onClick={()=>openChecks('jev-'+key)} disabled={!j.counts[key]}><span><span>{label}</span><strong>{count(j.counts[key])}</strong></span></Button>)}</div>
+    <div className="jev-evidence-secondary">{(['not_matched','not_run','unknown','error','unavailable'] as JevStatus[]).filter(key=>j.counts[key]>0).map(key=><Button key={key} variant="ghost" disabled={!j.counts[key]} onClick={()=>openChecks('jev-'+key)}>{jevLabels[key]}<strong>{count(j.counts[key])}</strong></Button>)}</div>
+    <Disclosure className="report-evidence-definitions" label="Metric definitions"><p>Final-action recall includes local rules and uncertainty blocks. It does not measure native JEV recall. Counts are per completed check; missing evidence is unavailable.</p></Disclosure></section>;
 }
 export function JevDetails({attempt}:{attempt:Attempt}){
   const d=jevDetection(attempt),rows=d.evidence?.evaluations??[];

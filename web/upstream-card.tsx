@@ -2,17 +2,17 @@ import {useEffect,useState,type ReactNode} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import Markdown,{type Components} from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import {BookOpen,ArrowUpRight,Download,FileCode2,RefreshCw,GitCommitHorizontal,Play,Scale,Link2,Check,ChevronDown} from 'lucide-react';
+import {BookOpen,ArrowUpRight,Download,FileCode2,RefreshCw,GitCommitHorizontal,Scale,Link2,ChevronDown} from 'lucide-react';
 import {cardOptions} from './query';
 import {remarkCardHeadings,cardLink,cardImage} from '../src/shared/card-markdown';
 import type {DatasetCard} from '../src/shared/types';
 import {Button} from './ui';
 import {Skeleton} from './components/ui/skeleton';
-import {SourceMark,PublisherMark,DatasetCategory} from './brand';
+import {SourceMark,PublisherMark} from './brand';
 
 const headingComponents:Components={h1:({node,...props})=><h1 tabIndex={-1} {...props}/>,h2:({node,...props})=><h2 tabIndex={-1} {...props}/>,h3:({node,...props})=><h3 tabIndex={-1} {...props}/>,h4:({node,...props})=><h4 tabIndex={-1} {...props}/>,h5:({node,...props})=><h5 tabIndex={-1} {...props}/>,h6:({node,...props})=><h6 tabIndex={-1} {...props}/>,};
 
-export function UpstreamDatasetCard({card,evaluate}:{card:DatasetCard;evaluate:()=>void}){
+export function UpstreamDatasetCard({card}:{card:DatasetCard}){
   const query=useQuery(cardOptions(card.id,card.revision)),source=query.data,[raw,setRaw]=useState(false),[section,setSection]=useState('');
   function jump(id:string,save=true){
     setRaw(false);
@@ -42,7 +42,7 @@ export function UpstreamDatasetCard({card,evaluate}:{card:DatasetCard;evaluate:(
       table:({node,...props})=><div className="upstream-table-scroll"><table {...props}/></div>,
     }}>{markdown}</Markdown></article>}
     <div className="upstream-card-attribution"><PublisherMark publisher={source.publisher} size="sm"/><div><p>Original Dataset card by <strong>{source.publisher}</strong> · <a href={source.readmeUrl} target="_blank" rel="noreferrer">pinned upstream source<ArrowUpRight/></a></p><span>License: {source.license??'See upstream source'} · Upstream wording, authors and citation are preserved.</span></div></div>
-    <section className="upstream-veritas-notes" aria-label="Veritas testing notes"><div><h2>Use this Dataset in Veritas</h2><Button onClick={evaluate} disabled={!card.rawAvailable}><Play/>Start testing</Button></div><p>Choose this Dataset, add other sources if needed, then select a Target. Configure each source scope and direction before setting concurrency and repeats.</p><p>Recommended test scope: <strong>{card.configs.join(', ')} · {card.splits.join(', ')}</strong>. Browsing another split does not change Testing defaults. Source labels are mapped to expected actions when the test is prepared.</p><div><DatasetCategory id={card.id}/><span><Check/>{card.rawAvailable?'Pinned archive available locally':'Archive required'}</span></div></section></div>
+    </div>
     <aside className="upstream-card-sidebar" aria-label="Dataset card information"><section className="upstream-metadata"><h2>Upstream metadata</h2>{metadataFields.filter(([key])=>metadata[key]!==undefined).map(([key,label])=><div key={key}><h3>{label}</h3><p>{simpleValue(metadata[key])}</p></div>)}{Array.isArray(metadata.tags)&&<div><h3>Tags</h3><div className="upstream-tags">{[...new Set(metadata.tags.map(String))].map(tag=><span key={tag}>{tag}</span>)}</div></div>}{source.metadataError&&<p className="notice">{source.metadataError}</p>}<details><summary>Original YAML metadata<ChevronDown/></summary><pre>{source.frontmatter||'No YAML metadata is present in this README.'}</pre></details></section><nav aria-label="On this Dataset card"><h2>On this page</h2>{source.headings.filter(h=>h.depth<=3).map(h=><button type="button" key={h.id} className={'depth-'+h.depth} aria-current={section===h.id?'location':undefined} onClick={()=>jump(h.id)}>{h.text}</button>)}</nav>
       <section className="upstream-card-provenance"><h2>Source snapshot</h2><a href={source.readmeUrl} target="_blank" rel="noreferrer">{source.filename}<ArrowUpRight/></a><dl><dt>Revision</dt><dd>{source.revision}</dd><dt>README SHA-256</dt><dd>{source.sha256}</dd><dt>Size</dt><dd>{source.bytes.toLocaleString()} bytes</dd></dl><p><Scale/>{source.license??'See source license'}</p><small>Rendered from the archived README. The card follows the raw archive revision when it is updated.</small></section>
     </aside></div>

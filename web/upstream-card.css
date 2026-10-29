@@ -78,13 +78,6 @@
 .upstream-card-attribution span { font-size: 12px; }
 .upstream-card-attribution a { display: inline-flex; align-items: center; gap: 4px; }
 .upstream-card-attribution svg { width: 12px; height: 12px; }
-.upstream-veritas-notes { border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; background: var(--card); margin: 16px 0 32px; }
-.upstream-veritas-notes > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.upstream-veritas-notes h2 { font-size: 18px; font-weight: 600; }
-.upstream-veritas-notes p { margin-top: 12px; font-size: 14px; line-height: 23px; color: var(--muted-foreground); }
-.upstream-veritas-notes > div:last-child { justify-content: flex-start; margin-top: 16px; font-size: 12px; }
-.upstream-veritas-notes > div:last-child > span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted-foreground); }
-.upstream-veritas-notes > div:last-child svg { width: 14px; height: 14px; }
 .upstream-card-loading { display: grid; gap: 20px; padding: 32px 4px; min-height: 420px; align-content: start; }
 .upstream-card-loading p { color: var(--muted-foreground); font-size: 14px; }
 .upstream-card-empty { min-height: 360px; }
