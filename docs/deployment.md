@@ -9,7 +9,10 @@ saved Reports and evidence remain available.
 ## Local Docker startup
 
 ```sh
-docker compose up --build -d
+mkdir veritas && cd veritas
+curl -fsSLO https://github.com/tasklattice/tasklattice-veritas/releases/download/v0.1.0/compose.yaml
+docker compose pull
+docker compose up --no-build -d
 docker compose exec veritas npm run veritas -- demo
 ```
 
@@ -25,12 +28,15 @@ The entrypoint creates child directories on a new volume. Bind-mounted storage
 must be writable by UID/GID 1000.
 
 ```sh
-docker build -t tasklattice-veritas:0.3.0 .
 docker run --rm --init --name veritas \
   -p 127.0.0.1:38100:38100 \
   -v veritas-data:/var/lib/veritas \
-  tasklattice-veritas:0.3.0
+  ghcr.io/tasklattice/tasklattice-veritas:0.1.0
 ```
+
+The published image supports Linux amd64 and arm64. In a source checkout, use
+`docker compose up --build -d` to build locally, or
+`docker build -t tasklattice-veritas:0.1.0 .` for a separate local image name.
 
 The build context excludes local data, credentials, Reports, caches and Git
 history. A full Node build stage supplies the native-module compiler toolchain;
@@ -42,30 +48,31 @@ Bookworm; override `--build-arg NODE_VERSION=...` to use another supported patch
 
 ## Kubernetes installation
 
-Requirements: Helm 3 or 4, Kubernetes 1.25+, an image accessible to every node,
-and a default StorageClass or existing PVC. For a remote cluster, substitute your
-registry for this placeholder:
+Requirements: Helm 3 or 4, Kubernetes 1.25+, registry access from every node,
+and a default StorageClass or existing PVC.
 
 ```sh
-docker build -t registry.example.test/tasklattice/veritas:0.3.0 .
-docker push registry.example.test/tasklattice/veritas:0.3.0
-helm upgrade --install veritas ./charts/tasklattice-veritas \
+helm upgrade --install veritas oci://ghcr.io/tasklattice/charts/tasklattice-veritas \
+  --version 0.1.0 \
   --namespace veritas --create-namespace \
-  --set image.repository=registry.example.test/tasklattice/veritas \
-  --set-string image.tag=0.3.0 \
   --wait --timeout 5m
 kubectl -n veritas port-forward service/veritas-tasklattice-veritas 38100:80
 ```
 
-Visit [localhost:38100](http://localhost:38100). For kind, load the locally built
-image with `kind load docker-image tasklattice-veritas:0.3.0` and use the default
-image values. Other local clusters may use a separate image store; import the
-image using their supported command. Use an image built for the nodes'
-architecture; a local ARM image does not run on AMD64 nodes. For both platforms:
+Visit [localhost:38100](http://localhost:38100). A chart archive is also available
+in the GitHub Release; pass `./tasklattice-veritas-0.1.0.tgz` instead of the OCI
+reference to install it. To use a private registry, mirror the published image
+or build your own, and set `image.repository` and `image.tag`.
+
+For kind with a locally built image, run
+`kind load docker-image tasklattice-veritas:0.1.0`, then install the local chart
+with `--set image.repository=tasklattice-veritas --set-string image.tag=0.1.0`.
+Other local clusters may use a separate image store. Build for the nodes'
+architecture; a local ARM image does not run on AMD64 nodes. To build both:
 
 ```sh
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t registry.example.test/tasklattice/veritas:0.3.0 --push .
+  -t registry.example.test/tasklattice/veritas:0.1.0 --push .
 ```
 
 The chart uses one replica and the `Recreate` strategy so an upgrade cannot run
@@ -77,7 +84,7 @@ that the API process responds; it does not contact a Target or download data.
 
 | Helm value | Default | Purpose |
 |---|---|---|
-| `image.repository`, `image.tag` | `tasklattice-veritas`, `0.3.0` | Image built from this repository |
+| `image.repository`, `image.tag` | `ghcr.io/tasklattice/tasklattice-veritas`, `0.1.0` | Published release image |
 | `image.pullPolicy` | `IfNotPresent` | Use a node-local or registry image |
 | `imagePullSecrets` | `[]` | Existing registry credential references |
 | `service.port` | `80` | ClusterIP Service port; container port is 38100 |
@@ -131,7 +138,8 @@ For Kubernetes, create a Secret from that private file and reference its name:
 kubectl create namespace veritas --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n veritas create secret generic veritas-credentials \
   --from-env-file=/absolute/path/to/private/veritas.env
-helm upgrade --install veritas ./charts/tasklattice-veritas \
+helm upgrade --install veritas oci://ghcr.io/tasklattice/charts/tasklattice-veritas \
+  --version 0.1.0 \
   --namespace veritas --set existingSecret=veritas-credentials \
   --wait --timeout 5m
 ```
@@ -166,9 +174,11 @@ ports or wildcards; Helm maps `allowedHosts` to it. Cross-origin requests remain
 rejected. The Host list is not authentication: keep the loopback/tunnel default,
 or configure a trusted authenticated proxy before allowing a remote hostname.
 
-Stop or cancel active tests before upgrading. Build a new immutable image tag,
-then use `docker compose up -d --build` locally, or `helm upgrade --install` with
-the new registry tag. A graceful shutdown closes the API and cancels active
+Stop or cancel active tests before upgrading. Download the new release's Compose
+file, run `docker compose pull && docker compose up --no-build -d`, or use
+`helm upgrade --install` with the new chart version. Back up the state volume
+first. For source builds, use `docker compose up -d --build`.
+A graceful shutdown closes the API and cancels active
 execution; it does not resume unfinished jobs automatically.
 
 Back up the entire `/var/lib/veritas` volume with the process stopped, including
@@ -189,9 +199,11 @@ stuck Pending, inspect the StorageClass, capacity and provisioning events with
 helm lint --strict charts/tasklattice-veritas
 helm template veritas charts/tasklattice-veritas --kube-version 1.31.0
 docker compose config --quiet
-docker build -t tasklattice-veritas:0.3.0 .
+docker build -t tasklattice-veritas:0.1.0 .
 ```
 
 `helm template` uses an explicit Kubernetes version so offline rendering also
 works with Helm installations whose synthetic default predates Kubernetes 1.25.
 Run `npm test` and `npm run build` before building a release image.
+
+See [Releasing](releasing.md) for asset checksums, image digests and the publishing workflow.

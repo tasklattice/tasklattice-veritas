@@ -16,6 +16,9 @@ RUN --mount=type=cache,target=/root/.npm \
     npm run build && npm prune --omit=dev --no-audit --no-fund
 
 FROM node:${NODE_VERSION}-bookworm-slim AS runtime
+LABEL org.opencontainers.image.source="https://github.com/tasklattice/tasklattice-veritas" \
+      org.opencontainers.image.title="TaskLattice Veritas" \
+      org.opencontainers.image.description="Desktop guardrail testing workbench, API and CLI"
 WORKDIR /app
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \

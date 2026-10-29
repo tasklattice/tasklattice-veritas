@@ -1,6 +1,6 @@
 services:
   veritas:
-    image: tasklattice-veritas:0.3.0
+    image: ghcr.io/tasklattice/tasklattice-veritas:0.1.0
     build: .
     init: true
     ports:

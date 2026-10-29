@@ -25,14 +25,18 @@ Datasets + Target + execution settings
 With Docker and Docker Compose installed:
 
 ```sh
-git clone https://github.com/tasklattice/tasklattice-veritas.git
-cd tasklattice-veritas
-docker compose up --build -d
+mkdir veritas && cd veritas
+curl -fsSLO https://github.com/tasklattice/tasklattice-veritas/releases/download/v0.1.0/compose.yaml
+docker compose pull
+docker compose up --no-build -d
 ```
 
-Open [localhost:38100](http://localhost:38100). This builds one image containing
-the desktop UI, API, CLI and public fixtures. Compose keeps data, Targets, Reports
-and caches in a named volume. No host Node.js installation is needed.
+Open [localhost:38100](http://localhost:38100). The published
+`ghcr.io/tasklattice/tasklattice-veritas:0.1.0` image supports Linux amd64 and arm64
+and contains the desktop UI, API, CLI and public fixtures. Compose keeps data,
+Targets, Reports and caches in a named volume. No host Node.js installation is needed.
+The [v0.1.0 release](https://github.com/tasklattice/tasklattice-veritas/releases/tag/v0.1.0)
+also includes the Helm package, image digest and SHA-256 checksums.
 
 Run an optional smoke test against a temporary local mock:
 
@@ -53,19 +57,18 @@ docker compose down            # Stops the app; retains the volume.
 
 ### Kubernetes with Helm
 
-Build the image and make it available to your cluster nodes, then install:
+Install the published chart:
 
 ```sh
-docker build -t tasklattice-veritas:0.3.0 .
-# For kind: kind load docker-image tasklattice-veritas:0.3.0
-helm upgrade --install veritas ./charts/tasklattice-veritas \
+helm upgrade --install veritas oci://ghcr.io/tasklattice/charts/tasklattice-veritas \
+  --version 0.1.0 \
   --namespace veritas --create-namespace --wait --timeout 5m
 kubectl -n veritas port-forward service/veritas-tasklattice-veritas 38100:80
 ```
 
-For a remote cluster, push the image to your own registry and set
-`image.repository` and `image.tag` on the Helm command. No pre-published image
-is assumed. The chart creates one Deployment, a ClusterIP Service and a 20 GiB
+The chart uses the published image by default. To use a private mirror, set
+`image.repository` and `image.tag` on the Helm command.
+The chart creates one Deployment, a ClusterIP Service and a 20 GiB
 PVC using the cluster's default StorageClass. A default StorageClass or an
 existing writable claim is required. The PVC is retained on uninstall.
 
@@ -77,6 +80,8 @@ credential Secrets, Dataset preparation, backups and Helm settings.
 Requires Node.js **22.22 or later** and npm:
 
 ```sh
+git clone https://github.com/tasklattice/tasklattice-veritas.git
+cd tasklattice-veritas
 npm ci
 
 # Exercise both protocols using bundled synthetic cases and a temporary local mock.
@@ -96,6 +101,8 @@ For a local production build:
 npm run build
 npm start
 ```
+
+To build the container from a source checkout, run `docker compose up --build -d`.
 
 Source runs bind to `127.0.0.1`; the container binds to `0.0.0.0` internally.
 Compose publishes only on host loopback, and Helm uses a local port-forward.
@@ -284,6 +291,7 @@ See [Scoring and offline re-scoring](docs/scoring.md) for accepted-action matric
 
 ```sh
 npm run typecheck
+npm run check:release
 npm test
 npm run test:integration
 npm run build
@@ -297,6 +305,10 @@ npm run check:publication
 ```
 
 [GitHub Actions](https://github.com/tasklattice/tasklattice-veritas/actions/workflows/verify.yml) runs source tests, synthetic F5/LiteLLM integration, offline re-scoring, the frontend build, Helm/Compose checks, and native amd64/arm64 container smoke checks on hosted runners. Pushes and pull requests to `main` trigger verification; manual runs are also available. No deployment, image publication, real Guard credentials or model calls are involved. Archive-dependent tests explicitly skip when pinned files are absent. See [Validation](docs/validation.md).
+
+Stable version tags also run the [Release workflow](.github/workflows/release.yml),
+which repeats verification before publishing tested images, a Helm OCI chart and
+checksummed GitHub Release assets. See [Releasing](docs/releasing.md).
 
 | Directory | Purpose |
 |---|---|

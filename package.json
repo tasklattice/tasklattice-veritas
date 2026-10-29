@@ -1,6 +1,6 @@
 {
   "name": "@tasklattice/veritas",
-  "version": "0.3.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "TypeScript guardrail testing workbench powered by the promptfoo SDK",
@@ -16,7 +16,9 @@
     "test": "tsx --test --test-concurrency=1 test/*.test.ts",
     "test:integration": "tsx scripts/demo.ts",
     "demo:serve": "tsx scripts/serve-demo.ts",
-    "check:publication": "node scripts/check-publication.mjs"
+    "check:publication": "node scripts/check-publication.mjs",
+    "check:release": "node --import tsx scripts/check-release.ts",
+    "release:package": "node scripts/package-release.mjs"
   },
   "dependencies": {
     "@fastify/static": "^8.0.0",

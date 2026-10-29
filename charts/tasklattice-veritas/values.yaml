@@ -1,7 +1,7 @@
-# Build this image locally or override repository/tag with your own registry.
+# Published multi-architecture release image; override for a private mirror.
 image:
-  repository: tasklattice-veritas
-  tag: "0.3.0"
+  repository: ghcr.io/tasklattice/tasklattice-veritas
+  tag: "0.1.0"
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 

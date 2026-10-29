@@ -3,5 +3,10 @@ name: tasklattice-veritas
 description: Desktop guardrail testing workbench, API and CLI
 type: application
 version: 0.1.0
-appVersion: "0.3.0"
+appVersion: "0.1.0"
 kubeVersion: ">=1.25.0-0"
+home: https://github.com/tasklattice/tasklattice-veritas
+sources:
+  - https://github.com/tasklattice/tasklattice-veritas
+annotations:
+  org.opencontainers.image.source: https://github.com/tasklattice/tasklattice-veritas

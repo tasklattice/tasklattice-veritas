@@ -6,7 +6,7 @@ The default verification runs in GitHub Actions on GitHub-hosted runners. Tests 
 
 [Verify workflow](../.github/workflows/verify.yml) runs on pushes and pull requests to `main`, and on manual dispatch. Actions are pinned to reviewed commit SHAs, checkout credentials are not persisted, and permissions are limited to reading repository content.
 
-- **Source:** inspect indexed files for private data and credentials, install the lockfile with Node.js 22.22.0, run unit/API tests, exercise both protocol adapters and offline re-scoring, then typecheck and build the frontend.
+- **Source:** inspect indexed files for private data and credentials, install the lockfile with Node.js 22.22.0, check that application/lockfile/Helm/Compose versions agree, run unit/API tests, exercise both protocol adapters and offline re-scoring, then typecheck and build the frontend.
 - **Manifests:** lint/package Helm, render default/existing-claim/disposable-storage variants, and validate Compose without accessing a Kubernetes cluster.
 - **Images:** build and run on native `ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64) runners. Check health, frontend delivery, native compression module loading, both synthetic protocol demos, offline re-scoring, and saved Reports after replacing a container while reusing its volume.
 
@@ -14,10 +14,17 @@ The container check uses a read-only root filesystem and temporary runner-owned 
 
 Open the repository's Actions tab and select **Verify → Run workflow** for a manual run. Investigate failed steps in their hosted logs; keep real model regression evidence in the private testing environment.
 
+Stable release tags reuse this complete Verify workflow before the separate
+[Release workflow](../.github/workflows/release.yml) can publish anything. It
+builds and smoke-tests each native release image before pushing, checks the
+combined manifest contains both platforms, then publishes Helm and checksummed
+GitHub Release assets. See [Releasing](releasing.md).
+
 ## Optional local commands
 
 ```sh
 npm ci
+npm run check:release
 npm run typecheck
 npm test
 npm run test:integration

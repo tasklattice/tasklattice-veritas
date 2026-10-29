@@ -8,7 +8,7 @@ if (!files.length) {
   process.exit(1);
 }
 const forbidden = [
-  /^(?:data|runs|node_modules|dist|build|coverage|logs|test-results|playwright-report|\.cache|\.promptfoo|\.venv|venv)\//,
+  /^(?:data|runs|node_modules|dist|build|coverage|logs|test-results|playwright-report|\.cache|\.promptfoo|\.taste-skill|\.venv|venv)\//,
   /^docs\/screenshots\//,
   /(?:^|\/)\.env(?:\..*)?$/, /(?:^|\/)\.npmrc$/,
   /(?:^|\/)__pycache__\//, /\.(?:pyc|pyo|pem|key|p12|pfx|log|tsbuildinfo)$/i,
